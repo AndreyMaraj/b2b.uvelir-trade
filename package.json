@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@iconify-json/mdi": "^1.1.67",
     "@nextui-org/react": "^2.4.6",
     "framer-motion": "^11.3.8",
     "next": "14.2.5",
@@ -16,6 +17,7 @@
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@iconify/tailwind": "^1.1.1",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
