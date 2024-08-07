@@ -26,8 +26,9 @@ export default function Header() {
 			isMenuOpen={isMenuOpen}
 			onMenuOpenChange={setIsMenuOpen}
 			height='6rem'
+			maxWidth='full'
 		>
-			<div className='flex flex-row w-full flex-nowrap items-center justify-between'>
+			<div className='flex flex-row w-full flex-nowrap items-center justify-between container'>
 				<NavbarContent justify='start' className='hidden sm:flex'>
 				</NavbarContent>
 
@@ -42,10 +43,10 @@ export default function Header() {
 				</NavbarContent>
 				<NavbarContent justify='end' className='self-end'>
 					<NavbarItem>
-						<Button className='hidden sm:flex' variant='light' startContent={<span className='iconify mdi--account-outline text-2xl' />}>
+						<Button className='hidden sm:flex text-white hover:text-black' variant='ghost' startContent={<span className='iconify mdi--account-outline text-2xl' />}>
 							Вход для партнеров
 						</Button>
-						<Button className='sm:hidden' variant='light' startContent={<span className='iconify mdi--account-outline text-2xl' />} isIconOnly />
+						<Button className='sm:hidden text-white hover:text-black' variant='ghost' startContent={<span className='iconify mdi--account-outline text-2xl' />} isIconOnly />
 					</NavbarItem>
 				</NavbarContent>
 

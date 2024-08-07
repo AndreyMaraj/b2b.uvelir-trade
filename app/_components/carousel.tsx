@@ -9,7 +9,8 @@ type CarouselProps = {
 		src: string,
 		alt: string
 	}[],
-	hideArrows?: boolean
+	hideArrows?: boolean,
+	className?: string
 }
 
 type ArrowButtonProps = {
@@ -32,7 +33,7 @@ export default function Carousel(props: CarouselProps) {
 	}, [current]);
 
 	return (
-		<div className='relative overflow-hidden h-full w-full'>
+		<div className={`relative overflow-hidden h-full w-full${props.className ? ` ${props.className}` : ''}`}>
 			<div
 				className='absolute flex transition ease-out duration-1000 h-full w-full'
 				style={{ transform: `translateX(-${current * 100}%)` }}
@@ -46,7 +47,7 @@ export default function Carousel(props: CarouselProps) {
 						quality={100}
 						objectFit='cover'
 						radius='none'
-						sizes='(min-width: 42rem) 100vw, (min-width: 30rem) 70vw, 50vw'
+						sizes='100vw'
 						classNames={{ 'wrapper': '!max-w-full h-full w-full  shrink-0' }}
 					/>
 				)}
