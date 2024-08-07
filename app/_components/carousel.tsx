@@ -1,36 +1,36 @@
 'use client'
 
-import { useCallback, useEffect, useState } from 'react';
-import { Button, Image } from '@nextui-org/react';
-import NextImage from 'next/image';
+import { useCallback, useEffect, useState } from 'react'
+import { Button, Image } from '@nextui-org/react'
+import NextImage from 'next/image'
 
 type CarouselProps = {
 	images: {
-		src: string,
+		src: string
 		alt: string
-	}[],
-	hideArrows?: boolean,
+	}[]
+	hideArrows?: boolean
 	className?: string
 }
 
 type ArrowButtonProps = {
-	icon: string,
+	icon: string
 	onClick: () => void
 }
 
 function ArrowButton(props: ArrowButtonProps) {
-	return <Button isIconOnly variant='light' radius='full' onClick={props.onClick} startContent={<span className={`iconify ${props.icon} text-3xl rounded-full`} />} />;
+	return <Button isIconOnly variant='light' radius='full' onClick={props.onClick} startContent={<span className={`iconify ${props.icon} text-3xl rounded-full`} />} />
 }
 
 export default function Carousel(props: CarouselProps) {
 	const [current, setCurrent] = useState(0),
 		previousSlide = useCallback(() => setCurrent((current === 0 ? props.images.length : current) - 1), [current, props.images]),
-		nextSlide = useCallback(() => setCurrent(current === props.images.length - 1 ? 0 : current + 1), [current, props.images]);
+		nextSlide = useCallback(() => setCurrent(current === props.images.length - 1 ? 0 : current + 1), [current, props.images])
 
 	useEffect(() => {
-		const interval = setTimeout(nextSlide, 8000);
-		return () => clearInterval(interval);
-	}, [current]);
+		const interval = setTimeout(nextSlide, 8000)
+		return () => clearInterval(interval)
+	}, [current])
 
 	return (
 		<div className={`relative overflow-hidden h-full w-full${props.className ? ` ${props.className}` : ''}`}>
@@ -70,5 +70,5 @@ export default function Carousel(props: CarouselProps) {
 				)}
 			</div>
 		</div>
-	);
+	)
 }

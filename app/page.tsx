@@ -1,24 +1,24 @@
-import Carousel from './_components/carousel';
-import Slider1 from '../public/slider-1.png';
-import Slider2 from '../public/slider-2.png';
-import Slider3 from '../public/slider-3.png';
-import Slider4 from '../public/slider-4.png';
-import Slider5 from '../public/slider-5.jpg';
-import Slider6 from '../public/slider-6.jpg';
-import Slider7 from '../public/slider-7.jpg';
-import Slider8 from '../public/slider-8.jpg';
-import Slider9 from '../public/slider-9.jpg';
-import Slider10 from '../public/slider-10.jpg';
-import Slider11 from '../public/slider-11.jpg';
-import Slider12 from '../public/slider-12.jpg';
-import Slider13 from '../public/slider-13.jpg';
-import { Button, Image } from '@nextui-org/react';
-import NextImage from 'next/image';
-import DiamondIcon from '../public/diamond-icon.svg';
+import Carousel from './_components/carousel'
+import Slider1 from '../public/slider-1.png'
+import Slider2 from '../public/slider-2.png'
+import Slider3 from '../public/slider-3.png'
+import Slider4 from '../public/slider-4.png'
+import Slider5 from '../public/slider-5.jpg'
+import Slider6 from '../public/slider-6.jpg'
+import Slider7 from '../public/slider-7.jpg'
+import Slider8 from '../public/slider-8.jpg'
+import Slider9 from '../public/slider-9.jpg'
+import Slider10 from '../public/slider-10.jpg'
+import Slider11 from '../public/slider-11.jpg'
+import Slider12 from '../public/slider-12.jpg'
+import Slider13 from '../public/slider-13.jpg'
+import { Button, Image } from '@nextui-org/react'
+import NextImage from 'next/image'
+import DiamondIcon from '../public/diamond-icon.svg'
 
 export default function Home() {
 	return (
-		<main>
+		<>
 			<div className='container md:h-[42rem] sm:h-[30rem] h-[21rem] py-3'>
 				<Carousel images={[{
 					src: Slider1.src,
@@ -82,6 +82,6 @@ export default function Home() {
 					</div>
 				</div>
 			</div>
-		</main>
-	);
+		</>
+	)
 }
