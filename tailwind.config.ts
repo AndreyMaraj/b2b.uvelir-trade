@@ -8,25 +8,13 @@ const config: Config = {
 		'./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}'
 	],
 	theme: {
-		extend: {}
+		container: {
+			center: true
+		}
 	},
 	darkMode: 'class',
 	plugins: [
-		nextui({
-			themes: {
-				light: {
-					colors: {
-						background: '#FFFFFF',
-						foreground: "#000000",
-						default: {
-							foreground: "#FFFFFF",
-							DEFAULT: "#FFFFFF"
-						},
-						focus: "#000000"
-					}
-				}
-			}
-		}),
+		nextui(),
 		addIconSelectors(['mdi'])
 	]
 };
