@@ -1,24 +1,25 @@
 'use client'
 
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Link } from '@nextui-org/react';
-import { useState } from 'react';
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, NavbarMenuToggle, NavbarMenu, NavbarMenuItem } from '@nextui-org/react'
+import { useState } from 'react'
+import Link from './link'
 
 const menuItems = [{
 	label: 'О компании',
-	href: '#'
+	href: '/about'
 }, {
 	label: 'Партнерам',
-	href: '#'
+	href: '/partners'
 }, {
 	label: 'Каталог',
-	href: '#'
+	href: '/catalog'
 }, {
 	label: 'Контакты',
-	href: '#'
-}];
+	href: '/contacts'
+}]
 
 export default function Header() {
-	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const [isMenuOpen, setIsMenuOpen] = useState(false)
 
 	return (
 		<Navbar
@@ -38,7 +39,9 @@ export default function Header() {
 
 				<NavbarContent justify='center'>
 					<NavbarBrand>
-						<p className='font-bold'>UvelirTrade</p>
+						<Link href='/' className='font-bold text-inherit'>
+							UvelirTrade
+						</Link>
 					</NavbarBrand>
 				</NavbarContent>
 				<NavbarContent justify='end' className='self-end'>
@@ -80,5 +83,5 @@ export default function Header() {
 				</NavbarContent>
 			</div>
 		</Navbar>
-	);
+	)
 }
