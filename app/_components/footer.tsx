@@ -3,7 +3,7 @@ import { Link } from '@nextui-org/react'
 export default function Footer() {
 	return (
 		<footer className='bg-black py-10'>
-			<div className='container text-white flex justify-between gap-8'>
+			<div className='container text-white flex flex-col md:flex-row justify-between gap-8 px-3'>
 				<div className='mt-8 text-sm'>
 					<p>© 2024, UvelirTrade</p>
 					<Link href='#'>Политика конфиденциальности</Link>
