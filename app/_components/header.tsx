@@ -54,7 +54,7 @@ export default function Header() {
 				</NavbarContent>
 
 				<NavbarMenu>
-					{menuItems.map((item, index) => (
+					{menuItems.map((item, index) =>
 						<NavbarMenuItem key={`${item.label}-${index}`}>
 							<Link
 								className='w-full'
@@ -65,12 +65,12 @@ export default function Header() {
 								{item.label}
 							</Link>
 						</NavbarMenuItem>
-					))}
+					)}
 				</NavbarMenu>
 			</div>
 			<div className='hidden sm:flex sm:flex-row sm:w-full sm:flex-nowrap sm:items-center sm:justify-center'>
 				<NavbarContent justify='center'>
-					{menuItems.map((item, index) => (
+					{menuItems.map((item, index) =>
 						<NavbarItem key={`${item.label}-${index}`}>
 							<Link
 								href={item.href}
@@ -79,7 +79,7 @@ export default function Header() {
 								{item.label}
 							</Link>
 						</NavbarItem>
-					))}
+					)}
 				</NavbarContent>
 			</div>
 		</Navbar>
