@@ -1,0 +1,226 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Sex {
+    id                Int               @id @default(autoincrement()) @db.SmallInt
+    name              String            @unique
+    productPrototypes ProductPrototyp[]
+}
+
+model AgeCategory {
+    id                Int               @id @default(autoincrement()) @db.SmallInt
+    name              String            @unique
+    productPrototypes ProductPrototyp[]
+}
+
+model WireType {
+    id                         Int                          @id @default(autoincrement()) @db.SmallInt
+    name                       String                       @unique
+    invisibleModelModification InvisibleModelModification[]
+}
+
+model WeavingType {
+    id                Int               @id @default(autoincrement()) @db.SmallInt
+    name              String            @unique
+    productPrototypes ProductPrototyp[]
+}
+
+model RingDimensions {
+    id                Int               @id @default(autoincrement()) @db.SmallInt
+    tireWidth         Decimal           @db.Decimal(4, 2)
+    productPrototypes ProductPrototyp[]
+
+    @@unique([tireWidth])
+}
+
+model EarringDimensions {
+    id                Int               @id @default(autoincrement()) @db.SmallInt
+    depth             Decimal?          @db.Decimal(4, 2)
+    pinLowering       Decimal?          @db.Decimal(4, 2)
+    pinWorkingArea    Decimal?          @db.Decimal(3, 2)
+    productPrototypes ProductPrototyp[]
+
+    // @@unique([depth, pinLowering, pinWorkingArea]) can't use optional fields
+}
+
+model ProductType {
+    id                Int               @id @default(autoincrement()) @db.SmallInt
+    name              String            @unique
+    productPrototypes ProductPrototyp[]
+}
+
+model ProductStyle {
+    id                Int               @id @default(autoincrement()) @db.SmallInt
+    name              String            @unique
+    productPrototypes ProductPrototyp[]
+}
+
+model ProductTheme {
+    id                Int               @id @default(autoincrement()) @db.SmallInt
+    name              String            @unique
+    productPrototypes ProductPrototyp[]
+}
+
+model ProductLockType {
+    id                Int               @id @default(autoincrement()) @db.SmallInt
+    name              String            @unique
+    productPrototypes ProductPrototyp[]
+}
+
+model MetalType {
+    id     Int     @id @default(autoincrement()) @db.SmallInt
+    name   String  @unique
+    metals Metal[]
+}
+
+model MetalCoating {
+    id     Int     @id @default(autoincrement()) @db.SmallInt
+    name   String  @unique
+    metals Metal[]
+}
+
+model Color {
+    id     Int     @id @default(autoincrement()) @db.SmallInt
+    name   String  @unique
+    stones Stone[]
+    metals Metal[]
+}
+
+model Metal {
+    id             Int            @id @default(autoincrement()) @db.SmallInt
+    standard       Int
+    metalType      MetalType      @relation(fields: [metalTypeId], references: [id])
+    metalTypeId    Int
+    metalCoating   MetalCoating?  @relation(fields: [metalCoatingId], references: [id], onDelete: Restrict)
+    metalCoatingId Int?
+    color          Color?         @relation(fields: [colorId], references: [id], onDelete: Restrict)
+    colorId        Int?
+    productModelss ProductModel[]
+
+    // @@unique([standard, metalTypeId, metalCoatingId, colorId])
+}
+
+model StoneType {
+    id     Int     @id @default(autoincrement()) @db.SmallInt
+    name   String  @unique
+    stones Stone[]
+}
+
+model CutType {
+    id     Int     @id @default(autoincrement()) @db.SmallInt
+    name   String  @unique
+    stones Stone[]
+}
+
+model Stone {
+    id              Int              @id @default(autoincrement()) @db.SmallInt
+    chroma          String?
+    purity          String?
+    color           Color?           @relation(fields: [colorId], references: [id], onDelete: Restrict)
+    colorId         Int?             @db.SmallInt
+    stoneType       StoneType        @relation(fields: [stoneTypeId], references: [id])
+    stoneTypeId     Int              @db.SmallInt
+    cutType         CutType          @relation(fields: [cutTypeId], references: [id])
+    cutTypeId       Int              @db.SmallInt
+    modelComponents ModelComponent[]
+
+    // @@unique([chroma, purity, colorId, stoneTypeId, cutTypeId])
+}
+
+model ModelComponent {
+    id                         Int                      @id @default(autoincrement())
+    count                      Int                      @default(1) @db.SmallInt
+    weight                     Decimal?                 @db.Decimal(5, 3)
+    stone                      Stone                    @relation(fields: [stoneId], references: [id])
+    stoneId                    Int                      @db.SmallInt
+    visibleModelModification   VisibleModelModification @relation(fields: [visibleModelModificationId], references: [id], onDelete: Cascade)
+    visibleModelModificationId Int
+
+    // @@unique([stoneId, weight, visibleModelModificationId])
+}
+
+model ModelSize {
+    id                           Int                        @id @default(autoincrement())
+    size                         Int?                       @db.SmallInt
+    averageWeight                Decimal                    @db.Decimal(4, 2)
+    averagePrice                 Decimal                    @db.Money
+    invisibleModelModification   InvisibleModelModification @relation(fields: [invisibleModelModificationId], references: [id], onDelete: Cascade)
+    invisibleModelModificationId Int
+
+    // @@unique([size, invisibleModelModificationId])
+}
+
+model InvisibleModelModification {
+    id                         Int                      @id @default(autoincrement())
+    article                    String                   @unique
+    height                     Decimal?                 @db.Decimal(4, 2)
+    width                      Decimal?                 @db.Decimal(4, 2)
+    description                String?
+    wireType                   WireType?                @relation(fields: [wireTypeId], references: [id])
+    wireTypeId                 Int?                     @db.SmallInt
+    visibleModelModification   VisibleModelModification @relation(fields: [visibleModelModificationId], references: [id], onDelete: Cascade)
+    visibleModelModificationId Int
+    modelSizes                 ModelSize[]
+}
+
+model ProductModificationMedia {
+    id                         Int                      @id @default(autoincrement())
+    visibleModelModification   VisibleModelModification @relation(fields: [visibleModelModificationId], references: [id], onDelete: Cascade)
+    visibleModelModificationId Int
+}
+
+model VisibleModelModification {
+    id                              Int                          @id @default(autoincrement())
+    code                            String
+    wireDiameter                    Decimal?                     @db.Decimal(3, 2)
+    productModel                    ProductModel                 @relation(fields: [productModelId], references: [id], onDelete: Cascade)
+    productModelId                  Int
+    visibleProductModificationMedia ProductModificationMedia[]
+    invisibleModelModification      InvisibleModelModification[]
+    modelComponent                  ModelComponent[]
+
+    @@unique([code, productModelId])
+}
+
+model ProductModel {
+    id                          Int                        @id @default(autoincrement())
+    productPrototyp             ProductPrototyp            @relation(fields: [productPrototypId], references: [id], onDelete: Cascade)
+    productPrototypId           Int
+    metal                       Metal                      @relation(fields: [metalId], references: [id])
+    metalId                     Int                        @db.SmallInt
+    visibleProductModifications VisibleModelModification[]
+
+    @@unique([productPrototypId, metalId])
+}
+
+model ProductPrototyp {
+    id                  Int                @id @default(autoincrement())
+    code                Int                @db.SmallInt
+    type                ProductType        @relation(fields: [typeId], references: [id])
+    typeId              Int                @db.SmallInt
+    sex                 Sex?               @relation(fields: [sexId], references: [id])
+    sexId               Int?               @db.SmallInt
+    ageCategory         AgeCategory?       @relation(fields: [ageCategoryId], references: [id])
+    ageCategoryId       Int?               @db.SmallInt
+    style               ProductStyle?      @relation(fields: [styleId], references: [id])
+    styleId             Int?               @db.SmallInt
+    theme               ProductTheme?      @relation(fields: [themeId], references: [id])
+    themeId             Int?               @db.SmallInt
+    lockType            ProductLockType?   @relation(fields: [lockTypeId], references: [id])
+    lockTypeId          Int?               @db.SmallInt
+    ringDimensions      RingDimensions?    @relation(fields: [ringDimensionsId], references: [id])
+    ringDimensionsId    Int?               @db.SmallInt
+    earringDimensions   EarringDimensions? @relation(fields: [earringDimensionsId], references: [id])
+    earringDimensionsId Int?               @db.SmallInt
+    weavingType         WeavingType?       @relation(fields: [weavingTypeId], references: [id])
+    weavingTypeId       Int?               @db.SmallInt
+    productModels       ProductModel[]
+
+    @@unique([code, typeId])
+}
