@@ -2,7 +2,8 @@
 
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, NavbarMenuToggle, NavbarMenu, NavbarMenuItem } from '@nextui-org/react'
 import { useState } from 'react'
-import Link from './link'
+import Link from '@/components/link'
+import { signIn } from 'next-auth/react'
 
 const menuItems = [{
 	label: 'О компании',
@@ -46,10 +47,12 @@ export default function Header() {
 				</NavbarContent>
 				<NavbarContent justify='end' className='self-end'>
 					<NavbarItem>
-						<Button className='hidden sm:flex text-white hover:text-black' variant='ghost' startContent={<span className='iconify mdi--account-outline text-2xl' />}>
+						<Button className='hidden sm:flex text-white hover:text-black' variant='ghost' startContent={<span className='iconify mdi--account-outline text-2xl' />} onClick={() => signIn()}>
 							Вход для партнеров
 						</Button>
-						<Button className='sm:hidden text-white hover:text-black' variant='ghost' startContent={<span className='iconify mdi--account-outline text-2xl' />} isIconOnly />
+						<Button className='sm:hidden text-white hover:text-black' variant='ghost' isIconOnly>
+							<span className='iconify mdi--account-outline text-2xl' />
+						</Button>
 					</NavbarItem>
 				</NavbarContent>
 

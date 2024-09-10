@@ -1,8 +1,8 @@
-import Link from '../_components/link';
+import Link from '@/components/link';
 
-export default function Catalog() {
+export default function () {
 	return (
-		<div className='container px-4 py-3'>
+		<>
 			<h1 className='text-3xl'>Доступ только для зарегистрированных пользователей</h1>
 			<p className='mt-5'>
 				Необходимо&nbsp;
@@ -15,6 +15,6 @@ export default function Catalog() {
 				</Link>
 				.
 			</p>
-		</div>
+		</>
 	)
 }

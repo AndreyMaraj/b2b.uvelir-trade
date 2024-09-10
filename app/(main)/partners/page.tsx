@@ -6,9 +6,9 @@ const offers = [
 	'За каждым нашим клиентом закрепляется персональный менеджер'
 ]
 
-export default function Partners() {
+export default function () {
 	return (
-		<div className='container px-4 py-3'>
+		<>
 			<h1 className='text-3xl'>Партнерам</h1>
 			<p className='mt-5'>Наши преимущества:</p>
 			<ul className='space-y-4 mt-5'>
@@ -25,6 +25,6 @@ export default function Partners() {
 			<Button size='lg' variant='ghost' className='mt-10 border-black hover:!bg-black hover:text-white'>
 				Стать партнёром
 			</Button>
-		</div>
+		</>
 	)
 }
