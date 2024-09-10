@@ -1,4 +1,4 @@
-import Link from './link'
+import Link from '@/components/link'
 
 
 export default function Footer() {

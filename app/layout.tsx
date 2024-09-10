@@ -1,21 +1,19 @@
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { ReactNode } from 'react'
-import Header from './_components/header'
+import Header from '@/components/header'
 import { Providers } from './providers'
-import Footer from './_components/footer'
+import Footer from '@/components/footer'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+export default function ({ children }: Readonly<{ children: ReactNode }>) {
 	return (
 		<html lang='ru'>
 			<body className={inter.className}>
 				<Providers className='min-h-screen bg-white flex flex-col'>
 					<Header />
-					<main className='flex-grow'>
-						{children}
-					</main>
+					{children}
 					<Footer />
 				</Providers>
 			</body>

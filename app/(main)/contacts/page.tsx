@@ -1,4 +1,4 @@
-import Link from '../_components/link'
+import Link from '@/components/link'
 
 const contacts = [{
 	department: 'Менеджер',
@@ -16,9 +16,9 @@ const contacts = [{
 	phone: '+79999999999'
 }]
 
-export default function Contacts() {
+export default function () {
 	return (
-		<div className='container px-4 py-3'>
+		<>
 			<h1 className='text-3xl mb-5'>Контакты</h1>
 			{contacts.length &&
 				<ul>
@@ -48,6 +48,6 @@ export default function Contacts() {
 				</Link>
 			</p>
 			<p>Адрес: Индустриальная 50/2</p>
-		</div>
+		</>
 	)
 }
