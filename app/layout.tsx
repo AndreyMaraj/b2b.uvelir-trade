@@ -1,17 +1,21 @@
 import { Inter } from 'next/font/google'
-import './globals.css'
-import { ReactNode } from 'react'
+import '@/app/globals.css'
+import type { ReactNode } from 'react'
 import Header from '@/components/header'
-import { Providers } from './providers'
+import { Providers } from '@/app/providers'
 import Footer from '@/components/footer'
+import { auth } from '@/auth'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function ({ children }: Readonly<{ children: ReactNode }>) {
+export default async function ({ children }: Readonly<{ children: ReactNode }>) {
+	const sessions = await auth(),
+		sessionKey = new Date().valueOf()
+
 	return (
 		<html lang='ru'>
 			<body className={inter.className}>
-				<Providers className='min-h-screen bg-white flex flex-col'>
+				<Providers className='min-h-screen bg-white flex flex-col' session={sessions} sessionKey={sessionKey}>
 					<Header />
 					{children}
 					<Footer />

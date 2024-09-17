@@ -1,20 +1,27 @@
 'use client'
 
 import { NextUIProvider } from '@nextui-org/react'
+import type { Session } from 'next-auth'
+import { SessionProvider } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
 
 type ProvidersProps = {
 	children: ReactNode
-	className?: string
+	className?: string,
+	session: Session | null,
+	sessionKey: number
 }
 
-export function Providers({ children, className }: ProvidersProps) {
-	const router = useRouter()
+export function Providers({ children, className, session, sessionKey }: ProvidersProps) {
+	const router = useRouter(),
+		memoizedSessionKey = useMemo(() => sessionKey, [session])
 
 	return (
-		<NextUIProvider navigate={router.push} className={className}>
-			{children}
-		</NextUIProvider>
+		<SessionProvider session={session} key={memoizedSessionKey}>
+			<NextUIProvider navigate={router.push} className={className}>
+				{children}
+			</NextUIProvider>
+		</SessionProvider>
 	)
 }
