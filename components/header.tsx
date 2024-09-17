@@ -1,9 +1,10 @@
 'use client'
 
 import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, NavbarMenuToggle, NavbarMenu, NavbarMenuItem } from '@nextui-org/react'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import Link from '@/components/link'
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 const menuItems = [{
 	label: 'О компании',
@@ -20,7 +21,16 @@ const menuItems = [{
 }]
 
 export default function Header() {
-	const [isMenuOpen, setIsMenuOpen] = useState(false)
+	const [isMenuOpen, setIsMenuOpen] = useState(false),
+		session = useSession(),
+		router = useRouter(),
+		onProfileButtonClick = useCallback(() => {
+			if (session.data) {
+				router.push('/profile')
+			} else {
+				signIn()
+			}
+		}, [session.data])
 
 	return (
 		<Navbar
@@ -47,15 +57,14 @@ export default function Header() {
 				</NavbarContent>
 				<NavbarContent justify='end' className='self-end'>
 					<NavbarItem>
-						<Button className='hidden sm:flex text-white hover:text-black' variant='ghost' startContent={<span className='iconify mdi--account-outline text-2xl' />} onClick={() => signIn()}>
-							Вход для партнеров
+						<Button className='hidden sm:flex text-white hover:text-black' variant='ghost' startContent={<span className='iconify mdi--account-outline text-2xl' />} onClick={onProfileButtonClick}>
+							{session.data ? 'Личный кабинет' : 'Вход для партнеров'}
 						</Button>
-						<Button className='sm:hidden text-white hover:text-black' variant='ghost' isIconOnly>
+						<Button className='sm:hidden text-white hover:text-black' variant='ghost' isIconOnly onClick={onProfileButtonClick}>
 							<span className='iconify mdi--account-outline text-2xl' />
 						</Button>
 					</NavbarItem>
 				</NavbarContent>
-
 				<NavbarMenu>
 					{menuItems.map((item, index) =>
 						<NavbarMenuItem key={`${item.label}-${index}`}>
