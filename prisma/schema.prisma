@@ -21,7 +21,6 @@ model User {
     emailVerified DateTime?
     image         String?
     accounts      Account[]
-    sessions      Session[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -46,16 +45,6 @@ model Account {
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@id([provider, providerAccountId])
-}
-
-model Session {
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
 }
 
 model VerificationToken {
@@ -204,17 +193,6 @@ model ModelComponent {
     // @@unique([stoneId, weight, visibleModelModificationId])
 }
 
-model ModelSize {
-    id                           Int                        @id @default(autoincrement())
-    size                         Int?                       @db.SmallInt
-    averageWeight                Decimal                    @db.Decimal(4, 2)
-    averagePrice                 Decimal                    @db.Money
-    invisibleModelModification   InvisibleModelModification @relation(fields: [invisibleModelModificationId], references: [id], onDelete: Cascade)
-    invisibleModelModificationId Int
-
-    // @@unique([size, invisibleModelModificationId])
-}
-
 model InvisibleModelModification {
     id                         Int                      @id @default(autoincrement())
     article                    String                   @unique
@@ -225,7 +203,6 @@ model InvisibleModelModification {
     wireTypeId                 Int?                     @db.SmallInt
     visibleModelModification   VisibleModelModification @relation(fields: [visibleModelModificationId], references: [id], onDelete: Cascade)
     visibleModelModificationId Int
-    modelSizes                 ModelSize[]
 }
 
 model ProductModificationMedia {
@@ -235,14 +212,14 @@ model ProductModificationMedia {
 }
 
 model VisibleModelModification {
-    id                              Int                          @id @default(autoincrement())
-    code                            String
-    wireDiameter                    Decimal?                     @db.Decimal(3, 2)
-    productModel                    ProductModel                 @relation(fields: [productModelId], references: [id], onDelete: Cascade)
-    productModelId                  Int
-    visibleProductModificationMedia ProductModificationMedia[]
-    invisibleModelModification      InvisibleModelModification[]
-    modelComponent                  ModelComponent[]
+    id                         Int                          @id @default(autoincrement())
+    code                       String
+    wireDiameter               Decimal?                     @db.Decimal(3, 2)
+    productModel               ProductModel                 @relation(fields: [productModelId], references: [id], onDelete: Cascade)
+    productModelId             Int
+    productModificationMedia   ProductModificationMedia[]
+    invisibleModelModification InvisibleModelModification[]
+    modelComponent             ModelComponent[]
 
     @@unique([code, productModelId])
 }
