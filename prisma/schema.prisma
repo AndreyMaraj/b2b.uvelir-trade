@@ -212,14 +212,14 @@ model ProductModificationMedia {
 }
 
 model VisibleModelModification {
-    id                              Int                          @id @default(autoincrement())
-    code                            String
-    wireDiameter                    Decimal?                     @db.Decimal(3, 2)
-    productModel                    ProductModel                 @relation(fields: [productModelId], references: [id], onDelete: Cascade)
-    productModelId                  Int
-    visibleProductModificationMedia ProductModificationMedia[]
-    invisibleModelModification      InvisibleModelModification[]
-    modelComponent                  ModelComponent[]
+    id                         Int                          @id @default(autoincrement())
+    code                       String
+    wireDiameter               Decimal?                     @db.Decimal(3, 2)
+    productModel               ProductModel                 @relation(fields: [productModelId], references: [id], onDelete: Cascade)
+    productModelId             Int
+    productModificationMedia   ProductModificationMedia[]
+    invisibleModelModification InvisibleModelModification[]
+    modelComponent             ModelComponent[]
 
     @@unique([code, productModelId])
 }

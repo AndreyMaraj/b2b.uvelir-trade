@@ -36,15 +36,6 @@ CREATE TABLE "Account" (
 );
 
 -- CreateTable
-CREATE TABLE "Session" (
-    "sessionToken" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "expires" TIMESTAMP(3) NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL
-);
-
--- CreateTable
 CREATE TABLE "VerificationToken" (
     "identifier" TEXT NOT NULL,
     "token" TEXT NOT NULL,
@@ -210,17 +201,6 @@ CREATE TABLE "ModelComponent" (
 );
 
 -- CreateTable
-CREATE TABLE "ModelSize" (
-    "id" SERIAL NOT NULL,
-    "size" SMALLINT,
-    "averageWeight" DECIMAL(4,2) NOT NULL,
-    "averagePrice" MONEY NOT NULL,
-    "invisibleModelModificationId" INTEGER NOT NULL,
-
-    CONSTRAINT "ModelSize_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "InvisibleModelModification" (
     "id" SERIAL NOT NULL,
     "article" TEXT NOT NULL,
@@ -281,9 +261,6 @@ CREATE TABLE "ProductPrototyp" (
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Session_sessionToken_key" ON "Session"("sessionToken");
-
--- CreateIndex
 CREATE UNIQUE INDEX "Sex_name_key" ON "Sex"("name");
 
 -- CreateIndex
@@ -341,9 +318,6 @@ CREATE UNIQUE INDEX "ProductPrototyp_code_typeId_key" ON "ProductPrototyp"("code
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "Metal" ADD CONSTRAINT "Metal_metalTypeId_fkey" FOREIGN KEY ("metalTypeId") REFERENCES "MetalType"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -366,9 +340,6 @@ ALTER TABLE "ModelComponent" ADD CONSTRAINT "ModelComponent_stoneId_fkey" FOREIG
 
 -- AddForeignKey
 ALTER TABLE "ModelComponent" ADD CONSTRAINT "ModelComponent_visibleModelModificationId_fkey" FOREIGN KEY ("visibleModelModificationId") REFERENCES "VisibleModelModification"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "ModelSize" ADD CONSTRAINT "ModelSize_invisibleModelModificationId_fkey" FOREIGN KEY ("invisibleModelModificationId") REFERENCES "InvisibleModelModification"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "InvisibleModelModification" ADD CONSTRAINT "InvisibleModelModification_wireTypeId_fkey" FOREIGN KEY ("wireTypeId") REFERENCES "WireType"("id") ON DELETE SET NULL ON UPDATE CASCADE;

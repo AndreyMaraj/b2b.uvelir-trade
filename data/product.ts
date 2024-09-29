@@ -287,3 +287,112 @@ export async function upsertProductPrototyp(data: Omit<ProductPrototyp, 'id'>) {
 
 	return id
 }
+
+interface GetProductsProps {
+	skip?: number,
+	take?: number,
+	articleQuery?: string,
+	stoneType?: string,
+	metalType?: string,
+	metalColor?: string,
+	productType?: string,
+	sort?: string
+}
+
+export async function getProducts({ skip, take, articleQuery, stoneType, metalType, metalColor, productType }: GetProductsProps) {
+	try {
+		const where = {
+			article: articleQuery !== undefined ? {
+				contains: articleQuery
+			} : undefined,
+			visibleModelModification: {
+				modelComponent: stoneType !== undefined ? {
+					some: {
+						stone: {
+							stoneTypeId: Number(stoneType)
+						}
+					}
+				} : undefined,
+				productModel: metalType !== undefined || metalColor !== undefined || productType !== undefined ? {
+					metal: {
+						metalTypeId: metalType !== undefined ? Number(metalType) : undefined,
+						colorId: metalColor !== undefined ? Number(metalColor) : undefined
+					},
+					productPrototyp: {
+						typeId: productType !== undefined ? Number(productType) : undefined,
+					}
+				} : undefined
+			}
+		}
+
+		return {
+			products: await prisma.invisibleModelModification.findMany({
+				where,
+				skip,
+				take,
+				include: {
+					visibleModelModification: {
+						include: {
+							productModificationMedia: true,
+							productModel: {
+								include: {
+									productPrototyp: {
+										include: {
+											type: true
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}),
+			productsCount: await prisma.invisibleModelModification.count({ where })
+		}
+	} catch (e) {
+		console.log(e)
+		return
+	}
+}
+
+export async function getMetalTypes() {
+	try {
+		return await prisma.metalType.findMany()
+	} catch (e) {
+		console.log(e)
+		return
+	}
+}
+
+export async function getStoneTypes() {
+	try {
+		return await prisma.stoneType.findMany()
+	} catch (e) {
+		console.log(e)
+		return
+	}
+}
+
+export async function getMetalColors() {
+	try {
+		return await prisma.color.findMany({
+			where: {
+				metals: {
+					some: {}
+				}
+			}
+		})
+	} catch (e) {
+		console.log(e)
+		return
+	}
+}
+
+export async function getProductTypes() {
+	try {
+		return await prisma.productType.findMany()
+	} catch (e) {
+		console.log(e)
+		return
+	}
+}

@@ -19,7 +19,11 @@ type ArrowButtonProps = {
 }
 
 function ArrowButton(props: ArrowButtonProps) {
-	return <Button isIconOnly variant='light' radius='full' onClick={props.onClick} startContent={<span className={`iconify ${props.icon} text-3xl rounded-full`} />} />
+	return (
+		<Button isIconOnly variant='light' radius='full' onClick={props.onClick}>
+			<span className={`iconify ${props.icon} text-3xl rounded-full`} />
+		</Button>
+	)
 }
 
 export default function Carousel(props: CarouselProps) {
@@ -45,10 +49,9 @@ export default function Carousel(props: CarouselProps) {
 						key={index}
 						fill
 						quality={100}
-						objectFit='cover'
 						radius='none'
 						sizes='100vw'
-						classNames={{ 'wrapper': '!max-w-full h-full w-full  shrink-0' }}
+						classNames={{ 'wrapper': '!max-w-full h-full w-full  shrink-0', 'img': 'object-cover' }}
 					/>
 				)}
 			</div>

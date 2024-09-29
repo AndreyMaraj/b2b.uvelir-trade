@@ -5,6 +5,10 @@
  */
 export const publicRoutes = [
 	'/',
+	'/catalog',
+	'/partners',
+	'/about',
+	'/contacts',
 	'/api/data-exchange'
 ]
 

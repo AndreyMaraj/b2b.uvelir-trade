@@ -110,7 +110,7 @@ const COOKIE_NAME = 'Cookie',
 	DATA_EXCHANGE_FOLDER = 'data-exchange',
 	DATA_EXCHANGE_MEDIA_FOLDER = 'import_files',
 	DATA_EXCHANGE_MEDIA_FOLDER_PATH = DATA_EXCHANGE_FOLDER + '/' + DATA_EXCHANGE_MEDIA_FOLDER,
-	PRODUCT_MEDIA_FOLDER = 'product-media',
+	PRODUCT_MEDIA_FOLDER_PATH = 'public/product-media',
 	IMPORT_PREFIX = 'import',
 	expectedProps: Props = {
 		[PropName.Diameter]: {
@@ -413,17 +413,17 @@ async function handleExchangeFileProducts(fileProducts: ElementCompact, file: st
 			}
 
 			if (images) {
-				const productModificationFolder = PRODUCT_MEDIA_FOLDER + '/' + visibleModelModificationId
-				if (!fs.existsSync(productModificationFolder)) {
-					fs.mkdirSync(productModificationFolder)
-				} else {
+				const productModificationFolder = PRODUCT_MEDIA_FOLDER_PATH + '/' + visibleModelModificationId
+				if (fs.existsSync(productModificationFolder)) {
 					fs.rmSync(productModificationFolder, { recursive: true })
 					await prisma.productModificationMedia.deleteMany({
 						where: { visibleModelModificationId }
 					})
 				}
 
-				for (const path of (Array.isArray(images) ? images.map(image => image._text) : [images._text])) {
+				fs.mkdirSync(productModificationFolder)
+
+				for (const path of (Array.isArray(images) ? images.map(image => image._text.replaceAll('\\', '/')) : [images._text.replaceAll('\\', '/')])) {
 					const extension = path.slice(path.lastIndexOf('.') + 1),
 						{ id: modelVariantMediaId } = await prisma.productModificationMedia.create({
 							...SELECT_ID,
@@ -548,8 +548,8 @@ async function handleExchangeFiles() {
 			}
 		})
 
-		if (importFiles.length && !fs.existsSync(PRODUCT_MEDIA_FOLDER)) {
-			fs.mkdirSync(PRODUCT_MEDIA_FOLDER)
+		if (importFiles.length && !fs.existsSync(PRODUCT_MEDIA_FOLDER_PATH)) {
+			fs.mkdirSync(PRODUCT_MEDIA_FOLDER_PATH)
 		}
 
 		let props: DataExchangeProp[] | undefined
@@ -569,9 +569,6 @@ export async function GET(request: NextRequest) {
 	const mode = request.nextUrl.searchParams.get('mode'),
 		requestHeaders = new Headers(request.headers),
 		sessionId = requestHeaders.get(COOKIE_NAME)
-
-	console.log('fewfenuiefiureuin')
-	return new Response(`success\n${COOKIE_NAME}\n123`)
 
 	switch (mode) {
 		case RequestMode.CheckAuth:
