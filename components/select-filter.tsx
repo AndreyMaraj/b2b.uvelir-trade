@@ -20,6 +20,7 @@ export default function SelectFilter({ items, label, paramName }: SelectFilterPr
 		[selectedKeys, setSelectedKeys] = useState<string[]>([]),
 		onSelectionChange = useCallback((keys: SharedSelection) => {
 			const params = new URLSearchParams(searchParams)
+			params.delete('page')
 			if (keys.currentKey) {
 				params.set(paramName, keys.currentKey)
 			} else {
@@ -35,7 +36,6 @@ export default function SelectFilter({ items, label, paramName }: SelectFilterPr
 			const item = items.find(item => item.id === Number(searchParams.get(paramName)))
 			setSelectedKeys(item ? [item.id.toString()] : [])
 		}
-
 	}, [searchParams, paramName, items, setSelectedKeys])
 
 	return (

@@ -8,7 +8,7 @@ import { useDebouncedCallback } from 'use-debounce'
 export default function SearchProduct() {
 	const searchParams = useSearchParams(),
 		pathname = usePathname(),
-		{ replace } = useRouter(),
+		router = useRouter(),
 		handleSearch = useDebouncedCallback(useCallback((term: string) => {
 			const params = new URLSearchParams(searchParams)
 			params.delete('page')
@@ -17,8 +17,8 @@ export default function SearchProduct() {
 			} else {
 				params.delete('query')
 			}
-			replace(`${pathname}?${params.toString()}`)
-		}, [searchParams, pathname, replace]), 800)
+			router.push(`${pathname}?${params.toString()}`)
+		}, [searchParams, pathname, router]), 800)
 
 	return (
 		<Input

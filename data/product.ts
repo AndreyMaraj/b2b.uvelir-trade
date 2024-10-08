@@ -1,6 +1,6 @@
 import { prisma } from '@/prisma'
 import { SerializedPrismaEntity } from '@/types'
-import { EarringDimensions, InvisibleModelModification, Metal, ModelComponent, ProductModel, ProductPrototyp, RingDimensions, Stone, VisibleModelModification } from '@prisma/client'
+import { EarringDimensions, InvisibleModelModification, Metal, ModelComponent, Prisma, ProductModel, ProductPrototyp, RingDimensions, Stone, VisibleModelModification } from '@prisma/client'
 
 export const SELECT_ID = {
 	select: {
@@ -301,12 +301,12 @@ interface GetProductsProps {
 
 export async function getProducts({ skip, take, articleQuery, stoneType, metalType, metalColor, productType }: GetProductsProps) {
 	try {
-		const where = {
+		const where = Prisma.validator<Prisma.InvisibleModelModificationWhereInput>()({
 			article: articleQuery !== undefined ? {
 				contains: articleQuery
 			} : undefined,
 			visibleModelModification: {
-				modelComponent: stoneType !== undefined ? {
+				modelComponents: stoneType !== undefined ? {
 					some: {
 						stone: {
 							stoneTypeId: Number(stoneType)
@@ -323,7 +323,7 @@ export async function getProducts({ skip, take, articleQuery, stoneType, metalTy
 					}
 				} : undefined
 			}
-		}
+		})
 
 		return {
 			products: await prisma.invisibleModelModification.findMany({
@@ -349,6 +349,110 @@ export async function getProducts({ skip, take, articleQuery, stoneType, metalTy
 			}),
 			productsCount: await prisma.invisibleModelModification.count({ where })
 		}
+	} catch (e) {
+		console.log(e)
+		return
+	}
+}
+
+export async function getProductByArticle(article: string) {
+	try {
+		return await prisma.invisibleModelModification.findUnique({
+			where: { article },
+			include: {
+				wireType: true,
+				visibleModelModification: {
+					include: {
+						productModificationMedia: true,
+						productModel: {
+							include: {
+								productPrototyp: {
+									include: {
+										type: true,
+										sex: true,
+										ringDimensions: true,
+										earringDimensions: true,
+										weavingType: true,
+										lockType: true
+									}
+								},
+								metal: {
+									include: {
+										color: true,
+										metalType: true,
+										metalCoating: true
+									}
+								}
+							}
+						},
+						modelComponents: {
+							include: {
+								stone: {
+									include: {
+										stoneType: true,
+										color: true,
+										cutType: true
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		})
+	} catch (e) {
+		console.log(e)
+		return
+	}
+}
+
+export async function getProductVariants(productPrototypId: number) {
+	try {
+		return await prisma.productPrototyp.findUnique({
+			where: {
+				id: productPrototypId
+			},
+			include: {
+				productModels: {
+					include: {
+						visibleProductModifications: {
+							include: {
+								invisibleModelModifications: true,
+								productModificationMedia: true
+							}
+						}
+					}
+				}
+			}
+		})
+	} catch (e) {
+		console.log(e)
+		return
+	}
+}
+
+export async function getOtherProducts({ take, skipIds }: { take?: number, skipIds?: Array<number> }) {
+	try {
+		return await prisma.invisibleModelModification.findMany({
+			take,
+			where: {
+				id: { notIn: skipIds }
+			},
+			include: {
+				visibleModelModification: {
+					include: {
+						productModel: {
+							include: {
+								productPrototyp: {
+									include: { type: true }
+								}
+							}
+						},
+						productModificationMedia: true
+					}
+				}
+			}
+		})
 	} catch (e) {
 		console.log(e)
 		return

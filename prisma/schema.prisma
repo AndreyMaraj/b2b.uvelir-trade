@@ -56,69 +56,69 @@ model VerificationToken {
 }
 
 model Sex {
-    id                Int               @id @default(autoincrement()) @db.SmallInt
-    name              String            @unique
-    productPrototypes ProductPrototyp[]
+    id                Int                @id @default(autoincrement()) @db.SmallInt
+    name              String             @unique
+    productPrototypes ProductPrototype[]
 }
 
 model AgeCategory {
-    id                Int               @id @default(autoincrement()) @db.SmallInt
-    name              String            @unique
-    productPrototypes ProductPrototyp[]
+    id                Int                @id @default(autoincrement()) @db.SmallInt
+    name              String             @unique
+    productPrototypes ProductPrototype[]
 }
 
 model WireType {
-    id                         Int                          @id @default(autoincrement()) @db.SmallInt
-    name                       String                       @unique
-    invisibleModelModification InvisibleModelModification[]
+    id                          Int                          @id @default(autoincrement()) @db.SmallInt
+    name                        String                       @unique
+    invisibleModelModifications InvisibleModelModification[]
 }
 
 model WeavingType {
-    id                Int               @id @default(autoincrement()) @db.SmallInt
-    name              String            @unique
-    productPrototypes ProductPrototyp[]
+    id                Int                @id @default(autoincrement()) @db.SmallInt
+    name              String             @unique
+    productPrototypes ProductPrototype[]
 }
 
 model RingDimensions {
-    id                Int               @id @default(autoincrement()) @db.SmallInt
-    tireWidth         Decimal           @db.Decimal(4, 2)
-    productPrototypes ProductPrototyp[]
+    id                Int                @id @default(autoincrement()) @db.SmallInt
+    tireWidth         Decimal            @db.Decimal(4, 2)
+    productPrototypes ProductPrototype[]
 
     @@unique([tireWidth])
 }
 
 model EarringDimensions {
-    id                Int               @id @default(autoincrement()) @db.SmallInt
-    depth             Decimal?          @db.Decimal(4, 2)
-    pinLowering       Decimal?          @db.Decimal(4, 2)
-    pinWorkingArea    Decimal?          @db.Decimal(3, 2)
-    productPrototypes ProductPrototyp[]
+    id                Int                @id @default(autoincrement()) @db.SmallInt
+    depth             Decimal?           @db.Decimal(4, 2)
+    pinLowering       Decimal?           @db.Decimal(4, 2)
+    pinWorkingArea    Decimal?           @db.Decimal(3, 2)
+    productPrototypes ProductPrototype[]
 
     // @@unique([depth, pinLowering, pinWorkingArea]) can't use optional fields
 }
 
 model ProductType {
-    id                Int               @id @default(autoincrement()) @db.SmallInt
-    name              String            @unique
-    productPrototypes ProductPrototyp[]
+    id                Int                @id @default(autoincrement()) @db.SmallInt
+    name              String             @unique
+    productPrototypes ProductPrototype[]
 }
 
 model ProductStyle {
-    id                Int               @id @default(autoincrement()) @db.SmallInt
-    name              String            @unique
-    productPrototypes ProductPrototyp[]
+    id                Int                @id @default(autoincrement()) @db.SmallInt
+    name              String             @unique
+    productPrototypes ProductPrototype[]
 }
 
 model ProductTheme {
-    id                Int               @id @default(autoincrement()) @db.SmallInt
-    name              String            @unique
-    productPrototypes ProductPrototyp[]
+    id                Int                @id @default(autoincrement()) @db.SmallInt
+    name              String             @unique
+    productPrototypes ProductPrototype[]
 }
 
 model ProductLockType {
-    id                Int               @id @default(autoincrement()) @db.SmallInt
-    name              String            @unique
-    productPrototypes ProductPrototyp[]
+    id                Int                @id @default(autoincrement()) @db.SmallInt
+    name              String             @unique
+    productPrototypes ProductPrototype[]
 }
 
 model MetalType {
@@ -149,7 +149,7 @@ model Metal {
     metalCoatingId Int?
     color          Color?         @relation(fields: [colorId], references: [id], onDelete: Restrict)
     colorId        Int?
-    productModelss ProductModel[]
+    productModels  ProductModel[]
 
     // @@unique([standard, metalTypeId, metalCoatingId, colorId])
 }
@@ -212,21 +212,21 @@ model ProductModificationMedia {
 }
 
 model VisibleModelModification {
-    id                         Int                          @id @default(autoincrement())
-    code                       String
-    wireDiameter               Decimal?                     @db.Decimal(3, 2)
-    productModel               ProductModel                 @relation(fields: [productModelId], references: [id], onDelete: Cascade)
-    productModelId             Int
-    productModificationMedia   ProductModificationMedia[]
-    invisibleModelModification InvisibleModelModification[]
-    modelComponent             ModelComponent[]
+    id                          Int                          @id @default(autoincrement())
+    code                        String
+    wireDiameter                Decimal?                     @db.Decimal(3, 2)
+    productModel                ProductModel                 @relation(fields: [productModelId], references: [id], onDelete: Cascade)
+    productModelId              Int
+    productModificationMedia    ProductModificationMedia[]
+    invisibleModelModifications InvisibleModelModification[]
+    modelComponents             ModelComponent[]
 
     @@unique([code, productModelId])
 }
 
 model ProductModel {
     id                          Int                        @id @default(autoincrement())
-    productPrototyp             ProductPrototyp            @relation(fields: [productPrototypId], references: [id], onDelete: Cascade)
+    productPrototyp             ProductPrototype           @relation(fields: [productPrototypId], references: [id], onDelete: Cascade)
     productPrototypId           Int
     metal                       Metal                      @relation(fields: [metalId], references: [id])
     metalId                     Int                        @db.SmallInt
@@ -235,7 +235,7 @@ model ProductModel {
     @@unique([productPrototypId, metalId])
 }
 
-model ProductPrototyp {
+model ProductPrototype {
     id                  Int                @id @default(autoincrement())
     code                Int                @db.SmallInt
     type                ProductType        @relation(fields: [typeId], references: [id])

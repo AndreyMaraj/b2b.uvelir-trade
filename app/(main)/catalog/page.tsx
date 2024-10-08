@@ -1,15 +1,13 @@
 import { auth } from '@/auth'
 import Link from '@/components/link'
 import SelectFilter from '@/components/select-filter'
-import { Card, CardBody, CardFooter, CardHeader, Chip, Image } from '@nextui-org/react'
-import NextImage from 'next/image'
 import { getMetalColors, getMetalTypes, getProducts, getProductTypes, getStoneTypes } from '@/data/product'
 import PaginationClient from '@/components/pagination'
 import SearchProduct from '@/components/search-product'
 import { Suspense } from 'react'
 import ClearFilterButton from '@/components/clear-filter-button'
 import { QueryParam } from '@/consts'
-import EmptyProductMedia from '@/public/empty-product-media.jpg'
+import ProductCard from './product-card'
 
 const numberOfProductsPerPage = 15
 
@@ -60,31 +58,10 @@ async function Page({ searchParams }: Omit<PageProps<never, `${QueryParam}`>, 'p
 						<ClearFilterButton />
 					</div>
 					<div>
-						<div className='flex flex-wrap'>
-							<Suspense key={currentPage}>
-								{products.map((product, index) =>
-									<Card className='p-3.5 basis-full sm:basis-1/2 lg:basis-1/3' key={index} radius='none'>
-										<CardHeader>
-											<p className='mx-auto'>
-												{product.visibleModelModification.productModel.productPrototyp.type.name} {product.article}
-											</p>
-										</CardHeader>
-										<CardBody className='overflow-visible py-2 items-center'>
-											<Image
-												as={NextImage}
-												src={product.visibleModelModification.productModificationMedia.length > 0 ? `/product-media/${product.visibleModelModificationId}/${product.visibleModelModification.productModificationMedia[0].id}.jpg` : EmptyProductMedia.src}
-												alt='test'
-												width={160}
-												height={160}
-												quality={100}
-												radius='none'
-												sizes='100vw'
-												className='object-cover'
-											/>
-										</CardBody>
-									</Card>
-								)}
-							</Suspense>
+						<div className='flex flex-wrap gap-x-2.5 gap-y-4'>
+							{products.map(product =>
+								<ProductCard product={product} className='basis-[calc(50%-10px)] sm:basis-full md:basis-[calc(50%-10px)] lg:basis-[calc(33.333%-10px)]' />
+							)}
 						</div>
 						{productsPagesCount > 1 &&
 							<div className='flex justify-center mt-4'>
