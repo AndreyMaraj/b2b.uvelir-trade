@@ -11,9 +11,14 @@ export default function ClearFilterButton() {
 		router = useRouter(),
 		onClick = useCallback(() => {
 			const params = new URLSearchParams(searchParams)
+			if (params.has(QueryParam.METAL_COLOR) || params.has(QueryParam.METAL_TYPE) || params.has(QueryParam.STONE_TYPE)) {
+				params.delete(QueryParam.PAGE)
+			}
+
 			params.delete(QueryParam.METAL_COLOR)
 			params.delete(QueryParam.METAL_TYPE)
 			params.delete(QueryParam.STONE_TYPE)
+
 			router.push(`${pathname}?${params.toString()}`)
 		}, [pathname, searchParams, router])
 

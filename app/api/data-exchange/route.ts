@@ -579,7 +579,7 @@ export async function GET(request: NextRequest) {
 			return new Response('success')
 		case RequestMode.Complete:
 			handleExchangeFiles()
-			break
+			return new Response('success')
 		default:
 			return new Response(`Unknown mode: ${mode}`, { status: 400 })
 	}

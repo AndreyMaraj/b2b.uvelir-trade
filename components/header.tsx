@@ -73,6 +73,7 @@ export default function Header() {
 								href={item.href}
 								size='lg'
 								color='foreground'
+								onClick={() => setIsMenuOpen(false)}
 							>
 								{item.label}
 							</Link>
