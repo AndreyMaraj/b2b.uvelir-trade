@@ -2,12 +2,11 @@ import { auth } from '@/auth'
 import Link from '@/components/link'
 import SelectFilter from '@/components/select-filter'
 import { getMetalColors, getMetalTypes, getProducts, getProductTypes, getStoneTypes } from '@/data/product'
-import PaginationClient from '@/components/pagination'
 import SearchProduct from '@/components/search-product'
-import { Suspense } from 'react'
 import ClearFilterButton from '@/components/clear-filter-button'
 import { QueryParam } from '@/consts'
 import ProductCard from './product-card'
+import PaginationClient from './pagination'
 
 const numberOfProductsPerPage = 15
 

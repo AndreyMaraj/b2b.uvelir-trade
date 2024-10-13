@@ -1,6 +1,6 @@
 import { prisma } from '@/prisma'
 import { SerializedPrismaEntity } from '@/types'
-import { EarringDimensions, InvisibleModelModification, Metal, ModelComponent, Prisma, ProductModel, ProductPrototyp, RingDimensions, Stone, VisibleModelModification } from '@prisma/client'
+import { EarringDimensions, InvisibleModelModification, Metal, ModelComponent, Prisma, ProductModel, ProductPrototype, RingDimensions, Stone, VisibleModelModification } from '@prisma/client'
 
 export const SELECT_ID = {
 	select: {
@@ -262,8 +262,8 @@ export async function upsertProductModel(data: Omit<ProductModel, 'id'>) {
 	return id
 }
 
-export async function upsertProductPrototyp(data: Omit<ProductPrototyp, 'id'>) {
-	const { id } = await prisma.productPrototyp.upsert({
+export async function upsertProductPrototyp(data: Omit<ProductPrototype, 'id'>) {
+	const { id } = await prisma.productPrototype.upsert({
 		...SELECT_ID,
 		where: {
 			code_typeId: {
@@ -406,12 +406,10 @@ export async function getProductByArticle(article: string) {
 	}
 }
 
-export async function getProductVariants(productPrototypId: number) {
+export async function getProductVariants(id: number) {
 	try {
-		return await prisma.productPrototyp.findUnique({
-			where: {
-				id: productPrototypId
-			},
+		return await prisma.productPrototype.findUnique({
+			where: { id },
 			include: {
 				productModels: {
 					include: {
@@ -431,7 +429,7 @@ export async function getProductVariants(productPrototypId: number) {
 	}
 }
 
-export async function getOtherProducts({ take, skipIds }: { take?: number, skipIds?: Array<number> }) {
+export async function getAdditionalProducts({ take, skipIds }: { take?: number, skipIds?: Array<number> }) {
 	try {
 		return await prisma.invisibleModelModification.findMany({
 			take,

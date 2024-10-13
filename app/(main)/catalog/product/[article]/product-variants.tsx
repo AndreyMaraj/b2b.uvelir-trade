@@ -8,7 +8,7 @@ import { useCallback } from 'react'
 import { getProductVariants } from '@/data/product'
 import { useRouter } from 'next/navigation'
 
-export default function ProductVariants({ currentProductArcticle, productPrototyp }: { currentProductArcticle: string, productPrototyp: NonNullable<Prisma.PromiseReturnType<typeof getProductVariants>> }) {
+export default function ProductVariants({ currentProductArcticle, productPrototype }: { currentProductArcticle: string, productPrototype: NonNullable<Prisma.PromiseReturnType<typeof getProductVariants>> }) {
 	const router = useRouter(),
 		onVariantClick = useCallback((article: string) => {
 			router.push(`/catalog/product/${article}`)
@@ -16,7 +16,7 @@ export default function ProductVariants({ currentProductArcticle, productPrototy
 
 	return (
 		<div className='flex gap-x-2 overflow-x-auto py-3'>
-			{productPrototyp.productModels.map(productModel =>
+			{productPrototype.productModels.map(productModel =>
 				productModel.visibleProductModifications.map(visibleProductModification =>
 					visibleProductModification.invisibleModelModifications.map((invisibleModelModification, index) =>
 						<Image

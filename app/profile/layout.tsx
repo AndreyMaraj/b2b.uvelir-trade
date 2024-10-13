@@ -12,8 +12,8 @@ const menuItems = [{
 	label: 'Загрузка файла Excel',
 	href: ''
 }, {
-	label: 'Текущая корзина',
-	href: ''
+	label: 'Корзина',
+	href: '/profile/shopping-bag'
 }, {
 	label: 'Смена пароля',
 	href: ''

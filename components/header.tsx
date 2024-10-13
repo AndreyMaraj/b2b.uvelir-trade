@@ -1,10 +1,11 @@
 'use client'
 
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, NavbarMenuToggle, NavbarMenu, NavbarMenuItem } from '@nextui-org/react'
-import { useCallback, useState } from 'react'
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Badge, Popover, PopoverTrigger, PopoverContent } from '@nextui-org/react'
+import { useCallback, useMemo, useState } from 'react'
 import Link from '@/components/link'
 import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { useShoppingBag } from './shopping-bag-hook'
 
 const menuItems = [{
 	label: 'О компании',
@@ -20,8 +21,59 @@ const menuItems = [{
 	href: '/contacts'
 }]
 
+function ShoppingBagButton({ productsCount, positionCount, isBadgeInvisible }: { productsCount: number, positionCount: number, isBadgeInvisible: boolean }) {
+	const [isOpen, setIsOpen] = useState(false)
+
+	return (
+		<Badge color='primary' content={productsCount} isInvisible={isBadgeInvisible}>
+			<Popover
+				showArrow
+				offset={10}
+				placement='bottom'
+				backdrop='opaque'
+				isOpen={isOpen}
+				onOpenChange={setIsOpen}
+			>
+				<PopoverTrigger>
+					<Button className='text-white hover:text-black' variant='ghost' isIconOnly>
+						<span className='iconify mdi--cart text-2xl' />
+					</Button>
+				</PopoverTrigger>
+				<PopoverContent className='p-6'>
+					{titleProps =>
+						<div className='w-full'>
+							<h3 className='text-2xl mb-5' {...titleProps}>
+								Корзина
+							</h3>
+							<div className='mt-2 flex flex-col gap-2 w-full'>
+								<p>
+									Позиций: {positionCount}
+								</p>
+								<p>
+									Штук: {productsCount}
+								</p>
+								<Link
+									className='mt-5 hover:underline'
+									href='/profile/shopping-bag'
+									size='sm'
+									color='foreground'
+									onClick={() => setIsOpen(false)}
+								>
+									Оформить заказ
+								</Link>
+							</div>
+						</div>
+					}
+				</PopoverContent>
+			</Popover>
+		</Badge>
+	)
+}
+
 export default function Header() {
 	const [isMenuOpen, setIsMenuOpen] = useState(false),
+		{ products, isPending } = useShoppingBag(),
+		productsCount = useMemo(() => products.reduce((sum, product) => sum + product.count, 0), [products]),
 		session = useSession(),
 		router = useRouter(),
 		onProfileButtonClick = useCallback(() => {
@@ -30,7 +82,7 @@ export default function Header() {
 			} else {
 				signIn()
 			}
-		}, [session.data])
+		}, [session.data, router, signIn])
 
 	return (
 		<Navbar
@@ -40,12 +92,16 @@ export default function Header() {
 			height='6rem'
 			maxWidth='full'
 		>
-			<div className='flex flex-row w-full flex-nowrap items-center justify-between container'>
-				<NavbarContent justify='start' className='hidden sm:flex'>
-				</NavbarContent>
-
-				<NavbarContent className='sm:hidden' justify='start'>
-					<NavbarMenuToggle aria-label={isMenuOpen ? 'Close menu' : 'Open menu'} />
+			<div className='flex w-full flex-nowrap items-center justify-between container'>
+				<NavbarContent justify='start'>
+					<NavbarItem className='sm:hidden'>
+						<NavbarMenuToggle />
+					</NavbarItem>
+					{!!products.length &&
+						<NavbarItem className='hidden sm:flex'>
+							<ShoppingBagButton positionCount={products.length} productsCount={productsCount} isBadgeInvisible={isPending} />
+						</NavbarItem>
+					}
 				</NavbarContent>
 
 				<NavbarContent justify='center'>
@@ -56,6 +112,9 @@ export default function Header() {
 					</NavbarBrand>
 				</NavbarContent>
 				<NavbarContent justify='end' className='self-end'>
+					<NavbarItem className='sm:hidden' >
+						<ShoppingBagButton positionCount={products.length} productsCount={productsCount} isBadgeInvisible={isPending} />
+					</NavbarItem>
 					<NavbarItem>
 						<Button className='hidden sm:flex text-white hover:text-black' variant='ghost' startContent={<span className='iconify mdi--account-outline text-2xl' />} onClick={onProfileButtonClick}>
 							{session.data ? 'Личный кабинет' : 'Вход для партнеров'}
@@ -67,7 +126,7 @@ export default function Header() {
 				</NavbarContent>
 				<NavbarMenu>
 					{menuItems.map((item, index) =>
-						<NavbarMenuItem key={`${item.label}-${index}`}>
+						<NavbarMenuItem key={index}>
 							<Link
 								className='w-full'
 								href={item.href}
@@ -81,7 +140,7 @@ export default function Header() {
 					)}
 				</NavbarMenu>
 			</div>
-			<div className='hidden sm:flex sm:flex-row sm:w-full sm:flex-nowrap sm:items-center sm:justify-center'>
+			<div className='hidden sm:flex sm:w-full sm:flex-nowrap sm:items-center sm:justify-center'>
 				<NavbarContent justify='center'>
 					{menuItems.map((item, index) =>
 						<NavbarItem key={`${item.label}-${index}`}>
