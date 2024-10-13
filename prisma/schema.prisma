@@ -13,14 +13,15 @@ enum UserRole {
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String    @unique
-    password      String?
-    role          UserRole  @default(USER)
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
+    id                   String                @id @default(cuid())
+    name                 String?
+    email                String                @unique
+    password             String?
+    role                 UserRole              @default(USER)
+    emailVerified        DateTime?
+    image                String?
+    accounts             Account[]
+    shoppingBagsProducts ShoppingBagsProduct[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -53,6 +54,17 @@ model VerificationToken {
     expires    DateTime
 
     @@id([identifier, token])
+}
+
+model ShoppingBagsProduct {
+    id                           String                     @id @default(cuid())
+    user                         User                       @relation(fields: [userId], references: [id], onDelete: Restrict)
+    userId                       String
+    invisibleModelModification   InvisibleModelModification @relation(fields: [invisibleModelModificationId], references: [id], onDelete: Restrict)
+    invisibleModelModificationId Int
+    count                        Int                        @db.SmallInt
+
+    @@unique([userId, invisibleModelModificationId])
 }
 
 model Sex {
@@ -203,6 +215,7 @@ model InvisibleModelModification {
     wireTypeId                 Int?                     @db.SmallInt
     visibleModelModification   VisibleModelModification @relation(fields: [visibleModelModificationId], references: [id], onDelete: Cascade)
     visibleModelModificationId Int
+    shoppingBagsProducts       ShoppingBagsProduct[]
 }
 
 model ProductModificationMedia {

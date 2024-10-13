@@ -45,6 +45,16 @@ CREATE TABLE "VerificationToken" (
 );
 
 -- CreateTable
+CREATE TABLE "ShoppingBagsProduct" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "invisibleModelModificationId" INTEGER NOT NULL,
+    "count" SMALLINT NOT NULL,
+
+    CONSTRAINT "ShoppingBagsProduct_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Sex" (
     "id" SMALLSERIAL NOT NULL,
     "name" TEXT NOT NULL,
@@ -241,7 +251,7 @@ CREATE TABLE "ProductModel" (
 );
 
 -- CreateTable
-CREATE TABLE "ProductPrototyp" (
+CREATE TABLE "ProductPrototype" (
     "id" SERIAL NOT NULL,
     "code" SMALLINT NOT NULL,
     "typeId" SMALLINT NOT NULL,
@@ -254,7 +264,7 @@ CREATE TABLE "ProductPrototyp" (
     "earringDimensionsId" SMALLINT,
     "weavingTypeId" SMALLINT,
 
-    CONSTRAINT "ProductPrototyp_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "ProductPrototype_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -312,10 +322,16 @@ CREATE UNIQUE INDEX "VisibleModelModification_code_productModelId_key" ON "Visib
 CREATE UNIQUE INDEX "ProductModel_productPrototypId_metalId_key" ON "ProductModel"("productPrototypId", "metalId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ProductPrototyp_code_typeId_key" ON "ProductPrototyp"("code", "typeId");
+CREATE UNIQUE INDEX "ProductPrototype_code_typeId_key" ON "ProductPrototype"("code", "typeId");
 
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ShoppingBagsProduct" ADD CONSTRAINT "ShoppingBagsProduct_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ShoppingBagsProduct" ADD CONSTRAINT "ShoppingBagsProduct_invisibleModelModificationId_fkey" FOREIGN KEY ("invisibleModelModificationId") REFERENCES "InvisibleModelModification"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Metal" ADD CONSTRAINT "Metal_metalTypeId_fkey" FOREIGN KEY ("metalTypeId") REFERENCES "MetalType"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -354,34 +370,34 @@ ALTER TABLE "ProductModificationMedia" ADD CONSTRAINT "ProductModificationMedia_
 ALTER TABLE "VisibleModelModification" ADD CONSTRAINT "VisibleModelModification_productModelId_fkey" FOREIGN KEY ("productModelId") REFERENCES "ProductModel"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ProductModel" ADD CONSTRAINT "ProductModel_productPrototypId_fkey" FOREIGN KEY ("productPrototypId") REFERENCES "ProductPrototyp"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "ProductModel" ADD CONSTRAINT "ProductModel_productPrototypId_fkey" FOREIGN KEY ("productPrototypId") REFERENCES "ProductPrototype"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ProductModel" ADD CONSTRAINT "ProductModel_metalId_fkey" FOREIGN KEY ("metalId") REFERENCES "Metal"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ProductPrototyp" ADD CONSTRAINT "ProductPrototyp_typeId_fkey" FOREIGN KEY ("typeId") REFERENCES "ProductType"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ProductPrototype" ADD CONSTRAINT "ProductPrototype_typeId_fkey" FOREIGN KEY ("typeId") REFERENCES "ProductType"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ProductPrototyp" ADD CONSTRAINT "ProductPrototyp_sexId_fkey" FOREIGN KEY ("sexId") REFERENCES "Sex"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "ProductPrototype" ADD CONSTRAINT "ProductPrototype_sexId_fkey" FOREIGN KEY ("sexId") REFERENCES "Sex"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ProductPrototyp" ADD CONSTRAINT "ProductPrototyp_ageCategoryId_fkey" FOREIGN KEY ("ageCategoryId") REFERENCES "AgeCategory"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "ProductPrototype" ADD CONSTRAINT "ProductPrototype_ageCategoryId_fkey" FOREIGN KEY ("ageCategoryId") REFERENCES "AgeCategory"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ProductPrototyp" ADD CONSTRAINT "ProductPrototyp_styleId_fkey" FOREIGN KEY ("styleId") REFERENCES "ProductStyle"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "ProductPrototype" ADD CONSTRAINT "ProductPrototype_styleId_fkey" FOREIGN KEY ("styleId") REFERENCES "ProductStyle"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ProductPrototyp" ADD CONSTRAINT "ProductPrototyp_themeId_fkey" FOREIGN KEY ("themeId") REFERENCES "ProductTheme"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "ProductPrototype" ADD CONSTRAINT "ProductPrototype_themeId_fkey" FOREIGN KEY ("themeId") REFERENCES "ProductTheme"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ProductPrototyp" ADD CONSTRAINT "ProductPrototyp_lockTypeId_fkey" FOREIGN KEY ("lockTypeId") REFERENCES "ProductLockType"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "ProductPrototype" ADD CONSTRAINT "ProductPrototype_lockTypeId_fkey" FOREIGN KEY ("lockTypeId") REFERENCES "ProductLockType"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ProductPrototyp" ADD CONSTRAINT "ProductPrototyp_ringDimensionsId_fkey" FOREIGN KEY ("ringDimensionsId") REFERENCES "RingDimensions"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "ProductPrototype" ADD CONSTRAINT "ProductPrototype_ringDimensionsId_fkey" FOREIGN KEY ("ringDimensionsId") REFERENCES "RingDimensions"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ProductPrototyp" ADD CONSTRAINT "ProductPrototyp_earringDimensionsId_fkey" FOREIGN KEY ("earringDimensionsId") REFERENCES "EarringDimensions"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "ProductPrototype" ADD CONSTRAINT "ProductPrototype_earringDimensionsId_fkey" FOREIGN KEY ("earringDimensionsId") REFERENCES "EarringDimensions"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ProductPrototyp" ADD CONSTRAINT "ProductPrototyp_weavingTypeId_fkey" FOREIGN KEY ("weavingTypeId") REFERENCES "WeavingType"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "ProductPrototype" ADD CONSTRAINT "ProductPrototype_weavingTypeId_fkey" FOREIGN KEY ("weavingTypeId") REFERENCES "WeavingType"("id") ON DELETE SET NULL ON UPDATE CASCADE;

@@ -1,10 +1,11 @@
-import { getOtherProducts as getAdditionalProducts, getProductByArticle, getProductVariants } from '@/data/product'
-import { Button, Card, CardBody, CardHeader } from '@nextui-org/react'
+import { getAdditionalProducts, getProductByArticle, getProductVariants } from '@/data/product'
+import { Card, CardBody, CardHeader } from '@nextui-org/react'
 import ProductImages from './product-images'
 import ProductVariants from './product-variants'
 import ProductTabs from './tabs'
 import { Prisma } from '@prisma/client'
 import ProductCard from '../../product-card'
+import AddToShoppingBagButton from './add-to-shopping-bag-button'
 
 interface Characteristic {
 	label: string,
@@ -148,16 +149,14 @@ async function Page({ product }: { product: NonNullable<Prisma.PromiseReturnType
 
 					}
 					<div className='flex justify-end mt-4'>
-						<Button color='primary'>
-							Добавить в корзину
-						</Button>
+						<AddToShoppingBagButton productId={product.id} />
 					</div>
 					{productPrototype &&
 						<div className='mt-3'>
 							<h3 className='mb-3'>
 								Другие варианты данной модели
 							</h3>
-							<ProductVariants currentProductArcticle={product.article} productPrototyp={productPrototype} />
+							<ProductVariants currentProductArcticle={product.article} productPrototype={productPrototype} />
 						</div>
 					}
 				</div>
