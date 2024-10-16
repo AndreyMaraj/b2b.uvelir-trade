@@ -9,7 +9,8 @@ export const publicRoutes = [
 	'/partners',
 	'/about',
 	'/contacts',
-	'/api/data-exchange'
+	'/api/data-exchange',
+	'/privacy-policy'
 ]
 
 /**
