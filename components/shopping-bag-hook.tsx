@@ -1,6 +1,6 @@
 'use client'
 
-import { clearUsersShoppingBag, getShoppingBagsProductsUser, updateShoppingBag } from '@/actions/shopping-bag'
+import { clearUsersShoppingBag, getShoppingBagsProducts, updateShoppingBag } from '@/actions/shopping-bag'
 import type { ShoppingBagsProduct, User } from '@prisma/client'
 import { useSession } from 'next-auth/react'
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
@@ -71,7 +71,7 @@ export const ShoppingBagProvider = ({ children }: { children: ReactNode }) => {
 	useEffect(() => {
 		const fetchData = async (userId: User['id']) => {
 			setIsPending(true)
-			setProducts(await getShoppingBagsProductsUser(userId) ?? [])
+			setProducts(await getShoppingBagsProducts(userId) ?? [])
 			setIsPending(false)
 		}
 
