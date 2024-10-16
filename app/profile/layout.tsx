@@ -7,7 +7,7 @@ const menuItems = [{
 	href: '/profile'
 }, {
 	label: 'История заказов',
-	href: ''
+	href: '/profile/orders'
 }, {
 	label: 'Загрузка файла Excel',
 	href: ''

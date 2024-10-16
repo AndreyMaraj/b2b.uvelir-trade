@@ -1,9 +1,9 @@
 'use server'
 
 import { prisma } from '@/prisma'
-import { Prisma, type ShoppingBagsProduct, type User } from '@prisma/client'
+import { Prisma, type User } from '@prisma/client'
 
-export const updateShoppingBag = async (userId: string, invisibleModelModificationId: number, count: number) => {
+export async function updateShoppingBag(userId: string, invisibleModelModificationId: number, count: number) {
 	const where = Prisma.validator<Prisma.ShoppingBagsProductWhereUniqueInput>()({
 		userId_invisibleModelModificationId: { userId, invisibleModelModificationId }
 	})
@@ -28,7 +28,7 @@ export const updateShoppingBag = async (userId: string, invisibleModelModificati
 	}
 }
 
-export const clearUsersShoppingBag = async (userId: string) => {
+export async function clearUsersShoppingBag(userId: string) {
 	try {
 		return await prisma.shoppingBagsProduct.deleteMany({ where: { userId } })
 	} catch (e) {
@@ -37,7 +37,7 @@ export const clearUsersShoppingBag = async (userId: string) => {
 	}
 }
 
-export async function getShoppingBagsProductsUser(userId: User['id']) {
+export async function getShoppingBagsProducts(userId: User['id']) {
 	try {
 		return await prisma.shoppingBagsProduct.findMany({ where: { userId } })
 	} catch (e) {
@@ -46,9 +46,10 @@ export async function getShoppingBagsProductsUser(userId: User['id']) {
 	}
 }
 
-export async function getShoppingBagsProducts(ids: ShoppingBagsProduct['id'][]) {
+export async function getShoppingBagsWithProducts(userId: User['id']) {
 	try {
 		return await prisma.shoppingBagsProduct.findMany({
+			where: { userId },
 			select: {
 				count: true,
 				invisibleModelModification: {
@@ -62,9 +63,6 @@ export async function getShoppingBagsProducts(ids: ShoppingBagsProduct['id'][]) 
 						}
 					}
 				}
-			},
-			where: {
-				id: { in: ids }
 			}
 		})
 	} catch (e) {

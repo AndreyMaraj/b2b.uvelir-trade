@@ -1,4 +1,4 @@
-import ProductsTable from './products-table'
+import OrdersTable from './orders-table'
 import { auth } from '@/auth'
 
 export default async function () {
@@ -11,10 +11,10 @@ export default async function () {
 	return (
 		<>
 			<h1 className='text-3xl mb-5'>
-				Оформление заказа
+				История заказов
 			</h1>
 			<div>
-				<ProductsTable userId={session.user.id} />
+				<OrdersTable userId={session.user.id} />
 			</div>
 		</>
 	)

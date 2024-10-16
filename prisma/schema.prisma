@@ -22,6 +22,7 @@ model User {
     image                String?
     accounts             Account[]
     shoppingBagsProducts ShoppingBagsProduct[]
+    orders               Order[]
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -56,15 +57,32 @@ model VerificationToken {
     @@id([identifier, token])
 }
 
-model ShoppingBagsProduct {
-    id                           String                     @id @default(cuid())
-    user                         User                       @relation(fields: [userId], references: [id], onDelete: Restrict)
-    userId                       String
+model OrderItem {
+    order                        Order                      @relation(fields: [orderId], references: [id], onDelete: Cascade)
+    orderId                      Int
     invisibleModelModification   InvisibleModelModification @relation(fields: [invisibleModelModificationId], references: [id], onDelete: Restrict)
     invisibleModelModificationId Int
     count                        Int                        @db.SmallInt
 
-    @@unique([userId, invisibleModelModificationId])
+    @@id([orderId, invisibleModelModificationId])
+}
+
+model Order {
+    id         Int         @id @default(autoincrement())
+    date       DateTime    @default(now())
+    user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId     String
+    orderItems OrderItem[]
+}
+
+model ShoppingBagsProduct {
+    user                         User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId                       String
+    invisibleModelModification   InvisibleModelModification @relation(fields: [invisibleModelModificationId], references: [id], onDelete: Cascade)
+    invisibleModelModificationId Int
+    count                        Int                        @db.SmallInt
+
+    @@id([userId, invisibleModelModificationId])
 }
 
 model Sex {
@@ -216,6 +234,7 @@ model InvisibleModelModification {
     visibleModelModification   VisibleModelModification @relation(fields: [visibleModelModificationId], references: [id], onDelete: Cascade)
     visibleModelModificationId Int
     shoppingBagsProducts       ShoppingBagsProduct[]
+    orderItems                 OrderItem[]
 }
 
 model ProductModificationMedia {
