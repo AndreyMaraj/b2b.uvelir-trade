@@ -93,7 +93,8 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 
 	return (
 		<>
-			<Table
+			<Table bottomContentPlacement='outside'
+				topContentPlacement='outside'
 				topContent={!!rows.length &&
 					<div className='flex justify-end'>
 						<Button

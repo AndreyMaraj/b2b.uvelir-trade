@@ -1,30 +1,15 @@
-import { signOut } from '@/auth'
 import Link from '@/components/link'
 import type { ReactNode } from 'react'
 
 const menuItems = [{
-	label: 'Личная информация',
-	href: '/profile'
+	label: 'Пользователи',
+	href: '/administration/users'
 }, {
-	label: 'История заказов',
-	href: '/profile/orders'
-}, {
-	label: 'Загрузка файла Excel',
-	href: ''
-}, {
-	label: 'Корзина',
-	href: '/profile/shopping-bag'
-}, {
-	label: 'Смена пароля',
-	href: ''
+	label: 'Заказы',
+	href: '/administration/orders'
 }]
 
 export default function ({ children }: Readonly<{ children: ReactNode }>) {
-	const onSiinOutButtonClick = async () => {
-		'use server'
-		await signOut({ redirectTo: '/' })
-	}
-
 	return (
 		<main className='flex-grow'>
 			<div className='container px-4 py-3 flex flex-col lg:flex-row gap-5'>
@@ -38,13 +23,6 @@ export default function ({ children }: Readonly<{ children: ReactNode }>) {
 									</Link>
 								</li>
 							)}
-							<li key='sign-out'>
-								<form action={onSiinOutButtonClick}>
-									<button type='submit'>
-										Выход
-									</button>
-								</form>
-							</li>
 						</ul>
 					</nav>
 				</div>

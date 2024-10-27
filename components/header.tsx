@@ -7,20 +7,6 @@ import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useShoppingBag } from './shopping-bag-hook'
 
-const menuItems = [{
-	label: 'О компании',
-	href: '/about'
-}, {
-	label: 'Партнерам',
-	href: '/partners'
-}, {
-	label: 'Каталог',
-	href: '/catalog'
-}, {
-	label: 'Контакты',
-	href: '/contacts'
-}]
-
 function ShoppingBagButton({ productsCount, positionCount, isBadgeInvisible }: { productsCount: number, positionCount: number, isBadgeInvisible: boolean }) {
 	const [isOpen, setIsOpen] = useState(false)
 
@@ -76,6 +62,22 @@ export default function Header() {
 		productsCount = useMemo(() => products.reduce((sum, product) => sum + product.count, 0), [products]),
 		session = useSession(),
 		router = useRouter(),
+		menuItems = [{
+			label: 'О компании',
+			href: '/about'
+		}, {
+			label: 'Партнерам',
+			href: '/partners'
+		}, {
+			label: 'Каталог',
+			href: '/catalog'
+		}, {
+			label: 'Контакты',
+			href: '/contacts'
+		}, ...(session.data?.user.role === 'ADMIN' ? [{
+			label: 'Администрирование',
+			href: '/administration/users'
+		}] : [])],
 		onProfileButtonClick = useCallback(() => {
 			if (session.data) {
 				router.push('/profile')

@@ -48,7 +48,7 @@ export default function ({ userId }: { userId: Order['userId'] }) {
 	}, [userId])
 
 	return (
-		<Table
+		<Table bottomContentPlacement='outside'
 			bottomContent={pages > 1 &&
 				<div className='flex justify-center'>
 					<Pagination

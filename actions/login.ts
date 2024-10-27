@@ -1,9 +1,8 @@
 'use server'
 
-import { signIn } from '@/auth'
+import { InvalidLoginError, signIn, UnverifiedAccountLoginError } from '@/auth'
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
 import { LoginSchema } from '@/schemas'
-import { AuthError } from 'next-auth'
 import { z } from 'zod'
 
 export const login = async (values: z.infer<typeof LoginSchema>) => {
@@ -20,11 +19,10 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 			redirectTo: DEFAULT_LOGIN_REDIRECT
 		})
 	} catch (error) {
-		if (error instanceof AuthError) {
-			switch (error.type) {
-				case 'CredentialsSignin': return { error: 'Invalid credentials' }
-				default: return { error: 'Something went wrong' }
-			}
+		if (error instanceof InvalidLoginError) {
+			return { error: 'Неверный email или пароль' }
+		} else if (error instanceof UnverifiedAccountLoginError) {
+			return { error: 'Аккаунт не верифицирован' }
 		}
 
 		throw error
