@@ -39,10 +39,34 @@ export async function getUserOrders(userId: Order['userId']) {
 	}
 }
 
-export async function getOrder(id: Order['id'], userId: Order['userId']) {
+export async function getOrders() {
+	try {
+		return await prisma.order.findMany({
+			include: {
+				user: {
+					select: {
+						name: true,
+						tin: true,
+						city: true
+					}
+				},
+				orderItems: {
+					include: {
+						invisibleModelModification: true
+					}
+				}
+			}
+		})
+	} catch (e) {
+		console.log(e)
+		return
+	}
+}
+
+export async function getOrder(id: Order['id'], withUser: boolean = false) {
 	try {
 		return await prisma.order.findUnique({
-			where: { id, userId },
+			where: { id },
 			select: {
 				id: true,
 				date: true,
@@ -60,7 +84,16 @@ export async function getOrder(id: Order['id'], userId: Order['userId']) {
 							}
 						}
 					}
-				}
+				},
+				...(withUser && {
+					user: {
+						select: {
+							name: true,
+							tin: true,
+							city: true
+						}
+					}
+				})
 			}
 		})
 	} catch (e) {

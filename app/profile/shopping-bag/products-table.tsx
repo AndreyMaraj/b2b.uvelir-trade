@@ -18,7 +18,7 @@ interface ProductRow {
 	photo: string
 }
 
-const rowsPerPage = 5
+const rowsPerPage = 25
 
 export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 	const { products, isPending, updateProducts, clearShoppingBag } = useShoppingBag(),
