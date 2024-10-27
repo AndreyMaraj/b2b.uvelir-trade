@@ -60,7 +60,7 @@ export default function ProductsTable({ rows }: { rows: ProductRow[] }) {
 		}, [])
 
 	return (
-		<Table
+		<Table bottomContentPlacement='outside'
 			bottomContent={pages > 1 &&
 				<div className='flex justify-center'>
 					<Pagination

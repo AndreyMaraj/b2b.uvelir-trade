@@ -11,17 +11,19 @@ export default function ProductImages({ media }: { media: ProductModificationMed
 
 	return (
 		<div className='md:w-1/2'>
-			<Image
-				as={NextImage}
-				src={selectedImage ? `/product-media/${selectedImage.visibleModelModificationId}/${selectedImage.id}.jpg` : EmptyProductMedia.src}
-				alt=''
-				width={557}
-				height={557}
-				quality={100}
-				radius='none'
-				sizes='100vw'
-				className='object-cover'
-			/>
+			<div className='flex justify-center items-center h-full'>
+				<Image
+					as={NextImage}
+					src={selectedImage ? `/product-media/${selectedImage.visibleModelModificationId}/${selectedImage.id}.jpg` : EmptyProductMedia.src}
+					alt=''
+					width={557}
+					height={557}
+					quality={100}
+					radius='none'
+					sizes='100vw'
+					className='object-cover'
+				/>
+			</div>
 			{media.length > 1 &&
 				<div className='flex justify-center mt-2 gap-x-2'>
 					{media.map((mediaFile, index) =>

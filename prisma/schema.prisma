@@ -14,12 +14,14 @@ enum UserRole {
 
 model User {
     id                   String                @id @default(cuid())
-    name                 String?
+    name                 String
+    tin                  String                @unique
+    city                 String
     email                String                @unique
-    password             String?
+    phone                String                @unique
+    password             String
     role                 UserRole              @default(USER)
-    emailVerified        DateTime?
-    image                String?
+    verified             Boolean               @default(false)
     accounts             Account[]
     shoppingBagsProducts ShoppingBagsProduct[]
     orders               Order[]

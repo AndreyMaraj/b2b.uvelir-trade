@@ -4,12 +4,14 @@ CREATE TYPE "UserRole" AS ENUM ('ADMIN', 'USER');
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
-    "name" TEXT,
+    "name" TEXT NOT NULL,
+    "tin" TEXT NOT NULL,
+    "city" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "password" TEXT,
+    "phone" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
     "role" "UserRole" NOT NULL DEFAULT 'USER',
-    "emailVerified" TIMESTAMP(3),
-    "image" TEXT,
+    "verified" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -45,13 +47,30 @@ CREATE TABLE "VerificationToken" (
 );
 
 -- CreateTable
+CREATE TABLE "OrderItem" (
+    "orderId" INTEGER NOT NULL,
+    "invisibleModelModificationId" INTEGER NOT NULL,
+    "count" SMALLINT NOT NULL,
+
+    CONSTRAINT "OrderItem_pkey" PRIMARY KEY ("orderId","invisibleModelModificationId")
+);
+
+-- CreateTable
+CREATE TABLE "Order" (
+    "id" SERIAL NOT NULL,
+    "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "userId" TEXT NOT NULL,
+
+    CONSTRAINT "Order_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "ShoppingBagsProduct" (
-    "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "invisibleModelModificationId" INTEGER NOT NULL,
     "count" SMALLINT NOT NULL,
 
-    CONSTRAINT "ShoppingBagsProduct_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "ShoppingBagsProduct_pkey" PRIMARY KEY ("userId","invisibleModelModificationId")
 );
 
 -- CreateTable
@@ -268,7 +287,13 @@ CREATE TABLE "ProductPrototype" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_tin_key" ON "User"("tin");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_phone_key" ON "User"("phone");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Sex_name_key" ON "Sex"("name");
@@ -328,10 +353,19 @@ CREATE UNIQUE INDEX "ProductPrototype_code_typeId_key" ON "ProductPrototype"("co
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ShoppingBagsProduct" ADD CONSTRAINT "ShoppingBagsProduct_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ShoppingBagsProduct" ADD CONSTRAINT "ShoppingBagsProduct_invisibleModelModificationId_fkey" FOREIGN KEY ("invisibleModelModificationId") REFERENCES "InvisibleModelModification"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_invisibleModelModificationId_fkey" FOREIGN KEY ("invisibleModelModificationId") REFERENCES "InvisibleModelModification"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Order" ADD CONSTRAINT "Order_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ShoppingBagsProduct" ADD CONSTRAINT "ShoppingBagsProduct_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ShoppingBagsProduct" ADD CONSTRAINT "ShoppingBagsProduct_invisibleModelModificationId_fkey" FOREIGN KEY ("invisibleModelModificationId") REFERENCES "InvisibleModelModification"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Metal" ADD CONSTRAINT "Metal_metalTypeId_fkey" FOREIGN KEY ("metalTypeId") REFERENCES "MetalType"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
