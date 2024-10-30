@@ -78,7 +78,7 @@ export async function getOrder(id: Order['id'], withUser: boolean = false) {
 								article: true,
 								visibleModelModification: {
 									select: {
-										productModificationMedia: { take: 1 }
+										media: { take: 1 }
 									}
 								}
 							}

@@ -333,7 +333,7 @@ export async function getProducts({ skip, take, articleQuery, stoneType, metalTy
 				include: {
 					visibleModelModification: {
 						include: {
-							productModificationMedia: true,
+							media: true,
 							productModel: {
 								include: {
 									productPrototyp: {
@@ -363,7 +363,7 @@ export async function getProductByArticle(article: string) {
 				wireType: true,
 				visibleModelModification: {
 					include: {
-						productModificationMedia: true,
+						media: true,
 						productModel: {
 							include: {
 								productPrototyp: {
@@ -416,7 +416,7 @@ export async function getProductVariants(id: number) {
 						visibleProductModifications: {
 							include: {
 								invisibleModelModifications: true,
-								productModificationMedia: true
+								media: true
 							}
 						}
 					}
@@ -446,7 +446,7 @@ export async function getAdditionalProducts({ take, skipIds }: { take?: number, 
 								}
 							}
 						},
-						productModificationMedia: true
+						media: true
 					}
 				}
 			}

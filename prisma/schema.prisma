@@ -59,6 +59,13 @@ model VerificationToken {
     @@id([identifier, token])
 }
 
+model Media {
+    id                         Int                      @id @default(autoincrement())
+    path                       String
+    visibleModelModification   VisibleModelModification @relation(fields: [visibleModelModificationId], references: [id], onDelete: Cascade)
+    visibleModelModificationId Int
+}
+
 model OrderItem {
     order                        Order                      @relation(fields: [orderId], references: [id], onDelete: Cascade)
     orderId                      Int
@@ -239,19 +246,13 @@ model InvisibleModelModification {
     orderItems                 OrderItem[]
 }
 
-model ProductModificationMedia {
-    id                         Int                      @id @default(autoincrement())
-    visibleModelModification   VisibleModelModification @relation(fields: [visibleModelModificationId], references: [id], onDelete: Cascade)
-    visibleModelModificationId Int
-}
-
 model VisibleModelModification {
     id                          Int                          @id @default(autoincrement())
     code                        String
     wireDiameter                Decimal?                     @db.Decimal(3, 2)
     productModel                ProductModel                 @relation(fields: [productModelId], references: [id], onDelete: Cascade)
     productModelId              Int
-    productModificationMedia    ProductModificationMedia[]
+    media                       Media[]
     invisibleModelModifications InvisibleModelModification[]
     modelComponents             ModelComponent[]
 

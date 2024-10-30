@@ -15,7 +15,7 @@ export default async function ({ params }: Omit<PageProps<'id', never>, 'searchP
 			id: item.invisibleModelModification.id,
 			count: item.count,
 			article: item.invisibleModelModification.article,
-			photo: item.invisibleModelModification.visibleModelModification.productModificationMedia.length === 1 ? `/product-media/${item.invisibleModelModification.visibleModelModification.productModificationMedia[0].visibleModelModificationId}/${item.invisibleModelModification.visibleModelModification.productModificationMedia[0].id}.jpg` : EmptyProductMedia.src
+			photo: item.invisibleModelModification.visibleModelModification.media.length === 1 ? item.invisibleModelModification.visibleModelModification.media[0].path : EmptyProductMedia.src
 		})) ?? []
 
 	return (

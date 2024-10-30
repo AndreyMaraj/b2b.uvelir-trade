@@ -3,18 +3,18 @@
 import { Image } from '@nextui-org/react'
 import NextImage from 'next/image'
 import EmptyProductMedia from '@/public/empty-product-media.jpg'
-import { ProductModificationMedia } from '@prisma/client'
+import { Media } from '@prisma/client'
 import { useState } from 'react'
 
-export default function ProductImages({ media }: { media: ProductModificationMedia[] }) {
+export default function ProductImages({ media }: { media: Media[] }) {
 	const [selectedImage, setSelectedImage] = useState(media.length > 0 ? media[0] : undefined)
 
 	return (
-		<div className='md:w-1/2'>
+		<div className='md:w-1/2 flex flex-col'>
 			<div className='flex justify-center items-center h-full'>
 				<Image
 					as={NextImage}
-					src={selectedImage ? `/product-media/${selectedImage.visibleModelModificationId}/${selectedImage.id}.jpg` : EmptyProductMedia.src}
+					src={selectedImage ? selectedImage.path : EmptyProductMedia.src}
 					alt=''
 					width={557}
 					height={557}
@@ -30,7 +30,7 @@ export default function ProductImages({ media }: { media: ProductModificationMed
 						<Image
 							as={NextImage}
 							key={index}
-							src={`/product-media/${mediaFile.visibleModelModificationId}/${mediaFile.id}.jpg`}
+							src={mediaFile.path}
 							alt=''
 							width={55}
 							height={55}

@@ -58,7 +58,7 @@ export async function getShoppingBagsWithProducts(userId: User['id']) {
 						article: true,
 						visibleModelModification: {
 							select: {
-								productModificationMedia: { take: 1 }
+								media: { take: 1 }
 							}
 						}
 					}

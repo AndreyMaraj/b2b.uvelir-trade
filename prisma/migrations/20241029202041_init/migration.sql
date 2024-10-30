@@ -47,6 +47,15 @@ CREATE TABLE "VerificationToken" (
 );
 
 -- CreateTable
+CREATE TABLE "Media" (
+    "id" SERIAL NOT NULL,
+    "path" TEXT NOT NULL,
+    "visibleModelModificationId" INTEGER NOT NULL,
+
+    CONSTRAINT "Media_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "OrderItem" (
     "orderId" INTEGER NOT NULL,
     "invisibleModelModificationId" INTEGER NOT NULL,
@@ -243,14 +252,6 @@ CREATE TABLE "InvisibleModelModification" (
 );
 
 -- CreateTable
-CREATE TABLE "ProductModificationMedia" (
-    "id" SERIAL NOT NULL,
-    "visibleModelModificationId" INTEGER NOT NULL,
-
-    CONSTRAINT "ProductModificationMedia_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
 CREATE TABLE "VisibleModelModification" (
     "id" SERIAL NOT NULL,
     "code" TEXT NOT NULL,
@@ -353,6 +354,9 @@ CREATE UNIQUE INDEX "ProductPrototype_code_typeId_key" ON "ProductPrototype"("co
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Media" ADD CONSTRAINT "Media_visibleModelModificationId_fkey" FOREIGN KEY ("visibleModelModificationId") REFERENCES "VisibleModelModification"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -396,9 +400,6 @@ ALTER TABLE "InvisibleModelModification" ADD CONSTRAINT "InvisibleModelModificat
 
 -- AddForeignKey
 ALTER TABLE "InvisibleModelModification" ADD CONSTRAINT "InvisibleModelModification_visibleModelModificationId_fkey" FOREIGN KEY ("visibleModelModificationId") REFERENCES "VisibleModelModification"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "ProductModificationMedia" ADD CONSTRAINT "ProductModificationMedia_visibleModelModificationId_fkey" FOREIGN KEY ("visibleModelModificationId") REFERENCES "VisibleModelModification"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "VisibleModelModification" ADD CONSTRAINT "VisibleModelModification_productModelId_fkey" FOREIGN KEY ("productModelId") REFERENCES "ProductModel"("id") ON DELETE CASCADE ON UPDATE CASCADE;

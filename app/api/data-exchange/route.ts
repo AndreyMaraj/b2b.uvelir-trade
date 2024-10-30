@@ -1,3 +1,5 @@
+'use server'
+
 import type { NextRequest } from 'next/server'
 import * as fs from 'fs'
 import { ElementCompact, xml2js } from 'xml-js'
@@ -110,7 +112,9 @@ const COOKIE_NAME = 'Cookie',
 	DATA_EXCHANGE_FOLDER = 'data-exchange',
 	DATA_EXCHANGE_MEDIA_FOLDER = 'import_files',
 	DATA_EXCHANGE_MEDIA_FOLDER_PATH = DATA_EXCHANGE_FOLDER + '/' + DATA_EXCHANGE_MEDIA_FOLDER,
-	PRODUCT_MEDIA_FOLDER_PATH = 'public/product-media',
+	PUBLIC_FOLDER = 'public',
+	PRODUCT_MEDIA_FOLDER = 'product-media',
+	PRODUCT_MEDIA_FOLDER_PATH = PUBLIC_FOLDER + '/' + PRODUCT_MEDIA_FOLDER,
 	IMPORT_PREFIX = 'import',
 	expectedProps: Props = {
 		[PropName.Diameter]: {
@@ -416,20 +420,23 @@ async function handleExchangeFileProducts(fileProducts: ElementCompact, file: st
 				const productModificationFolder = PRODUCT_MEDIA_FOLDER_PATH + '/' + visibleModelModificationId
 				if (fs.existsSync(productModificationFolder)) {
 					fs.rmSync(productModificationFolder, { recursive: true })
-					await prisma.productModificationMedia.deleteMany({
+					await prisma.media.deleteMany({
 						where: { visibleModelModificationId }
 					})
 				}
 
 				fs.mkdirSync(productModificationFolder)
 
-				for (const path of (Array.isArray(images) ? images.map(image => image._text.replaceAll('\\', '/')) : [images._text.replaceAll('\\', '/')])) {
-					const extension = path.slice(path.lastIndexOf('.') + 1),
-						{ id: modelVariantMediaId } = await prisma.productModificationMedia.create({
-							...SELECT_ID,
-							data: { visibleModelModificationId }
-						})
-					fs.copyFileSync(`${DATA_EXCHANGE_FOLDER}/${path}`, `${productModificationFolder}/${modelVariantMediaId}.${extension}`, fs.constants.COPYFILE_EXCL)
+				for (const path of (Array.isArray(images) ? images : [images]).map(image => image._text.replaceAll('\\', '/'))) {
+					const { path: newFilePath } = await prisma.media.create({
+						select: { path: true },
+						data: {
+							visibleModelModificationId,
+							path: '/' + PRODUCT_MEDIA_FOLDER + '/' + visibleModelModificationId + path.slice(path.lastIndexOf('/'))
+						}
+					})
+
+					fs.copyFileSync(`${DATA_EXCHANGE_FOLDER}/${path}`, PUBLIC_FOLDER + newFilePath, fs.constants.COPYFILE_EXCL)
 				}
 			}
 
@@ -559,7 +566,7 @@ async function handleExchangeFiles() {
 			await handleExchangeFileProducts(data[XMLFileKey.CommercialInformation]?.[XMLFileKey.Catalog]?.[XMLFileKey.Products]?.[XMLFileKey.Product], file, props)
 		}
 
-		fs.rmSync(DATA_EXCHANGE_FOLDER, { recursive: true })
+		// fs.rmSync(DATA_EXCHANGE_FOLDER, { recursive: true })
 	} catch (e) {
 		console.warn(e)
 	}

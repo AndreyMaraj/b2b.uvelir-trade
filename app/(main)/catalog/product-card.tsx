@@ -18,7 +18,7 @@ const ProductCardData = Prisma.validator<Prisma.InvisibleModelModificationDefaul
 						}
 					}
 				},
-				productModificationMedia: true
+				media: true
 			}
 		}
 	}
@@ -46,7 +46,7 @@ export default function ProductCard({ product, className }: ProductCardProps) {
 			<CardBody className='overflow-visible py-2 items-center'>
 				<Image
 					as={NextImage}
-					src={product.visibleModelModification.productModificationMedia.length > 0 ? `/product-media/${product.visibleModelModificationId}/${product.visibleModelModification.productModificationMedia[0].id}.jpg` : EmptyProductMedia.src}
+					src={product.visibleModelModification.media.length > 0 ? product.visibleModelModification.media[0].path.replace('public', '') : EmptyProductMedia.src}
 					alt=''
 					width={160}
 					height={160}
