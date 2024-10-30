@@ -121,7 +121,7 @@ async function Page({ product }: { product: NonNullable<Prisma.PromiseReturnType
 	return (
 		<>
 			<div className='flex flex-col md:flex-row gap-5 lg:gap-x-14'>
-				<ProductImages media={product.visibleModelModification.productModificationMedia} />
+				<ProductImages media={product.visibleModelModification.media} />
 				<div className='md:w-1/2'>
 					<h1 className='text-3xl uppercase'>
 						{product.visibleModelModification.productModel.productPrototyp.type.name}
