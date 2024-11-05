@@ -59,7 +59,7 @@ async function ProductsPage({ searchParams }: Omit<PageProps<never, `${QueryPara
 					<div>
 						<div className='flex flex-wrap gap-x-2.5 gap-y-4'>
 							{products.map(product =>
-								<ProductCard product={product} className='basis-[calc(50%-10px)] sm:basis-full md:basis-[calc(50%-10px)] lg:basis-[calc(33.333%-10px)]' />
+								<ProductCard key={product.article} product={product} className='basis-[calc(50%-10px)] sm:basis-full md:basis-[calc(50%-10px)] lg:basis-[calc(33.333%-10px)]' />
 							)}
 						</div>
 						{productsPagesCount > 1 &&

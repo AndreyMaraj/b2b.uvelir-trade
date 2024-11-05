@@ -203,7 +203,7 @@ async function ProductPage({ product }: { product: NonNullable<Prisma.PromiseRet
 					</h2>
 					<div className='flex overflow-x-auto p-3 gap-x-2.5'>
 						{additionalProducts.map(product =>
-							<ProductCard product={product} className='basis-[calc(50%-10px)] sm:basis-[calc(33.33%-10px)] md:basis-[calc(25%-10px)] lg:basis-[calc(20%-10px)]' />
+							<ProductCard key={product.article} product={product} className='basis-[calc(50%-10px)] sm:basis-[calc(33.33%-10px)] md:basis-[calc(25%-10px)] lg:basis-[calc(20%-10px)]' />
 						)}
 					</div>
 				</section>

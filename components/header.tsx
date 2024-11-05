@@ -84,7 +84,7 @@ export default function Header() {
 			} else {
 				signIn()
 			}
-		}, [session.data, router, signIn])
+		}, [session.data, router])
 
 	return (
 		<Navbar

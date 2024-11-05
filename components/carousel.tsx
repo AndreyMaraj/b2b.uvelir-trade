@@ -34,7 +34,7 @@ export default function Carousel(props: CarouselProps) {
 	useEffect(() => {
 		const interval = setTimeout(nextSlide, 8000)
 		return () => clearInterval(interval)
-	}, [current])
+	}, [current, nextSlide])
 
 	return (
 		<div className={`relative overflow-hidden h-full w-full${props.className ? ` ${props.className}` : ''}`}>
@@ -46,6 +46,7 @@ export default function Carousel(props: CarouselProps) {
 					<Image
 						{...image}
 						as={NextImage}
+						alt=''
 						key={index}
 						fill
 						quality={100}

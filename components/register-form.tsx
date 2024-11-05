@@ -41,7 +41,7 @@ export default function RegisterForm() {
 					router.push('/auth/login')
 				}
 			}))
-		}, [])
+		}, [router])
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)}>
