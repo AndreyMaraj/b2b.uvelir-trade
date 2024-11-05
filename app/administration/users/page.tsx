@@ -1,7 +1,7 @@
 import UsersTable from './users-table'
 import { auth } from '@/auth'
 
-export default async function () {
+export default async function Page() {
 	const session = await auth()
 
 	if (!session || !session.user.id || session.user.role !== 'ADMIN') {

@@ -2,7 +2,7 @@ import Link from '@/components/link'
 import RegisterForm from '@/components/register-form'
 import { Card, CardBody } from '@nextui-org/react'
 
-export default function () {
+export default function Page() {
 	return (
 		<div className='container px-4 py-3'>
 			<h1 className='text-3xl w-full mb-5'>

@@ -2,7 +2,7 @@
 import { auth } from '@/auth'
 import OrdersTable from './orders-table'
 
-export default async function () {
+export default async function Page() {
 	const session = await auth()
 
 	if (!session?.user.id) {

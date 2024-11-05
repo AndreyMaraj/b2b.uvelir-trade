@@ -3,7 +3,7 @@ import ProductsTable from './products-table'
 import { getOrder } from '@/actions/order'
 import EmptyProductMedia from '@/public/empty-product-media.jpg'
 
-export default async function ({ params }: Omit<PageProps<'id', never>, 'searchParams'>) {
+export default async function Page({ params }: Omit<PageProps<'id', never>, 'searchParams'>) {
 	const session = await auth()
 
 	if (!session || !session.user.id || session.user.role !== 'ADMIN') {

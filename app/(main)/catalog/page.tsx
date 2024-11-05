@@ -10,7 +10,7 @@ import PaginationClient from './pagination'
 
 const numberOfProductsPerPage = 15
 
-async function Page({ searchParams }: Omit<PageProps<never, `${QueryParam}`>, 'params'>) {
+async function ProductsPage({ searchParams }: Omit<PageProps<never, `${QueryParam}`>, 'params'>) {
 	const currentPage = Number(searchParams[QueryParam.PAGE]) || 1,
 		{ products, productsCount } = await getProducts({
 			skip: (currentPage - 1) * numberOfProductsPerPage,
@@ -93,11 +93,11 @@ function NotLoggedInPage() {
 	)
 }
 
-export default async function ({ searchParams }: PageProps<never, 'page' | 'query'>) {
+export default async function Page({ searchParams }: PageProps<never, 'page' | 'query'>) {
 	const session = await auth()
 
 	return session?.user ? (
-		<Page searchParams={searchParams} />
+		<ProductsPage searchParams={searchParams} />
 	) : (
 		<NotLoggedInPage />
 	)

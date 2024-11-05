@@ -8,7 +8,7 @@ import { auth } from '@/auth'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default async function ({ children }: Readonly<{ children: ReactNode }>) {
+export default async function Layout({ children }: Readonly<{ children: ReactNode }>) {
 	const sessions = await auth(),
 		sessionKey = new Date().valueOf()
 

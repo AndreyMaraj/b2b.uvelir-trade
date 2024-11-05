@@ -11,7 +11,7 @@ import { Button, Image } from '@nextui-org/react'
 import NextImage from 'next/image'
 import DiamondIcon from '@/public/diamond-icon.svg'
 
-export default function () {
+export default function Page() {
 	return (
 		<main className='flex flex-col flex-grow'>
 			<div className='container md:h-[42rem] sm:h-[30rem] h-[21rem] py-3'>

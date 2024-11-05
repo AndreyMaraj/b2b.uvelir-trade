@@ -1,4 +1,4 @@
-export default function () {
+export default function Page() {
 	return (
 		<>
 			<h1 className='text-3xl mb-5'>

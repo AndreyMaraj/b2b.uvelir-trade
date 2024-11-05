@@ -19,7 +19,7 @@ const menuItems = [{
 	href: ''
 }]
 
-export default function ({ children }: Readonly<{ children: ReactNode }>) {
+export default function Layout({ children }: Readonly<{ children: ReactNode }>) {
 	const onSiinOutButtonClick = async () => {
 		'use server'
 		await signOut({ redirectTo: '/' })

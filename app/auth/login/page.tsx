@@ -2,7 +2,7 @@ import Link from '@/components/link'
 import LoginForm from '@/components/login-form'
 import { Card, CardBody, CardFooter, CardHeader } from '@nextui-org/react'
 
-export default function () {
+export default function Page() {
 	return (
 		<div className='container px-4 py-3 flex items-center justify-center'>
 			<Card className='p-6 w-96'>
