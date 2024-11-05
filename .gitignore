@@ -27,6 +27,7 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env
 
 # vercel
 .vercel
@@ -37,3 +38,9 @@ next-env.d.ts
 
 # vs code project config
 /.vscode/
+
+# temporary data files
+/data-exchange/
+
+# product media files
+/public/product-media/
