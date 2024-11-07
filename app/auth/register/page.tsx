@@ -2,7 +2,7 @@ import Link from '@/components/link'
 import RegisterForm from '@/components/register-form'
 import { Card, CardBody } from '@nextui-org/react'
 
-export default function () {
+export default function Page() {
 	return (
 		<div className='container px-4 py-3'>
 			<h1 className='text-3xl w-full mb-5'>
@@ -30,7 +30,7 @@ export default function () {
 						Все поля обязательны для заполнения!
 					</p>
 					<p>
-						Нажимая кнопку <b>"Зарегистрироваться"</b> Вы соглашаетесь с <Link href='/privacy-policy'>политикой конфеденциальности</Link> данного сайта.
+						Нажимая кнопку <b>&quot;Зарегистрироваться&quot;</b> Вы соглашаетесь с <Link href='/privacy-policy'>политикой конфеденциальности</Link> данного сайта.
 					</p>
 				</div>
 				<Card className='p-6 md:basis-1/2'>

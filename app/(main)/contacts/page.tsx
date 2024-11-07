@@ -16,7 +16,7 @@ const contacts = [{
 	phone: '+79999999999'
 }]
 
-export default function () {
+export default function Page() {
 	return (
 		<>
 			<h1 className='text-3xl mb-5'>Контакты</h1>

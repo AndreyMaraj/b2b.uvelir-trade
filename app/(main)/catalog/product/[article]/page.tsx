@@ -19,7 +19,7 @@ interface CharacteristicGroup {
 
 const youMayLikeBlockProductCount = 20
 
-async function Page({ product }: { product: NonNullable<Prisma.PromiseReturnType<typeof getProductByArticle>> }) {
+async function ProductPage({ product }: { product: NonNullable<Prisma.PromiseReturnType<typeof getProductByArticle>> }) {
 	const productPrototype = await getProductVariants(product.visibleModelModification.productModel.productPrototypId),
 		additionalProducts = await getAdditionalProducts({
 			take: youMayLikeBlockProductCount,
@@ -203,7 +203,7 @@ async function Page({ product }: { product: NonNullable<Prisma.PromiseReturnType
 					</h2>
 					<div className='flex overflow-x-auto p-3 gap-x-2.5'>
 						{additionalProducts.map(product =>
-							<ProductCard product={product} className='basis-[calc(50%-10px)] sm:basis-[calc(33.33%-10px)] md:basis-[calc(25%-10px)] lg:basis-[calc(20%-10px)]' />
+							<ProductCard key={product.article} product={product} className='basis-[calc(50%-10px)] sm:basis-[calc(33.33%-10px)] md:basis-[calc(25%-10px)] lg:basis-[calc(20%-10px)]' />
 						)}
 					</div>
 				</section>
@@ -212,12 +212,12 @@ async function Page({ product }: { product: NonNullable<Prisma.PromiseReturnType
 	)
 }
 
-export default async function ({ params }: Omit<PageProps<'article', never>, 'searchParams'>) {
+export default async function Page({ params }: Omit<PageProps<'article', never>, 'searchParams'>) {
 	const article = decodeURIComponent(params.article),
 		product = await getProductByArticle(article)
 
 	return product ?
-		<Page product={product} />
+		<ProductPage product={product} />
 		:
 		<>
 			Товара с артикулом {article} не существует

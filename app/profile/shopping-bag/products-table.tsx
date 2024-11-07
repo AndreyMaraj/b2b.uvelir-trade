@@ -71,11 +71,11 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 					)
 				default: return cellValue
 			}
-		}, []),
+		}, [updateProducts]),
 		onCreateOrderClick = useCallback(async () => {
 			await createOrder(userId, rows.map(productRow => ({ invisibleModelModificationId: productRow.id, count: productRow.count })))
 			clearShoppingBag()
-		}, [userId, rows, clearShoppingBag, createOrder])
+		}, [userId, rows, clearShoppingBag])
 
 	useEffect(() => {
 		const fetchData = async () =>
@@ -89,7 +89,7 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 		if (!isPending) {
 			fetchData()
 		}
-	}, [products, isPending, setRows])
+	}, [products, isPending, setRows, userId])
 
 	return (
 		<>

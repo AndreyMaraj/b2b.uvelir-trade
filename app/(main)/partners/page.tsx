@@ -6,7 +6,7 @@ const offers = [
 	'За каждым нашим клиентом закрепляется персональный менеджер'
 ]
 
-export default function () {
+export default function Page() {
 	return (
 		<>
 			<h1 className='text-3xl'>Партнерам</h1>

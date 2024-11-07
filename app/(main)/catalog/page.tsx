@@ -10,7 +10,7 @@ import PaginationClient from './pagination'
 
 const numberOfProductsPerPage = 15
 
-async function Page({ searchParams }: Omit<PageProps<never, `${QueryParam}`>, 'params'>) {
+async function ProductsPage({ searchParams }: Omit<PageProps<never, `${QueryParam}`>, 'params'>) {
 	const currentPage = Number(searchParams[QueryParam.PAGE]) || 1,
 		{ products, productsCount } = await getProducts({
 			skip: (currentPage - 1) * numberOfProductsPerPage,
@@ -59,7 +59,7 @@ async function Page({ searchParams }: Omit<PageProps<never, `${QueryParam}`>, 'p
 					<div>
 						<div className='flex flex-wrap gap-x-2.5 gap-y-4'>
 							{products.map(product =>
-								<ProductCard product={product} className='basis-[calc(50%-10px)] sm:basis-full md:basis-[calc(50%-10px)] lg:basis-[calc(33.333%-10px)]' />
+								<ProductCard key={product.article} product={product} className='basis-[calc(50%-10px)] sm:basis-full md:basis-[calc(50%-10px)] lg:basis-[calc(33.333%-10px)]' />
 							)}
 						</div>
 						{productsPagesCount > 1 &&
@@ -93,11 +93,11 @@ function NotLoggedInPage() {
 	)
 }
 
-export default async function ({ searchParams }: PageProps<never, 'page' | 'query'>) {
+export default async function Page({ searchParams }: PageProps<never, 'page' | 'query'>) {
 	const session = await auth()
 
 	return session?.user ? (
-		<Page searchParams={searchParams} />
+		<ProductsPage searchParams={searchParams} />
 	) : (
 		<NotLoggedInPage />
 	)

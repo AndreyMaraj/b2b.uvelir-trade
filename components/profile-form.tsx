@@ -27,7 +27,7 @@ export default function PrifileForm() {
 				return
 			}
 			updateProfile(values, session.data.user.id).then(data => setError(data?.error))
-		}), [])
+		}), [session.data?.user.id])
 
 	return (
 		<form onSubmit={handleSubmit(onSubmit)}>

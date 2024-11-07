@@ -9,7 +9,7 @@ const menuItems = [{
 	href: '/administration/orders'
 }]
 
-export default function ({ children }: Readonly<{ children: ReactNode }>) {
+export default function Layout({ children }: Readonly<{ children: ReactNode }>) {
 	return (
 		<main className='flex-grow'>
 			<div className='container px-4 py-3 flex flex-col lg:flex-row gap-5'>

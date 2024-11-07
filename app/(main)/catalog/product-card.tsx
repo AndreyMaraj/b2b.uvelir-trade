@@ -37,7 +37,7 @@ export default function ProductCard({ product, className }: ProductCardProps) {
 	}, [router])
 
 	return (
-		<Card key={product.article} className={`p-3.5 flex-grow-0 flex-shrink-0${className ? ` ${className}` : ''}`} radius='none' isPressable onPress={() => onCardPress(product.article)}>
+		<Card className={`p-3.5 flex-grow-0 flex-shrink-0${className ? ` ${className}` : ''}`} radius='none' isPressable onPress={() => onCardPress(product.article)}>
 			<CardHeader>
 				<p className='mx-auto'>
 					{product.visibleModelModification.productModel.productPrototyp.type.name} {product.article}

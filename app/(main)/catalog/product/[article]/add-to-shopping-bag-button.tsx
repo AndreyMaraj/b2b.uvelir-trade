@@ -10,9 +10,9 @@ export default function AddToShoppingBagButton({ productId }: { productId: numbe
 		onCountChange = useCallback((newCount: number) => {
 			updateProducts(productId, newCount)
 			setCount(newCount)
-		}, [])
+		}, [updateProducts, productId, setCount])
 
-	useEffect(() => setCount(products.find(product => product.invisibleModelModificationId === productId)?.count ?? 0), [products])
+	useEffect(() => setCount(products.find(product => product.invisibleModelModificationId === productId)?.count ?? 0), [products, productId, setCount])
 
 	return count ?
 		<Input

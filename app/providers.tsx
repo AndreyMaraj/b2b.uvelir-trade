@@ -16,7 +16,7 @@ type ProvidersProps = {
 
 export function Providers({ children, className, session, sessionKey }: ProvidersProps) {
 	const router = useRouter(),
-		memoizedSessionKey = useMemo(() => sessionKey, [session])
+		memoizedSessionKey = useMemo(() => sessionKey, [sessionKey])
 
 	return (
 		<SessionProvider session={session} key={memoizedSessionKey}>
