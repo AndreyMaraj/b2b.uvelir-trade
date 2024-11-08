@@ -566,7 +566,7 @@ async function handleExchangeFiles() {
 			await handleExchangeFileProducts(data[XMLFileKey.CommercialInformation]?.[XMLFileKey.Catalog]?.[XMLFileKey.Products]?.[XMLFileKey.Product], file, props)
 		}
 
-		// fs.rmSync(DATA_EXCHANGE_FOLDER, { recursive: true })
+		fs.rmSync(DATA_EXCHANGE_FOLDER, { recursive: true })
 	} catch (e) {
 		console.warn(e)
 	}
