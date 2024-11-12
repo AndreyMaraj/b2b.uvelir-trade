@@ -22,7 +22,7 @@ export default function ProductVariants({ currentProductArcticle, productPrototy
 						<Image
 							as={NextImage}
 							key={index}
-							src={visibleProductModification.media.length > 0 ? visibleProductModification.media[0].path : EmptyProductMedia.src}
+							src={visibleProductModification.media.length > 0 ? `data:image/jpeg;base64,${visibleProductModification.media[0].data}` : EmptyProductMedia.src}
 							alt={invisibleModelModification.article}
 							width={55}
 							height={55}

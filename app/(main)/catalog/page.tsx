@@ -16,10 +16,10 @@ async function ProductsPage({ searchParams }: Omit<PageProps<never, `${QueryPara
 			skip: (currentPage - 1) * numberOfProductsPerPage,
 			take: numberOfProductsPerPage,
 			articleQuery: searchParams[QueryParam.QUERY]?.toString(),
-			stoneType: searchParams[QueryParam.STONE_TYPE]?.toString(),
-			metalType: searchParams[QueryParam.METAL_TYPE]?.toString(),
-			metalColor: searchParams[QueryParam.METAL_COLOR]?.toString(),
-			productType: searchParams[QueryParam.PRODUCT_TYPE]?.toString()
+			stoneTypeId: Number(searchParams[QueryParam.STONE_TYPE]) || undefined,
+			metalTypeId: Number(searchParams[QueryParam.METAL_TYPE]) || undefined,
+			colorId: Number(searchParams[QueryParam.METAL_COLOR]) || undefined,
+			typeId: Number(searchParams[QueryParam.PRODUCT_TYPE]) || undefined
 		}) ?? { products: [], productsCount: 0 },
 		productsPagesCount = Math.ceil(productsCount / numberOfProductsPerPage),
 		stoneTypes = await getStoneTypes() ?? [],

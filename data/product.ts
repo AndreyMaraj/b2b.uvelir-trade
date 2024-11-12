@@ -1,8 +1,10 @@
-import { prisma } from '@/prisma'
-import { SerializedPrismaEntity } from '@/types'
-import { EarringDimensions, InvisibleModelModification, Metal, ModelComponent, Prisma, ProductModel, ProductPrototype, RingDimensions, Stone, VisibleModelModification } from '@prisma/client'
+'use server'
 
-export const SELECT_ID = {
+import { prisma } from '@/prisma'
+import type { SerializedPrismaEntity } from '@/types'
+import type { EarringDimensions, InvisibleModelModification, Metal, ModelComponent, ProductModel, ProductPrototype, RingDimensions, Stone, VisibleModelModification } from '@prisma/client'
+
+const SELECT_ID = {
 	select: {
 		id: true
 	}
@@ -20,173 +22,141 @@ export async function upsertCutType(name: string) {
 }
 
 export async function upsertStoneType(name: string) {
-	const { id } = await prisma.stoneType.upsert({
+	return (await prisma.stoneType.upsert({
 		...SELECT_ID,
 		where: { name },
 		create: { name },
 		update: {}
-	})
-
-	return id
+	})).id
 }
 
 export async function upsertColor(name: string) {
-	const { id } = await prisma.color.upsert({
+	return (await prisma.color.upsert({
 		...SELECT_ID,
 		where: { name },
 		create: { name },
 		update: {}
-	})
-
-	return id
+	})).id
 }
 
 export async function upsertMetalCoating(name: string) {
-	const { id } = await prisma.metalCoating.upsert({
+	return (await prisma.metalCoating.upsert({
 		...SELECT_ID,
 		where: { name },
 		create: { name },
 		update: {}
-	})
-
-	return id
+	})).id
 }
 
 export async function upsertMetalType(name: string) {
-	const { id } = await prisma.metalType.upsert({
+	return (await prisma.metalType.upsert({
 		...SELECT_ID,
 		where: { name },
 		create: { name },
 		update: {}
-	})
-
-	return id
+	})).id
 }
 
 export async function upsertProductLockType(name: string) {
-	const { id } = await prisma.productLockType.upsert({
+	return (await prisma.productLockType.upsert({
 		...SELECT_ID,
 		where: { name },
 		create: { name },
 		update: {}
-	})
-
-	return id
+	})).id
 }
 
 export async function upsertProductTheme(name: string) {
-	const { id } = await prisma.productTheme.upsert({
+	return (await prisma.productTheme.upsert({
 		...SELECT_ID,
 		where: { name },
 		create: { name },
 		update: {}
-	})
-
-	return id
+	})).id
 }
 
 export async function upsertProductStyle(name: string) {
-	const { id } = await prisma.productStyle.upsert({
+	return (await prisma.productStyle.upsert({
 		...SELECT_ID,
 		where: { name },
 		create: { name },
 		update: {}
-	})
-
-	return id
+	})).id
 }
 
 export async function upsertProductType(name: string) {
-	const { id } = await prisma.productType.upsert({
+	return (await prisma.productType.upsert({
 		...SELECT_ID,
 		where: { name },
 		create: { name },
 		update: {}
-	})
-
-	return id
+	})).id
 }
 
 export async function upsertWeavingType(name: string) {
-	const { id } = await prisma.weavingType.upsert({
+	return (await prisma.weavingType.upsert({
 		...SELECT_ID,
 		where: { name },
 		create: { name },
 		update: {}
-	})
-
-	return id
+	})).id
 }
 
 export async function upsertWireType(name: string) {
-	const { id } = await prisma.wireType.upsert({
+	return (await prisma.wireType.upsert({
 		...SELECT_ID,
 		where: { name },
 		create: { name },
 		update: {}
-	})
-
-	return id
+	})).id
 }
 
 export async function upsertAgeCategory(name: string) {
-	const { id } = await prisma.ageCategory.upsert({
+	return (await prisma.ageCategory.upsert({
 		...SELECT_ID,
 		where: { name },
 		create: { name },
 		update: {}
-	})
-
-	return id
+	})).id
 }
 
 export async function upsertSex(name: string) {
-	const { id } = await prisma.sex.upsert({
+	return (await prisma.sex.upsert({
 		...SELECT_ID,
 		where: { name },
 		create: { name },
 		update: {}
-	})
-
-	return id
+	})).id
 }
 
 export async function upsertRingDimensions(data: SerializedPrismaEntity<Omit<RingDimensions, 'id'>>) {
-	const { id } = await prisma.ringDimensions.upsert({
+	return (await prisma.ringDimensions.upsert({
 		...SELECT_ID,
 		where: { ...data },
 		create: { ...data },
 		update: {}
-	})
-
-	return id
+	})).id
 }
 
 export async function upsertEarringDimensions(data: SerializedPrismaEntity<Omit<EarringDimensions, 'id'>>) {
-	const { id } = await prisma.earringDimensions.findFirst({
+	return (await prisma.earringDimensions.findFirst({
 		...SELECT_ID,
 		where: { ...data }
-	}) ?? await prisma.earringDimensions.create({ ...SELECT_ID, data })
-
-	return id
+	}))?.id ?? (await prisma.earringDimensions.create({ ...SELECT_ID, data })).id
 }
 
 export async function upsertMetal(data: Omit<Metal, 'id'>) {
-	const { id } = await prisma.metal.findFirst({
+	return (await prisma.metal.findFirst({
 		...SELECT_ID,
 		where: { ...data }
-	}) ?? await prisma.metal.create({ ...SELECT_ID, data })
-
-	return id
+	}))?.id ?? (await prisma.metal.create({ ...SELECT_ID, data })).id
 }
 
 export async function upsertStone(data: Omit<Stone, 'id'>) {
-	const { id } = await prisma.stone.findFirst({
+	return (await prisma.stone.findFirst({
 		...SELECT_ID,
 		where: { ...data }
-	}) ?? await prisma.stone.create({ ...SELECT_ID, data })
-
-	return id
+	}))?.id ?? (await prisma.stone.create({ ...SELECT_ID, data })).id
 }
 
 export async function upsertModelComponent(data: SerializedPrismaEntity<Omit<ModelComponent, 'id'>>) {
@@ -199,19 +169,17 @@ export async function upsertModelComponent(data: SerializedPrismaEntity<Omit<Mod
 		}
 	})
 
-	const { id } = model ? await prisma.modelComponent.update({
+	return model ? (await prisma.modelComponent.update({
 		...SELECT_ID,
 		where: { ...model },
 		data: {
 			count: data.count
 		}
-	}) : await prisma.modelComponent.create({ ...SELECT_ID, data })
-
-	return id
+	})).id : (await prisma.modelComponent.create({ ...SELECT_ID, data })).id
 }
 
 export async function upsertInvisibleModelModification(data: SerializedPrismaEntity<Omit<InvisibleModelModification, 'id'>>) {
-	const { id } = await prisma.invisibleModelModification.upsert({
+	return (await prisma.invisibleModelModification.upsert({
 		...SELECT_ID,
 		where: {
 			article: data.article
@@ -223,13 +191,11 @@ export async function upsertInvisibleModelModification(data: SerializedPrismaEnt
 			description: data.description,
 			wireTypeId: data.wireTypeId
 		}
-	})
-
-	return id
+	})).id
 }
 
 export async function upsertVisibleModelModification(data: SerializedPrismaEntity<Omit<VisibleModelModification, 'id'>>) {
-	const { id } = await prisma.visibleModelModification.upsert({
+	return (await prisma.visibleModelModification.upsert({
 		...SELECT_ID,
 		where: {
 			code_productModelId: {
@@ -241,13 +207,11 @@ export async function upsertVisibleModelModification(data: SerializedPrismaEntit
 		update: {
 			wireDiameter: data.wireDiameter
 		}
-	})
-
-	return id
+	})).id
 }
 
 export async function upsertProductModel(data: Omit<ProductModel, 'id'>) {
-	const { id } = await prisma.productModel.upsert({
+	return (await prisma.productModel.upsert({
 		...SELECT_ID,
 		where: {
 			productPrototypId_metalId: {
@@ -257,13 +221,11 @@ export async function upsertProductModel(data: Omit<ProductModel, 'id'>) {
 		},
 		create: { ...data },
 		update: {}
-	})
-
-	return id
+	})).id
 }
 
 export async function upsertProductPrototyp(data: Omit<ProductPrototype, 'id'>) {
-	const { id } = await prisma.productPrototype.upsert({
+	return (await prisma.productPrototype.upsert({
 		...SELECT_ID,
 		where: {
 			code_typeId: {
@@ -283,47 +245,36 @@ export async function upsertProductPrototyp(data: Omit<ProductPrototype, 'id'>) 
 			earringDimensionsId: data.earringDimensionsId,
 			weavingTypeId: data.weavingTypeId
 		}
-	})
-
-	return id
+	})).id
 }
 
 interface GetProductsProps {
 	skip?: number,
 	take?: number,
 	articleQuery?: string,
-	stoneType?: string,
-	metalType?: string,
-	metalColor?: string,
-	productType?: string,
+	stoneTypeId?: number,
+	metalTypeId?: number,
+	colorId?: number,
+	typeId?: number,
 	sort?: string
 }
 
-export async function getProducts({ skip, take, articleQuery, stoneType, metalType, metalColor, productType }: GetProductsProps) {
+export async function getProducts({ skip, take, articleQuery, stoneTypeId, metalTypeId, colorId, typeId }: GetProductsProps) {
 	try {
-		const where = Prisma.validator<Prisma.InvisibleModelModificationWhereInput>()({
-			article: articleQuery !== undefined ? {
-				contains: articleQuery
-			} : undefined,
+		const where = {
+			article: { contains: articleQuery },
 			visibleModelModification: {
-				modelComponents: stoneType !== undefined ? {
+				modelComponents: {
 					some: {
-						stone: {
-							stoneTypeId: Number(stoneType)
-						}
+						stone: { stoneTypeId }
 					}
-				} : undefined,
-				productModel: metalType !== undefined || metalColor !== undefined || productType !== undefined ? {
-					metal: {
-						metalTypeId: metalType !== undefined ? Number(metalType) : undefined,
-						colorId: metalColor !== undefined ? Number(metalColor) : undefined
-					},
-					productPrototyp: {
-						typeId: productType !== undefined ? Number(productType) : undefined,
-					}
-				} : undefined
+				},
+				productModel: {
+					metal: { metalTypeId, colorId },
+					productPrototyp: { typeId }
+				}
 			}
-		})
+		}
 
 		return {
 			products: await prisma.invisibleModelModification.findMany({

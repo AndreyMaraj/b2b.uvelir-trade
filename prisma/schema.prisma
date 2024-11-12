@@ -61,7 +61,7 @@ model VerificationToken {
 
 model Media {
     id                         Int                      @id @default(autoincrement())
-    path                       String
+    data                       Bytes
     visibleModelModification   VisibleModelModification @relation(fields: [visibleModelModificationId], references: [id], onDelete: Cascade)
     visibleModelModificationId Int
 }
