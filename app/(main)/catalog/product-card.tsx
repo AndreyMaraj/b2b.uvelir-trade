@@ -43,10 +43,10 @@ export default function ProductCard({ product, className }: ProductCardProps) {
 					{product.visibleModelModification.productModel.productPrototyp.type.name} {product.article}
 				</p>
 			</CardHeader>
-			<CardBody className='overflow-visible py-2 items-center'>
+			<CardBody className='overflow-visible py-2 items-center justify-end'>
 				<Image
 					as={NextImage}
-					src={product.visibleModelModification.media.length > 0 ? product.visibleModelModification.media[0].path.replace('public', '') : EmptyProductMedia.src}
+					src={product.visibleModelModification.media.length > 0 ? `data:image/jpeg;base64,${product.visibleModelModification.media[0].data}` : EmptyProductMedia.src}
 					alt=''
 					width={160}
 					height={160}

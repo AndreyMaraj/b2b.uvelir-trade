@@ -49,7 +49,7 @@ CREATE TABLE "VerificationToken" (
 -- CreateTable
 CREATE TABLE "Media" (
     "id" SERIAL NOT NULL,
-    "path" TEXT NOT NULL,
+    "data" BYTEA NOT NULL,
     "visibleModelModificationId" INTEGER NOT NULL,
 
     CONSTRAINT "Media_pkey" PRIMARY KEY ("id")

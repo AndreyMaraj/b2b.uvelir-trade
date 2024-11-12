@@ -3,8 +3,9 @@
 import type { NextRequest } from 'next/server'
 import * as fs from 'fs'
 import { ElementCompact, xml2js } from 'xml-js'
-import { SELECT_ID, upsertProductModel, upsertInvisibleModelModification, upsertEarringDimensions, upsertModelComponent, upsertMetal, upsertVisibleModelModification, upsertProductPrototyp, upsertRingDimensions, upsertStone, upsertWeavingType, upsertWireType, upsertMetalCoating, upsertColor, upsertSex, upsertProductTheme, upsertProductStyle, upsertProductLockType, upsertAgeCategory, upsertProductType, upsertMetalType, upsertStoneType, upsertCutType } from '@/data/product'
+import { upsertProductModel, upsertInvisibleModelModification, upsertEarringDimensions, upsertModelComponent, upsertMetal, upsertVisibleModelModification, upsertProductPrototyp, upsertRingDimensions, upsertStone, upsertWeavingType, upsertWireType, upsertMetalCoating, upsertColor, upsertSex, upsertProductTheme, upsertProductStyle, upsertProductLockType, upsertAgeCategory, upsertProductType, upsertMetalType, upsertStoneType, upsertCutType } from '@/data/product'
 import { prisma } from '@/prisma'
+import path from 'path'
 
 enum RequestMode {
 	CheckAuth = 'checkauth',
@@ -111,10 +112,7 @@ type DataExchangeProductInlay = {
 const COOKIE_NAME = 'Cookie',
 	DATA_EXCHANGE_FOLDER = 'data-exchange',
 	DATA_EXCHANGE_MEDIA_FOLDER = 'import_files',
-	DATA_EXCHANGE_MEDIA_FOLDER_PATH = DATA_EXCHANGE_FOLDER + '/' + DATA_EXCHANGE_MEDIA_FOLDER,
-	PUBLIC_FOLDER = 'public',
-	PRODUCT_MEDIA_FOLDER = 'product-media',
-	PRODUCT_MEDIA_FOLDER_PATH = PUBLIC_FOLDER + '/' + PRODUCT_MEDIA_FOLDER,
+	DATA_EXCHANGE_MEDIA_FOLDER_PATH = path.join(DATA_EXCHANGE_FOLDER, DATA_EXCHANGE_MEDIA_FOLDER),
 	IMPORT_PREFIX = 'import',
 	expectedProps: Props = {
 		[PropName.Diameter]: {
@@ -339,7 +337,7 @@ async function handleExchangeFileProducts(fileProducts: ElementCompact, file: st
 				throw new TypeError(`Product '${article}' doesn't have a standard`)
 			}
 
-			const images = fileProduct[XMLFileKey.Picture]
+			const images = fileProduct[XMLFileKey.Picture] && (Array.isArray(fileProduct[XMLFileKey.Picture]) ? fileProduct[XMLFileKey.Picture] : [fileProduct[XMLFileKey.Picture]]).map(image => image._text.replaceAll('\\', '/'))
 			!images && console.warn(`Product '${article}' doesn't have images`)
 
 			const description = fileProduct[XMLFileKey.Description]?._text
@@ -390,10 +388,33 @@ async function handleExchangeFileProducts(fileProducts: ElementCompact, file: st
 					}
 				}),
 				productModelId = await upsertProductModel({ productPrototypId, metalId }),
-				visibleModelModificationId = await upsertVisibleModelModification({
-					code: visibleModelModificationCode,
-					productModelId,
-					wireDiameter: propValues?.[PropName.Diameter] ?? null
+				{ id: visibleModelModificationId } = await prisma.visibleModelModification.upsert({
+					select: { id: true },
+					where: {
+						code_productModelId: {
+							code: visibleModelModificationCode,
+							productModelId
+						}
+					},
+					create: {
+						code: visibleModelModificationCode,
+						productModelId,
+						wireDiameter: propValues?.[PropName.Diameter] ?? null,
+						media: {
+							createMany: {
+								data: images.map((image: string) => ({ data: fs.readFileSync(path.join(process.cwd(), DATA_EXCHANGE_FOLDER, image)) }))
+							}
+						}
+					},
+					update: {
+						wireDiameter: propValues?.[PropName.Diameter] ?? null,
+						media: {
+							deleteMany: {},
+							createMany: {
+								data: images.map((image: string) => ({ data: fs.readFileSync(path.join(process.cwd(), DATA_EXCHANGE_FOLDER, image)) }))
+							}
+						}
+					}
 				})
 
 			for (const modelComponent of modelComponents) {
@@ -414,30 +435,6 @@ async function handleExchangeFileProducts(fileProducts: ElementCompact, file: st
 					stoneId,
 					visibleModelModificationId
 				})
-			}
-
-			if (images) {
-				const productModificationFolder = PRODUCT_MEDIA_FOLDER_PATH + '/' + visibleModelModificationId
-				if (fs.existsSync(productModificationFolder)) {
-					fs.rmSync(productModificationFolder, { recursive: true })
-					await prisma.media.deleteMany({
-						where: { visibleModelModificationId }
-					})
-				}
-
-				fs.mkdirSync(productModificationFolder)
-
-				for (const path of (Array.isArray(images) ? images : [images]).map(image => image._text.replaceAll('\\', '/'))) {
-					const { path: newFilePath } = await prisma.media.create({
-						select: { path: true },
-						data: {
-							visibleModelModificationId,
-							path: '/' + PRODUCT_MEDIA_FOLDER + '/' + visibleModelModificationId + path.slice(path.lastIndexOf('/'))
-						}
-					})
-
-					fs.copyFileSync(`${DATA_EXCHANGE_FOLDER}/${path}`, PUBLIC_FOLDER + newFilePath, fs.constants.COPYFILE_EXCL)
-				}
 			}
 
 			await upsertInvisibleModelModification({
@@ -536,6 +533,9 @@ async function handleExchangeFileProps(props: ElementCompact, file: string) {
 }
 
 async function handleExchangeFiles() {
+	if (!fs.existsSync(DATA_EXCHANGE_FOLDER)) {
+		throw new TypeError(`No folder ${DATA_EXCHANGE_FOLDER}`)
+	}
 	try {
 		const importFiles: string[] = []
 
@@ -555,10 +555,6 @@ async function handleExchangeFiles() {
 			}
 		})
 
-		if (importFiles.length && !fs.existsSync(PRODUCT_MEDIA_FOLDER_PATH)) {
-			fs.mkdirSync(PRODUCT_MEDIA_FOLDER_PATH)
-		}
-
 		let props: DataExchangeProp[] | undefined
 		for (const file of importFiles) {
 			const data = xml2js(fs.readFileSync(`${DATA_EXCHANGE_FOLDER}/${file}`).toString(), { compact: true, trim: true, ignoreInstruction: true, ignoreDeclaration: true, ignoreAttributes: true, ignoreComment: true, ignoreCdata: true, ignoreDoctype: true }) as ElementCompact
@@ -573,23 +569,23 @@ async function handleExchangeFiles() {
 }
 
 export async function GET(request: NextRequest) {
-	const mode = request.nextUrl.searchParams.get('mode'),
-		requestHeaders = new Headers(request.headers),
-		sessionId = requestHeaders.get(COOKIE_NAME)
+	// const mode = request.nextUrl.searchParams.get('mode'),
+	// 	requestHeaders = new Headers(request.headers),
+	// 	sessionId = requestHeaders.get(COOKIE_NAME)
 
-	switch (mode) {
-		case RequestMode.CheckAuth:
-			return new Response(`success\n${COOKIE_NAME}\n123`)
-		case RequestMode.Init:
-			return new Response('zip=no\nfile_limit=100000000')
-		case RequestMode.Import:
-			return new Response('success')
-		case RequestMode.Complete:
-			handleExchangeFiles()
-			return new Response('success')
-		default:
-			return new Response(`Unknown mode: ${mode}`, { status: 400 })
-	}
+	// switch (mode) {
+	// 	case RequestMode.CheckAuth:
+	// 		return new Response(`success\n${COOKIE_NAME}\n123`)
+	// 	case RequestMode.Init:
+	// 		return new Response('zip=no\nfile_limit=100000000')
+	// 	case RequestMode.Import:
+	// 		return new Response('success')
+	// 	case RequestMode.Complete:
+	handleExchangeFiles()
+	return new Response('success')
+	// default:
+	// 	return new Response(`Unknown mode: ${mode}`, { status: 400 })
+	// }
 }
 
 export async function POST(request: NextRequest) {
@@ -617,14 +613,14 @@ export async function POST(request: NextRequest) {
 						return new Response(`File name must match the mask: ${DATA_EXCHANGE_MEDIA_FOLDER}/{product article}/{index}.{extension}`, { status: 400 })
 					}
 
-					const dataExchangeMediaArticleFolderPath = DATA_EXCHANGE_MEDIA_FOLDER_PATH + '/' + fileFolder[1]
+					const dataExchangeMediaArticleFolderPath = path.join(DATA_EXCHANGE_MEDIA_FOLDER_PATH, fileFolder[1])
 					if (!fs.existsSync(dataExchangeMediaArticleFolderPath)) {
 						fs.mkdirSync(dataExchangeMediaArticleFolderPath)
 					}
 
-					fs.writeFileSync(`${DATA_EXCHANGE_FOLDER}/${request.nextUrl.searchParams.get('filename')}`, Buffer.from(await request.arrayBuffer()))
+					fs.writeFileSync(path.join(DATA_EXCHANGE_FOLDER, fileName), Buffer.from(await request.arrayBuffer()))
 				} else {
-					fs.writeFileSync(`${DATA_EXCHANGE_FOLDER}/${request.nextUrl.searchParams.get('filename')}`, await request.text())
+					fs.writeFileSync(path.join(DATA_EXCHANGE_FOLDER, fileName), await request.text())
 				}
 			} catch (err) {
 				console.error(err)
