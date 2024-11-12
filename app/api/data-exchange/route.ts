@@ -402,7 +402,7 @@ async function handleExchangeFileProducts(fileProducts: ElementCompact, file: st
 						wireDiameter: propValues?.[PropName.Diameter] ?? null,
 						media: {
 							createMany: {
-								data: images.map((image: string) => ({ data: fs.readFileSync(path.join(process.cwd(), DATA_EXCHANGE_FOLDER, image)) }))
+								data: images?.map((image: string) => ({ data: fs.readFileSync(path.join(process.cwd(), DATA_EXCHANGE_FOLDER, image)) }))
 							}
 						}
 					},
@@ -411,7 +411,7 @@ async function handleExchangeFileProducts(fileProducts: ElementCompact, file: st
 						media: {
 							deleteMany: {},
 							createMany: {
-								data: images.map((image: string) => ({ data: fs.readFileSync(path.join(process.cwd(), DATA_EXCHANGE_FOLDER, image)) }))
+								data: images?.map((image: string) => ({ data: fs.readFileSync(path.join(process.cwd(), DATA_EXCHANGE_FOLDER, image)) }))
 							}
 						}
 					}
