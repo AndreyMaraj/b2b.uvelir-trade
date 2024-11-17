@@ -14,7 +14,7 @@ export default function ProductImages({ media }: { media: Media[] }) {
 			<div className='flex justify-center items-center h-full'>
 				<Image
 					as={NextImage}
-					src={selectedImage ? `data:image/jpeg;base64,${selectedImage.data}` : EmptyProductMedia.src}
+					src={selectedImage ? `${process.env.NEXT_PUBLIC_IMAGE_UPLOAD_API_URL}${selectedImage.path}` : EmptyProductMedia.src}
 					alt=''
 					width={557}
 					height={557}
@@ -30,7 +30,7 @@ export default function ProductImages({ media }: { media: Media[] }) {
 						<Image
 							as={NextImage}
 							key={index}
-							src={`data:image/jpeg;base64,${mediaFile.data}`}
+							src={`${process.env.NEXT_PUBLIC_IMAGE_UPLOAD_API_URL}${mediaFile.path}`}
 							alt=''
 							width={55}
 							height={55}
