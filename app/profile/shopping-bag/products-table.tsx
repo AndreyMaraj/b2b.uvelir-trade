@@ -83,7 +83,7 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 				id: product.invisibleModelModification.id,
 				count: product.count,
 				article: product.invisibleModelModification.article,
-				photo: product.invisibleModelModification.visibleModelModification.media.length === 1 ? `data:image/jpeg;base64,${product.invisibleModelModification.visibleModelModification.media[0].data}` : EmptyProductMedia.src
+				photo: product.invisibleModelModification.visibleModelModification.media.length === 1 ? `${process.env.NEXT_PUBLIC_IMAGE_UPLOAD_API_URL}${product.invisibleModelModification.visibleModelModification.media[0].path}` : EmptyProductMedia.src
 			})) ?? [])
 
 		if (!isPending) {

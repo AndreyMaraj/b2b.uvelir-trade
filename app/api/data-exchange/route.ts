@@ -113,6 +113,7 @@ const COOKIE_NAME = 'Cookie',
 	DATA_EXCHANGE_FOLDER = 'data-exchange',
 	DATA_EXCHANGE_MEDIA_FOLDER = 'import_files',
 	DATA_EXCHANGE_MEDIA_FOLDER_PATH = path.join(DATA_EXCHANGE_FOLDER, DATA_EXCHANGE_MEDIA_FOLDER),
+	PRODUCT_FOLDER = 'product',
 	IMPORT_PREFIX = 'import',
 	expectedProps: Props = {
 		[PropName.Diameter]: {
@@ -312,6 +313,29 @@ function getArticleFromFile(fileArticle?: string) {
 	return { article, prototypCode, visibleModelModificationCode }
 }
 
+async function uploadImage(files: File[], folderPath: string): Promise<string[]> {
+	if (!process.env.IMAGE_API_URL) {
+		throw new Error('Env property IMAGE_API_URL is empty')
+	}
+
+	const formData = new FormData()
+	files.forEach(file => formData.append('files', file, file.name))
+	formData.append('folderPath', folderPath)
+
+	const response = await fetch(process.env.IMAGE_API_URL, {
+		method: 'POST',
+		body: formData
+	})
+
+	const responseBody = await response.json()
+
+	if (!response.ok) {
+		throw new Error(`Error loading image${responseBody.error ? ` ${responseBody.error}` : ''}`)
+	}
+
+	return responseBody
+}
+
 async function handleExchangeFileProducts(fileProducts: ElementCompact, file: string, dataExchangeProps?: DataExchangeProp[]) {
 	if (!fileProducts) {
 		console.warn(`Exchange file '${file}' doesn't contain products`)
@@ -337,7 +361,17 @@ async function handleExchangeFileProducts(fileProducts: ElementCompact, file: st
 				throw new TypeError(`Product '${article}' doesn't have a standard`)
 			}
 
-			const images = fileProduct[XMLFileKey.Picture] && (Array.isArray(fileProduct[XMLFileKey.Picture]) ? fileProduct[XMLFileKey.Picture] : [fileProduct[XMLFileKey.Picture]]).map(image => image._text.replaceAll('\\', '/'))
+			const images = fileProduct[XMLFileKey.Picture] && (Array.isArray(fileProduct[XMLFileKey.Picture]) ? fileProduct[XMLFileKey.Picture] : [fileProduct[XMLFileKey.Picture]]).map(image => {
+				const imageName = image._text.replaceAll('\\', '/'),
+					imagePath = path.join(process.cwd(), DATA_EXCHANGE_FOLDER, imageName),
+					fileBuffer = fs.readFileSync(imagePath),
+					ext = path.extname(imageName).toLowerCase(),
+					mimeType = ext === '.jpg' || ext === '.jpeg' ? 'image/jpeg' :
+						ext === '.png' ? 'image/png' :
+							ext === '.gif' ? 'image/gif' : 'application/octet-stream'
+
+				return new File([fileBuffer], path.basename(imageName), { type: mimeType })
+			})
 			!images && console.warn(`Product '${article}' doesn't have images`)
 
 			const description = fileProduct[XMLFileKey.Description]?._text
@@ -403,7 +437,7 @@ async function handleExchangeFileProducts(fileProducts: ElementCompact, file: st
 						...images && {
 							media: {
 								createMany: {
-									data: images.map((image: string) => ({ data: fs.readFileSync(path.join(process.cwd(), DATA_EXCHANGE_FOLDER, image)) }))
+									data: (await uploadImage(images ?? [], path.join(PRODUCT_FOLDER, article))).map(path => ({ path }))
 								}
 							}
 						}
@@ -414,7 +448,7 @@ async function handleExchangeFileProducts(fileProducts: ElementCompact, file: st
 							deleteMany: {},
 							...images && {
 								createMany: {
-									data: images.map((image: string) => ({ data: fs.readFileSync(path.join(process.cwd(), DATA_EXCHANGE_FOLDER, image)) }))
+									data: (await uploadImage(images ?? [], path.join(PRODUCT_FOLDER, article))).map(path => ({ path }))
 								}
 							}
 						}
@@ -573,23 +607,23 @@ async function handleExchangeFiles() {
 }
 
 export async function GET(request: NextRequest) {
-	const mode = request.nextUrl.searchParams.get('mode'),
-		requestHeaders = new Headers(request.headers),
-		sessionId = requestHeaders.get(COOKIE_NAME)
+	// const mode = request.nextUrl.searchParams.get('mode'),
+	// 	requestHeaders = new Headers(request.headers),
+	// 	sessionId = requestHeaders.get(COOKIE_NAME)
 
-	switch (mode) {
-		case RequestMode.CheckAuth:
-			return new Response(`success\n${COOKIE_NAME}\n123`)
-		case RequestMode.Init:
-			return new Response('zip=no\nfile_limit=100000000')
-		case RequestMode.Import:
-			return new Response('success')
-		case RequestMode.Complete:
-			handleExchangeFiles()
-			return new Response('success')
-		default:
-			return new Response(`Unknown mode: ${mode}`, { status: 400 })
-	}
+	// switch (mode) {
+	// 	case RequestMode.CheckAuth:
+	// 		return new Response(`success\n${COOKIE_NAME}\n123`)
+	// 	case RequestMode.Init:
+	// 		return new Response('zip=no\nfile_limit=100000000')
+	// 	case RequestMode.Import:
+	// 		return new Response('success')
+	// 	case RequestMode.Complete:
+	handleExchangeFiles()
+	return new Response('success')
+	// 	default:
+	// 		return new Response(`Unknown mode: ${mode}`, { status: 400 })
+	// }
 }
 
 export async function POST(request: NextRequest) {
