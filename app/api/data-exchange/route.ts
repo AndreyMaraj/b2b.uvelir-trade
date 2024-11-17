@@ -607,23 +607,23 @@ async function handleExchangeFiles() {
 }
 
 export async function GET(request: NextRequest) {
-	// const mode = request.nextUrl.searchParams.get('mode'),
-	// 	requestHeaders = new Headers(request.headers),
-	// 	sessionId = requestHeaders.get(COOKIE_NAME)
+	const mode = request.nextUrl.searchParams.get('mode'),
+		requestHeaders = new Headers(request.headers),
+		sessionId = requestHeaders.get(COOKIE_NAME)
 
-	// switch (mode) {
-	// 	case RequestMode.CheckAuth:
-	// 		return new Response(`success\n${COOKIE_NAME}\n123`)
-	// 	case RequestMode.Init:
-	// 		return new Response('zip=no\nfile_limit=100000000')
-	// 	case RequestMode.Import:
-	// 		return new Response('success')
-	// 	case RequestMode.Complete:
-	handleExchangeFiles()
-	return new Response('success')
-	// 	default:
-	// 		return new Response(`Unknown mode: ${mode}`, { status: 400 })
-	// }
+	switch (mode) {
+		case RequestMode.CheckAuth:
+			return new Response(`success\n${COOKIE_NAME}\n123`)
+		case RequestMode.Init:
+			return new Response('zip=no\nfile_limit=100000000')
+		case RequestMode.Import:
+			return new Response('success')
+		case RequestMode.Complete:
+			handleExchangeFiles()
+			return new Response('success')
+		default:
+			return new Response(`Unknown mode: ${mode}`, { status: 400 })
+	}
 }
 
 export async function POST(request: NextRequest) {
