@@ -6,6 +6,8 @@ import { ElementCompact, xml2js } from 'xml-js'
 import { upsertProductModel, upsertInvisibleModelModification, upsertEarringDimensions, upsertModelComponent, upsertMetal, upsertVisibleModelModification, upsertProductPrototyp, upsertRingDimensions, upsertStone, upsertWeavingType, upsertWireType, upsertMetalCoating, upsertColor, upsertSex, upsertProductTheme, upsertProductStyle, upsertProductLockType, upsertAgeCategory, upsertProductType, upsertMetalType, upsertStoneType, upsertCutType } from '@/data/product'
 import { prisma } from '@/prisma'
 import path from 'path'
+import FormData from 'form-data'
+import fetch from 'node-fetch'
 
 enum RequestMode {
 	CheckAuth = 'checkauth',
@@ -313,13 +315,18 @@ function getArticleFromFile(fileArticle?: string) {
 	return { article, prototypCode, visibleModelModificationCode }
 }
 
-async function uploadImage(files: File[], folderPath: string): Promise<string[]> {
+async function uploadImage(filesPaths: string[], folderPath: string): Promise<string[]> {
 	if (!process.env.IMAGE_API_URL) {
 		throw new Error('Env property IMAGE_API_URL is empty')
 	}
 
 	const formData = new FormData()
-	files.forEach(file => formData.append('files', file, file.name))
+	filesPaths.forEach(filePath => {
+		const fileBuffer = fs.readFileSync(filePath),
+			fileName = path.basename(filePath)
+
+		formData.append('files', fileBuffer, { filename: fileName })
+	})
 	formData.append('folderPath', folderPath)
 
 	const response = await fetch(process.env.IMAGE_API_URL, {
@@ -327,13 +334,11 @@ async function uploadImage(files: File[], folderPath: string): Promise<string[]>
 		body: formData
 	})
 
-	const responseBody = await response.json()
-
 	if (!response.ok) {
-		throw new Error(`Error loading image${responseBody.error ? ` ${responseBody.error}` : ''}`)
+		throw new Error(`Error uploading images: ${await response.text()}`)
 	}
 
-	return responseBody
+	return await response.json() as string[]
 }
 
 async function handleExchangeFileProducts(fileProducts: ElementCompact, file: string, dataExchangeProps?: DataExchangeProp[]) {
@@ -361,17 +366,7 @@ async function handleExchangeFileProducts(fileProducts: ElementCompact, file: st
 				throw new TypeError(`Product '${article}' doesn't have a standard`)
 			}
 
-			const images = fileProduct[XMLFileKey.Picture] && (Array.isArray(fileProduct[XMLFileKey.Picture]) ? fileProduct[XMLFileKey.Picture] : [fileProduct[XMLFileKey.Picture]]).map(image => {
-				const imageName = image._text.replaceAll('\\', '/'),
-					imagePath = path.join(process.cwd(), DATA_EXCHANGE_FOLDER, imageName),
-					fileBuffer = fs.readFileSync(imagePath),
-					ext = path.extname(imageName).toLowerCase(),
-					mimeType = ext === '.jpg' || ext === '.jpeg' ? 'image/jpeg' :
-						ext === '.png' ? 'image/png' :
-							ext === '.gif' ? 'image/gif' : 'application/octet-stream'
-
-				return new File([fileBuffer], path.basename(imageName), { type: mimeType })
-			})
+			const images = fileProduct[XMLFileKey.Picture] && (Array.isArray(fileProduct[XMLFileKey.Picture]) ? fileProduct[XMLFileKey.Picture] : [fileProduct[XMLFileKey.Picture]]).map(image => path.join(process.cwd(), DATA_EXCHANGE_FOLDER, image._text.replaceAll('\\', '/')))
 			!images && console.warn(`Product '${article}' doesn't have images`)
 
 			const description = fileProduct[XMLFileKey.Description]?._text
@@ -437,7 +432,7 @@ async function handleExchangeFileProducts(fileProducts: ElementCompact, file: st
 						...images && {
 							media: {
 								createMany: {
-									data: (await uploadImage(images ?? [], path.join(PRODUCT_FOLDER, article))).map(path => ({ path }))
+									data: (await uploadImage(images, path.join(`/${PRODUCT_FOLDER}`, article))).map(path => ({ path }))
 								}
 							}
 						}
@@ -448,7 +443,7 @@ async function handleExchangeFileProducts(fileProducts: ElementCompact, file: st
 							deleteMany: {},
 							...images && {
 								createMany: {
-									data: (await uploadImage(images ?? [], path.join(PRODUCT_FOLDER, article))).map(path => ({ path }))
+									data: (await uploadImage(images, path.join(`/${PRODUCT_FOLDER}`, article))).map(path => ({ path }))
 								}
 							}
 						}
@@ -607,23 +602,23 @@ async function handleExchangeFiles() {
 }
 
 export async function GET(request: NextRequest) {
-	const mode = request.nextUrl.searchParams.get('mode'),
-		requestHeaders = new Headers(request.headers),
-		sessionId = requestHeaders.get(COOKIE_NAME)
+	// const mode = request.nextUrl.searchParams.get('mode'),
+	// 	requestHeaders = new Headers(request.headers),
+	// 	sessionId = requestHeaders.get(COOKIE_NAME)
 
-	switch (mode) {
-		case RequestMode.CheckAuth:
-			return new Response(`success\n${COOKIE_NAME}\n123`)
-		case RequestMode.Init:
-			return new Response('zip=no\nfile_limit=100000000')
-		case RequestMode.Import:
-			return new Response('success')
-		case RequestMode.Complete:
-			handleExchangeFiles()
-			return new Response('success')
-		default:
-			return new Response(`Unknown mode: ${mode}`, { status: 400 })
-	}
+	// switch (mode) {
+	// 	case RequestMode.CheckAuth:
+	// 		return new Response(`success\n${COOKIE_NAME}\n123`)
+	// 	case RequestMode.Init:
+	// 		return new Response('zip=no\nfile_limit=100000000')
+	// 	case RequestMode.Import:
+	// 		return new Response('success')
+	// 	case RequestMode.Complete:
+	handleExchangeFiles()
+	return new Response('success')
+	// 	default:
+	// 		return new Response(`Unknown mode: ${mode}`, { status: 400 })
+	// }
 }
 
 export async function POST(request: NextRequest) {
