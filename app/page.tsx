@@ -10,6 +10,7 @@ import Slider8 from '@/public/slider-17.jpg'
 import { Button, Image } from '@nextui-org/react'
 import NextImage from 'next/image'
 import DiamondIcon from '@/public/diamond-icon.svg'
+import Link from '@/components/link'
 
 export default function Page() {
 	return (
@@ -56,7 +57,7 @@ export default function Page() {
 						<p className='text-center text-6xl md:text-5xl lg:text-6xl font-light !leading-[100px]'>
 							Начните сотрудничать<br />с UvelirTrade уже сегодня!
 						</p>
-						<Button size='lg' variant='ghost' className='self-center border-black hover:!bg-black hover:text-white'>
+						<Button size='lg' variant='ghost' className='self-center border-black hover:!bg-black hover:text-white' as={Link} href='/auth/register'>
 							Стать партнёром
 						</Button>
 					</div>
