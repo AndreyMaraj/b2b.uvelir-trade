@@ -1,11 +1,8 @@
-'use client'
-
 import { Card, CardBody, CardHeader, Image } from '@nextui-org/react'
 import NextImage from 'next/image'
 import { Prisma } from '@prisma/client'
 import EmptyProductMedia from '@/public/empty-product-media.jpg'
-import { useCallback } from 'react'
-import { useRouter } from 'next/navigation'
+import Link from '@/components/link'
 
 const ProductCardData = Prisma.validator<Prisma.InvisibleModelModificationDefaultArgs>()({
 	include: {
@@ -30,14 +27,8 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, className }: ProductCardProps) {
-	const router = useRouter()
-
-	const onCardPress = useCallback((article: string) => {
-		router.push(`/catalog/product/${article}`)
-	}, [router])
-
 	return (
-		<Card className={`p-3.5 flex-grow-0 flex-shrink-0${className ? ` ${className}` : ''}`} radius='none' isPressable onPress={() => onCardPress(product.article)}>
+		<Card className={`p-3.5 flex-grow-0 flex-shrink-0${className ? ` ${className}` : ''}`} radius='none' isPressable isHoverable as={Link} href={`/catalog/product/${product.article}`}>
 			<CardHeader>
 				<p className='mx-auto'>
 					{product.visibleModelModification.productModel.productPrototyp.type.name} {product.article}

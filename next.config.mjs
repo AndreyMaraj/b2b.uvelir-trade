@@ -1,11 +1,14 @@
 /** @type {import('next').NextConfig} */
+
+const parsedUrl = new URL(process.env.NEXT_PUBLIC_IMAGE_UPLOAD_API_URL)
+
 const nextConfig = {
 	images: {
 		remotePatterns: [{
-			protocol: 'http',
-			hostname: 'localhost',
-			port: '3001',
-			pathname: '/media/**'
+			protocol: parsedUrl.protocol.replace(':', ''),
+			hostname: parsedUrl.hostname,
+			port: parsedUrl.port,
+			pathname: `${parsedUrl.pathname}/**`
 		}]
 	}
 }

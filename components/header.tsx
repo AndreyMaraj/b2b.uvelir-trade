@@ -65,15 +65,15 @@ export default function Header() {
 		menuItems = [{
 			label: 'О компании',
 			href: '/about'
-		}, {
-			label: 'Партнерам',
-			href: '/partners'
+			// }, {
+			// 	label: 'Партнерам',
+			// 	href: '/partners'
 		}, {
 			label: 'Каталог',
 			href: '/catalog'
-		}, {
-			label: 'Контакты',
-			href: '/contacts'
+			// }, {
+			// 	label: 'Контакты',
+			// 	href: '/contacts'
 		}, ...(session.data?.user.role === 'ADMIN' ? [{
 			label: 'Администрирование',
 			href: '/administration/users'
@@ -114,9 +114,11 @@ export default function Header() {
 					</NavbarBrand>
 				</NavbarContent>
 				<NavbarContent justify='end' className='self-end'>
-					<NavbarItem className='sm:hidden' >
-						<ShoppingBagButton positionCount={products.length} productsCount={productsCount} isBadgeInvisible={isPending} />
-					</NavbarItem>
+					{!!products.length &&
+						<NavbarItem className='sm:hidden' >
+							<ShoppingBagButton positionCount={products.length} productsCount={productsCount} isBadgeInvisible={isPending} />
+						</NavbarItem>
+					}
 					<NavbarItem>
 						<Button className='hidden sm:flex text-white hover:text-black' variant='ghost' startContent={<span className='iconify mdi--account-outline text-2xl' />} onClick={onProfileButtonClick}>
 							{session.data ? 'Личный кабинет' : 'Вход для партнеров'}
