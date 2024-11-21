@@ -17,11 +17,11 @@ export default function Footer() {
 						Партнёрам
 					</h3>
 					<ul className='space-y-2'>
-						<li>
+						{/* <li>
 							<Link href='/contacts'>
 								Контакты
 							</Link>
-						</li>
+						</li> */}
 						<li>
 							<Link href='/catalog'>
 								Каталог
