@@ -17,11 +17,6 @@ export default function Footer() {
 						Партнёрам
 					</h3>
 					<ul className='space-y-2'>
-						{/* <li>
-							<Link href='/contacts'>
-								Контакты
-							</Link>
-						</li> */}
 						<li>
 							<Link href='/catalog'>
 								Каталог
@@ -42,16 +37,6 @@ export default function Footer() {
 						<li>
 							Индустриальная 50/2
 						</li>
-						{/* <li>
-							<Link href='tel:89999999999' isExternal>
-								8 (999) 999-99-99
-							</Link>
-						</li>
-						<li>
-							<Link href='mailto:info@uvelirtrade.ru' isExternal>
-								info@uvelirtrade.ru
-							</Link>
-						</li> */}
 					</ul>
 				</div>
 			</div>
