@@ -2,7 +2,7 @@
 
 import { prisma } from '@/prisma'
 import type { SerializedPrismaEntity } from '@/types'
-import type { EarringDimensions, InvisibleModelModification, Metal, ModelComponent, ProductModel, ProductPrototype, RingDimensions, Stone, VisibleModelModification } from '@prisma/client'
+import { Prisma, type EarringDimensions, type InvisibleModelModification, type Metal, type ModelComponent, type ProductModel, type ProductPrototype, type RingDimensions, type Stone, type VisibleModelModification } from '@prisma/client'
 
 const SELECT_ID = {
 	select: {
@@ -261,20 +261,22 @@ interface GetProductsProps {
 
 export async function getProducts({ skip, take, articleQuery, stoneTypeId, metalTypeId, colorId, typeId }: GetProductsProps) {
 	try {
-		const where = {
+		const where = Prisma.validator<Prisma.InvisibleModelModificationWhereInput>()({
 			article: { contains: articleQuery },
 			visibleModelModification: {
-				modelComponents: {
-					some: {
-						stone: { stoneTypeId }
+				...(stoneTypeId && {
+					modelComponents: {
+						some: {
+							stone: { stoneTypeId }
+						}
 					}
-				},
+				}),
 				productModel: {
 					metal: { metalTypeId, colorId },
 					productPrototyp: { typeId }
 				}
 			}
-		}
+		})
 
 		return {
 			products: await prisma.invisibleModelModification.findMany({

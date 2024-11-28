@@ -38,8 +38,8 @@ async function ProductsPage({ searchParams }: Omit<PageProps<never, `${QueryPara
 						<SearchProduct />
 						<ul className='mt-8'>
 							{productTypes.map(productType =>
-								<li key={productType.id} className={`transition ease-in-out duration-300 hover:bg-black ${productType.id === Number(searchParams[QueryParam.PRODUCT_TYPE]) ? 'bg-black' : ''}`}>
-									<Link href={`/catalog?productType=${productType.id}`} color='foreground' className={`transition ease-in-out duration-300 p-2.5 uppercase w-full hover:text-white ${productType.id === Number(searchParams[QueryParam.PRODUCT_TYPE]) ? 'text-white' : ''}`}>
+								<li key={productType.id} className={`transition ease-in-out duration-300 hover:bg-black${productType.id === Number(searchParams[QueryParam.PRODUCT_TYPE]) ? ' bg-black' : ''}`}>
+									<Link href={`/catalog?productType=${productType.id}`} color='foreground' className={`transition ease-in-out duration-300 p-2.5 uppercase w-full hover:text-white${productType.id === Number(searchParams[QueryParam.PRODUCT_TYPE]) ? ' text-white' : ''}`}>
 										{productType.name}
 									</Link>
 								</li>
@@ -77,7 +77,9 @@ async function ProductsPage({ searchParams }: Omit<PageProps<never, `${QueryPara
 function NotLoggedInPage() {
 	return (
 		<>
-			<h1 className='text-3xl'>Доступ только для зарегистрированных пользователей</h1 >
+			<h1 className='text-3xl'>
+				Доступ только для зарегистрированных пользователей
+			</h1>
 			<p className='mt-5'>
 				Необходимо&nbsp;
 				<Link href='/login'>
