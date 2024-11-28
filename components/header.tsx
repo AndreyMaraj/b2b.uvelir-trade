@@ -65,15 +65,9 @@ export default function Header() {
 		menuItems = [{
 			label: 'О компании',
 			href: '/about'
-			// }, {
-			// 	label: 'Партнерам',
-			// 	href: '/partners'
 		}, {
 			label: 'Каталог',
 			href: '/catalog'
-			// }, {
-			// 	label: 'Контакты',
-			// 	href: '/contacts'
 		}, ...(session.data?.user.role === 'ADMIN' ? [{
 			label: 'Администрирование',
 			href: '/administration/users'

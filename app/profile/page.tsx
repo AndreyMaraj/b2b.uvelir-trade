@@ -1,12 +1,38 @@
-import PrifileForm from '@/components/profile-form'
+import { auth } from '@/auth'
+import PrifileForm from './profile-form'
+import { getUserById } from '@/data/user'
+import { Button } from '@nextui-org/react'
+import { signOut } from '@/auth'
 
 export default async function Page() {
+	const session = await auth()
+
+	if (!session?.user.id) {
+		return
+	}
+
+	const user = await getUserById(session?.user.id)
+
+	if (!user) {
+		return
+	}
+
+	const onSignOutButtonClick = async () => {
+		'use server'
+		await signOut({ redirectTo: '/' })
+	}
+
 	return (
 		<div className='max-w-80'>
-			<h1>
+			<h1 className='mb-5'>
 				Личные данные
 			</h1>
-			<PrifileForm />
+			<PrifileForm user={user} />
+			<form action={onSignOutButtonClick} className='mt-5'>
+				<Button type='submit' color='danger' variant='light' fullWidth>
+					Выход
+				</Button>
+			</form>
 		</div>
 	)
 }
