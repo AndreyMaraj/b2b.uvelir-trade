@@ -10,7 +10,7 @@ export const LoginSchema = z.object({
 export const RegisterSchema = z.object({
 	email: z.string().email('Email обязателен'),
 	phone: z.string().min(1, {
-		message: 'Email обязателен'
+		message: 'Телефон обязателен'
 	}),
 	password: z.string().min(6, {
 		message: 'Минимум 6 символов необходимо'
@@ -33,5 +33,14 @@ export const ProfileSchema = z.object({
 	name: z.string().min(1, {
 		message: 'Название компании обязательно'
 	}),
-	email: z.string().email()
+	phone: z.string().min(1, {
+		message: 'Телефон обязателен'
+	}),
+	email: z.string().email('Email обязателен'),
+	tin: z.string().min(1, {
+		message: 'ИНН обязательно'
+	}),
+	city: z.string().min(1, {
+		message: 'Город обязателен'
+	})
 })

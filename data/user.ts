@@ -1,7 +1,7 @@
 'use server'
 
 import { prisma } from '@/prisma'
-import type { User } from '@prisma/client'
+import { Prisma, type User } from '@prisma/client'
 
 export const getUserByEmail = async (email: User['email']) => {
 	try {
@@ -12,9 +12,36 @@ export const getUserByEmail = async (email: User['email']) => {
 	}
 }
 
-export const getUserById = async (id: User['id']) => {
+const userWithoutPassword = Prisma.validator<Prisma.UserDefaultArgs>()({
+	select: {
+		id: true,
+		name: true,
+		tin: true,
+		city: true,
+		email: true,
+		phone: true,
+		role: true,
+		verified: true
+	}
+})
+
+export type UserWithoutPassword = Prisma.UserGetPayload<typeof userWithoutPassword>
+
+export const getUserById = async (id: User['id']): Promise<UserWithoutPassword | null> => {
 	try {
-		return await prisma.user.findUnique({ where: { id } })
+		return await prisma.user.findUnique({
+			select: {
+				id: true,
+				name: true,
+				tin: true,
+				city: true,
+				email: true,
+				phone: true,
+				role: true,
+				verified: true
+			},
+			where: { id }
+		})
 	} catch (e) {
 		console.log(e)
 		return null
