@@ -91,7 +91,7 @@ export default function Header() {
 			<div className='flex w-full flex-nowrap items-center justify-between container'>
 				<NavbarContent justify='start'>
 					<NavbarItem className='sm:hidden'>
-						<NavbarMenuToggle />
+						<NavbarMenuToggle icon={<span className='iconify mdi--hamburger-menu text-2xl' />} />
 					</NavbarItem>
 					{!!products.length &&
 						<NavbarItem className='hidden sm:flex'>
