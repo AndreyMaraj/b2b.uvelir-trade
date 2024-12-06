@@ -28,11 +28,6 @@ export default async function Page() {
 				Личные данные
 			</h1>
 			<PrifileForm user={user} />
-			<form action={onSignOutButtonClick} className='mt-5'>
-				<Button type='submit' color='danger' variant='light' fullWidth>
-					Выход
-				</Button>
-			</form>
 		</div>
 	)
 }

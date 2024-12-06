@@ -20,7 +20,11 @@ export default function LoginForm() {
 				password: ''
 			}
 		}),
-		onSubmit = useCallback((values: z.infer<typeof LoginSchema>) => startTransition(() => login(values).then(data => setError(data?.error))), []),
+		onSubmit = useCallback((values: z.infer<typeof LoginSchema>) => {
+			startTransition(() => {
+				login(values).then(data => setError(data?.error))
+			})
+		}, []),
 		changeIsVisiblePassword = useCallback(() => setIsVisiblePassword(!isVisiblePassword), [isVisiblePassword])
 
 	return (

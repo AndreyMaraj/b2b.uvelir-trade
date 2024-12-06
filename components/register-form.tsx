@@ -35,12 +35,14 @@ export default function RegisterForm() {
 				setError('Пароли не совпадают')
 				return
 			}
-			startTransition(() => register(values).then(data => {
-				setError(data?.error)
-				if (data.success) {
-					router.push('/auth/login')
-				}
-			}))
+			startTransition(() => {
+				register(values).then(data => {
+					setError(data?.error)
+					if (data.success) {
+						router.push('/auth/login')
+					}
+				})
+			})
 		}, [router])
 
 	return (

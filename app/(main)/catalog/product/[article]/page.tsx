@@ -3,7 +3,6 @@ import { Card, CardBody, CardHeader } from '@nextui-org/react'
 import ProductImages from './product-images'
 import ProductVariants from './product-variants'
 import ProductTabs from './tabs'
-import { Prisma } from '@prisma/client'
 import ProductCard from '../../product-card'
 import AddToShoppingBagButton from './add-to-shopping-bag-button'
 
@@ -19,7 +18,18 @@ interface CharacteristicGroup {
 
 const youMayLikeBlockProductCount = 20
 
-async function ProductPage({ product }: { product: NonNullable<Prisma.PromiseReturnType<typeof getProductByArticle>> }) {
+export default async function Page({ params }: Omit<PageProps<'article', never>, 'searchParams'>) {
+	const article = decodeURIComponent(params.article),
+		product = await getProductByArticle(article)
+
+	if (!product) {
+		return (
+			<>
+				Товара с артикулом {article} не существует
+			</>
+		)
+	}
+
 	const productPrototype = await getProductVariants(product.visibleModelModification.productModel.productPrototypId),
 		additionalProducts = await getAdditionalProducts({
 			take: youMayLikeBlockProductCount,
@@ -210,16 +220,4 @@ async function ProductPage({ product }: { product: NonNullable<Prisma.PromiseRet
 			}
 		</>
 	)
-}
-
-export default async function Page({ params }: Omit<PageProps<'article', never>, 'searchParams'>) {
-	const article = decodeURIComponent(params.article),
-		product = await getProductByArticle(article)
-
-	return product ?
-		<ProductPage product={product} />
-		:
-		<>
-			Товара с артикулом {article} не существует
-		</>
 }
