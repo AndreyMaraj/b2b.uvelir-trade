@@ -8,6 +8,7 @@ import { getUsers, setUserRole, setUserVerified } from '@/data/user'
 interface UserRow extends Omit<User, 'updatedAt' | 'password'> { }
 
 const rowsPerPage = 25
+//
 
 export default function UsersTable({ userId }: { userId: User['id'] }) {
 	const [rows, setRows] = useState<UserRow[]>([]),
