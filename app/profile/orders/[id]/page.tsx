@@ -3,14 +3,15 @@ import ProductsTable from './products-table'
 import { getOrder } from '@/actions/order'
 import EmptyProductMedia from '@/public/empty-product-media.jpg'
 
-export default async function Page({ params }: Omit<PageProps<'id', never>, 'searchParams'>) {
+export default async function Page(props: PageProps<'id', never>) {
 	const session = await auth()
 
 	if (!session?.user.id) {
 		return
 	}
 
-	const order = await getOrder(Number(params.id)),
+	const params = await props.params,
+		order = await getOrder(Number(params.id)),
 		orderItems = order?.orderItems.map(item => ({
 			id: item.invisibleModelModification.id,
 			count: item.count,

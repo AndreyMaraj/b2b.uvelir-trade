@@ -1,7 +1,7 @@
 'use client'
 
 import { QueryParam } from '@/consts'
-import { Button } from '@nextui-org/react'
+import { Button } from '@nextui-org/button'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
 

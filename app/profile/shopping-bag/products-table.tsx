@@ -2,14 +2,17 @@
 
 import { getShoppingBagsWithProducts } from '@/actions/shopping-bag'
 import { useShoppingBag } from '@/components/shopping-bag-hook'
-import { Button, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from '@nextui-org/react'
+import { Pagination } from '@nextui-org/pagination'
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table'
 import { type Key, useCallback, useEffect, useMemo, useState } from 'react'
 import EmptyProductMedia from '@/public/empty-product-media.jpg'
 import type { InvisibleModelModification, Order, ShoppingBagsProduct } from '@prisma/client'
-import { Image } from '@nextui-org/react'
+import { Image } from '@nextui-org/image'
+import { Button } from '@nextui-org/button'
 import NextImage from 'next/image'
 import Link from '@/components/link'
 import { createOrder } from '@/actions/order'
+import { Tooltip } from '@nextui-org/tooltip'
 
 interface ProductRow {
 	id: InvisibleModelModification['id'],

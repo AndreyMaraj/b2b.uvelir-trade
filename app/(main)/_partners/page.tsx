@@ -1,4 +1,4 @@
-import { Button } from '@nextui-org/react'
+import { Button } from '@nextui-org/button'
 
 const offers = [
 	'Мы предлагаем индивидуальный подход к каждому клиенту',

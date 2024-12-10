@@ -1,6 +1,6 @@
 'use client'
 
-import { Tab, Tabs } from '@nextui-org/react'
+import { Tab, Tabs } from '@nextui-org/tabs'
 import { ReactNode } from 'react'
 
 export default function ProductTabs({ description, characteristics }: { description?: ReactNode, characteristics?: ReactNode }) {

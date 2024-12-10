@@ -1,6 +1,6 @@
 import Link from '@/components/link'
 import RegisterForm from '@/components/register-form'
-import { Card, CardBody } from '@nextui-org/react'
+import { Card, CardBody } from '@nextui-org/card'
 
 export default function Page() {
 	return (

@@ -1,6 +1,10 @@
 'use client'
 
-import { Button, Chip, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react'
+import { Button } from '@nextui-org/button'
+import { Chip } from '@nextui-org/chip'
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/dropdown'
+import { Pagination } from '@nextui-org/pagination'
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table'
 import { type Key, useCallback, useEffect, useMemo, useState } from 'react'
 import { type User, UserRole } from '@prisma/client'
 import { getUsers, setUserRole, setUserVerified } from '@/data/user'

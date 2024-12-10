@@ -10,8 +10,9 @@ import PaginationClient from './pagination'
 
 const numberOfProductsPerPage = 15
 
-export default async function Page({ searchParams }: Omit<PageProps<never, QueryParam>, 'params'>) {
-	const session = await auth()
+export default async function Page(props: PageProps<never, QueryParam>) {
+	const session = await auth(),
+		searchParams = await props.searchParams
 
 	if (!session?.user) {
 		return (
