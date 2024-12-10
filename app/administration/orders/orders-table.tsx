@@ -1,6 +1,7 @@
 'use client'
 
-import { Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react'
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table'
+import { Pagination } from '@nextui-org/pagination'
 import { type Key, useCallback, useEffect, useMemo, useState } from 'react'
 import type { Order, User } from '@prisma/client'
 import { getOrders } from '@/actions/order'

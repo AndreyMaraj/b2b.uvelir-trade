@@ -1,6 +1,7 @@
 'use client'
 
-import { Select, SelectItem, SharedSelection } from '@nextui-org/react'
+import { Select, SelectItem } from '@nextui-org/select'
+import type { SharedSelection } from '@nextui-org/system-rsc'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
 

@@ -1,5 +1,5 @@
 import { getAdditionalProducts, getProductByArticle, getProductVariants } from '@/data/product'
-import { Card, CardBody, CardHeader } from '@nextui-org/react'
+import { Card, CardBody, CardHeader } from '@nextui-org/card'
 import ProductImages from './product-images'
 import ProductVariants from './product-variants'
 import ProductTabs from './tabs'
@@ -18,8 +18,9 @@ interface CharacteristicGroup {
 
 const youMayLikeBlockProductCount = 20
 
-export default async function Page({ params }: Omit<PageProps<'article', never>, 'searchParams'>) {
-	const article = decodeURIComponent(params.article),
+export default async function Page(props: PageProps<'article', never>) {
+	const params = await props.params,
+		article = decodeURIComponent(params.article),
 		product = await getProductByArticle(article)
 
 	if (!product) {

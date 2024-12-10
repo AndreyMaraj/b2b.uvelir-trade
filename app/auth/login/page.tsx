@@ -1,6 +1,6 @@
 import Link from '@/components/link'
 import LoginForm from '@/components/login-form'
-import { Card, CardBody, CardFooter, CardHeader } from '@nextui-org/react'
+import { Card, CardBody, CardFooter, CardHeader } from '@nextui-org/card'
 
 export default function Page() {
 	return (

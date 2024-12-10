@@ -1,6 +1,9 @@
 'use client'
 
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Badge, Popover, PopoverTrigger, PopoverContent } from '@nextui-org/react'
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem } from '@nextui-org/navbar'
+import { Button } from '@nextui-org/button'
+import { Badge } from '@nextui-org/badge'
+import { Popover, PopoverTrigger, PopoverContent } from '@nextui-org/popover'
 import { useCallback, useMemo, useState } from 'react'
 import Link from '@/components/link'
 import { signIn, useSession } from 'next-auth/react'

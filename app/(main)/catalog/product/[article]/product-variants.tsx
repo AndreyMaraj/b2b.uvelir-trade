@@ -1,6 +1,6 @@
 'use client'
 
-import { Image } from '@nextui-org/react'
+import { Image } from '@nextui-org/image'
 import NextImage from 'next/image'
 import EmptyProductMedia from '@/public/empty-product-media.jpg'
 import { Prisma } from '@prisma/client'

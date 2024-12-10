@@ -1,7 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { Button, Image } from '@nextui-org/react'
+import { Button } from '@nextui-org/button'
+import { Image } from '@nextui-org/image'
 import NextImage from 'next/image'
 
 type CarouselProps = {

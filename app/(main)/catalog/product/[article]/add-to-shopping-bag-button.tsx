@@ -1,6 +1,7 @@
 'use client'
 
-import { Button, Input } from '@nextui-org/react'
+import { Button } from '@nextui-org/button'
+import { Input } from '@nextui-org/input'
 import { useCallback, useEffect, useState } from 'react'
 import { useShoppingBag } from '@/components/shopping-bag-hook'
 

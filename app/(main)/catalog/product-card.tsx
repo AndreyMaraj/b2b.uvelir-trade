@@ -1,4 +1,5 @@
-import { Card, CardBody, CardHeader, Image } from '@nextui-org/react'
+import { Card, CardBody, CardHeader } from '@nextui-org/card'
+import { Image } from '@nextui-org/image'
 import NextImage from 'next/image'
 import { Prisma } from '@prisma/client'
 import EmptyProductMedia from '@/public/empty-product-media.jpg'
