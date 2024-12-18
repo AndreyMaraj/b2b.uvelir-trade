@@ -11,6 +11,7 @@ import { useCallback, useState, useTransition } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { signOut } from 'next-auth/react'
+import { Form } from '@nextui-org/form'
 
 export default function PrifileForm({ user }: { user: UserWithoutPassword }) {
 	const [isPending, startTransition] = useTransition(),
@@ -30,7 +31,7 @@ export default function PrifileForm({ user }: { user: UserWithoutPassword }) {
 		}), [user.id])
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)}>
+		<Form onSubmit={handleSubmit(onSubmit)}>
 			<Controller
 				control={control}
 				name='name'
@@ -124,9 +125,9 @@ export default function PrifileForm({ user }: { user: UserWithoutPassword }) {
 			<Button type='submit' className='w-full' isDisabled={isPending}>
 				Сохранить
 			</Button>
-			<Button type='submit' color='danger' variant='light' fullWidth className='mt-5' onClick={() => signOut()}>
+			<Button color='danger' variant='light' fullWidth className='mt-5' onPress={() => signOut()}>
 				Выход
 			</Button>
-		</form>
+		</Form>
 	)
 }

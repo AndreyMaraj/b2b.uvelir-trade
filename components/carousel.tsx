@@ -21,7 +21,7 @@ type ArrowButtonProps = {
 
 function ArrowButton(props: ArrowButtonProps) {
 	return (
-		<Button isIconOnly variant='light' radius='full' onClick={props.onClick}>
+		<Button isIconOnly variant='light' radius='full' onPress={props.onClick}>
 			<span className={`iconify ${props.icon} text-3xl rounded-full`} />
 		</Button>
 	)

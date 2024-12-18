@@ -67,7 +67,7 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 				case 'remove':
 					return (
 						<Tooltip color='danger' content='Удалить товар'>
-							<Button variant='ghost' isIconOnly onClick={() => updateProducts(product.id, 0)}>
+							<Button variant='ghost' isIconOnly onPress={() => updateProducts(product.id, 0)}>
 								<span className='iconify mdi--delete-outline text-2xl' />
 							</Button>
 						</Tooltip>
@@ -103,7 +103,7 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 						<Button
 							color='danger'
 							endContent={<span className='iconify mdi--delete-outline text-2xl' />}
-							onClick={() => clearShoppingBag()}
+							onPress={() => clearShoppingBag()}
 						>
 							Очистить
 						</Button>
@@ -152,7 +152,7 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 			</Table>
 			{!!rows.length &&
 				<div className='flex justify-center mt-5'>
-					<Button as={Link} color='primary' onClick={onCreateOrderClick} href='/profile/orders'>
+					<Button as={Link} color='primary' onPress={onCreateOrderClick} href='/profile/orders'>
 						Отправить заказ
 					</Button>
 				</div>

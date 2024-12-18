@@ -1,4 +1,29 @@
 import { Button } from '@nextui-org/button'
+import { openGraph, twitter } from '@/app/shared-metadata'
+import type { Metadata } from 'next/types'
+
+const title = 'Партнеры',
+	description = 'Информация о наших партнерах и условиях сотрудничества.',
+	url = '/partners'
+
+export const metadata: Metadata = {
+	title,
+	description,
+	alternates: {
+		canonical: url
+	},
+	openGraph: {
+		...openGraph,
+		url,
+		title,
+		description
+	},
+	twitter: {
+		...twitter,
+		description,
+		title
+	}
+}
 
 const offers = [
 	'Мы предлагаем индивидуальный подход к каждому клиенту',

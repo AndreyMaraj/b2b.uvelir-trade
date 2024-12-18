@@ -51,13 +51,13 @@ export default function UsersTable({ userId }: { userId: User['id'] }) {
 								</Button>
 							</DropdownTrigger>
 							<DropdownMenu disabledKeys={userId === user.id ? ['verified', 'admin'] : undefined}>
-								<DropdownItem key='verified' onClick={async () => {
+								<DropdownItem key='verified' onPress={async () => {
 									const updatedUser = await setUserVerified(user.id, !user.verified)
 									updatedUser && setRows(prevRows => prevRows.map(row => row.id === updatedUser.id ? { ...row, verified: updatedUser.verified } : row))
 								}}>
 									{user.verified ? 'Отменить верификацию' : 'Верифицивровать'}
 								</DropdownItem>
-								<DropdownItem key='admin' onClick={async () => {
+								<DropdownItem key='admin' onPress={async () => {
 									const updatedUser = await setUserRole(user.id, user.role === UserRole.ADMIN ? UserRole.USER : UserRole.ADMIN)
 
 									updatedUser && setRows(prevRows => prevRows.map(row => row.id === updatedUser.id ? { ...row, role: updatedUser.role } : row))

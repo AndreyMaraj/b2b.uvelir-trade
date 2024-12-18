@@ -5,6 +5,49 @@ import Header from '@/components/header'
 import { Providers } from '@/app/providers'
 import Footer from '@/components/footer'
 import { auth } from '@/auth'
+import type { Metadata } from 'next'
+
+const title = {
+	default: 'Ювелир Трейд Опт',
+	template: '%s | Ювелир Трейд Опт'
+},
+	url = 'https://b2b.uvelir-trade.ru'
+
+export const metadata: Metadata = {
+	metadataBase: new URL(url),
+	title,
+	applicationName: 'Ювелир Трейд Опт',
+	authors: [{
+		name: 'Команда разработки Ювелир Трейд',
+		url
+	}],
+	generator: 'Next.js',
+	keywords: ['ювелирные изделия', 'оптовая торговля ювелиркой', 'ювелирный опт', 'дизайнерские украшения', 'золотые изделия оптом', 'серебряные украшения', 'ювелирные аксессуары', 'оптовые цены на ювелирные изделия', 'поставщики ювелирных изделий'],
+	referrer: 'origin-when-cross-origin',
+	creator: 'Ювелир Трейд',
+	publisher: 'Ювелир Трейд',
+	robots: {
+		index: true,
+		follow: true
+	},
+	openGraph: { title },
+	twitter: { title },
+	appleWebApp: {
+		capable: true,
+		title: 'Ювелир Трейд Опт',
+		startupImage: '/apple-icon.png',
+		statusBarStyle: 'black'
+	},
+	formatDetection: {
+		telephone: true,
+		date: true,
+		email: true,
+		url: true
+	},
+	bookmarks: ['https://uvelirtrade.ru'],
+	category: 'Ювелирные изделия',
+	classification: 'Бизнес, Торговля'
+}
 
 const inter = Inter({ subsets: ['latin'] })
 

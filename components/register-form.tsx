@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation'
 import { useCallback, useState, useTransition } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { Form } from '@nextui-org/form'
 
 export default function RegisterForm() {
 	const router = useRouter(),
@@ -47,7 +48,7 @@ export default function RegisterForm() {
 		}, [router])
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)}>
+		<Form onSubmit={handleSubmit(onSubmit)}>
 			<Controller
 				control={control}
 				name='name'
@@ -148,7 +149,7 @@ export default function RegisterForm() {
 						isInvalid={fieldState.invalid}
 						errorMessage={fieldState.error?.message}
 						endContent={
-							<Button isIconOnly variant='light' onClick={changeIsVisiblePassword}>
+							<Button isIconOnly variant='light' onPress={changeIsVisiblePassword}>
 								<span className={`iconify ${isVisiblePassword ? 'mdi--eye-off-outline' : 'mdi--eye-outline'} text-2xl`} />
 							</Button>
 						}
@@ -170,7 +171,7 @@ export default function RegisterForm() {
 						isInvalid={fieldState.invalid}
 						errorMessage={fieldState.error?.message}
 						endContent={
-							<Button isIconOnly variant='light' onClick={changeIsVisibleConfirmPassword}>
+							<Button isIconOnly variant='light' onPress={changeIsVisibleConfirmPassword}>
 								<span className={`iconify ${isVisibleConfirmPassword ? 'mdi--eye-off-outline' : 'mdi--eye-outline'} text-2xl`} />
 							</Button>
 						}
@@ -185,6 +186,6 @@ export default function RegisterForm() {
 			<Button type='submit' className='w-full' isDisabled={isPending}>
 				Зарегестрироваться
 			</Button>
-		</form>
+		</Form>
 	)
 }

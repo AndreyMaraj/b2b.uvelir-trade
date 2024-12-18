@@ -29,7 +29,7 @@ export default function AddToShoppingBagButton({ productId }: { productId: numbe
 			className='w-40'
 			color='primary'
 			disabled={isPending}
-			onClick={() => onCountChange(1)}
+			onPress={() => onCountChange(1)}
 		>
 			Добавить в корзину
 		</Button>
