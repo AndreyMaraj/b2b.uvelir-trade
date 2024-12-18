@@ -46,7 +46,7 @@ function ShoppingBagButton({ productsCount, positionCount, isBadgeInvisible }: {
 									href='/profile/shopping-bag'
 									size='sm'
 									color='foreground'
-									onClick={() => setIsOpen(false)}
+									onPress={() => setIsOpen(false)}
 								>
 									Оформить заказ
 								</Link>
@@ -117,10 +117,10 @@ export default function Header() {
 						</NavbarItem>
 					}
 					<NavbarItem>
-						<Button className='hidden sm:flex text-white hover:text-black' variant='ghost' startContent={<span className='iconify mdi--account-outline text-2xl' />} onClick={onProfileButtonClick}>
+						<Button className='hidden sm:flex text-white hover:text-black' variant='ghost' startContent={<span className='iconify mdi--account-outline text-2xl' />} onPress={onProfileButtonClick}>
 							{session.data ? 'Личный кабинет' : 'Вход для партнеров'}
 						</Button>
-						<Button className='sm:hidden text-white hover:text-black' variant='ghost' isIconOnly onClick={onProfileButtonClick}>
+						<Button className='sm:hidden text-white hover:text-black' variant='ghost' isIconOnly onPress={onProfileButtonClick}>
 							<span className='iconify mdi--account-outline text-2xl' />
 						</Button>
 					</NavbarItem>
@@ -133,7 +133,7 @@ export default function Header() {
 								href={item.href}
 								size='lg'
 								color='foreground'
-								onClick={() => setIsMenuOpen(false)}
+								onPress={() => setIsMenuOpen(false)}
 							>
 								{item.label}
 							</Link>

@@ -1,5 +1,30 @@
 import UsersTable from './users-table'
 import { auth } from '@/auth'
+import { openGraph, twitter } from '@/app/shared-metadata'
+import type { Metadata } from 'next/types'
+
+const title = 'Пользователи',
+	description = 'Управление пользователями в системе.',
+	url = '/administration/users'
+
+export const metadata: Metadata = {
+	title,
+	description,
+	alternates: {
+		canonical: url
+	},
+	openGraph: {
+		...openGraph,
+		url,
+		title,
+		description
+	},
+	twitter: {
+		...twitter,
+		description,
+		title
+	}
+}
 
 export default async function Page() {
 	const session = await auth()

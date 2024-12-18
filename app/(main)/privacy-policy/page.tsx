@@ -1,3 +1,29 @@
+import { openGraph, twitter } from '@/app/shared-metadata'
+import type { Metadata } from 'next/types'
+
+const title = 'Политика конфиденциальности',
+	description = 'Узнайте о нашей политике конфиденциальности и защите ваших данных.',
+	url = '/privacy-policy'
+
+export const metadata: Metadata = {
+	title,
+	description,
+	alternates: {
+		canonical: url
+	},
+	openGraph: {
+		...openGraph,
+		url,
+		title,
+		description
+	},
+	twitter: {
+		...twitter,
+		description,
+		title
+	}
+}
+
 export default function Page() {
 	return (
 		<>

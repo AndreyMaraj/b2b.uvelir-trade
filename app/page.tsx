@@ -12,6 +12,27 @@ import DiamondIcon from '@/public/diamond-icon.svg'
 import Link from '@/components/link'
 import { Button } from '@nextui-org/button'
 import { Image } from '@nextui-org/image'
+import { openGraph, twitter } from '@/app/shared-metadata'
+import type { Metadata } from 'next/types'
+
+const description = 'Ювелир Трейд предлагает широкий ассортимент ювелирных изделий оптом: от золотых и серебряных украшений до дизайнерских аксессуаров. Мы гарантируем высокое качество и конкурентные цены для оптовых покупателей в России И СНГ.',
+	url = '/'
+
+export const metadata: Metadata = {
+	description,
+	alternates: {
+		canonical: url
+	},
+	openGraph: {
+		...openGraph,
+		url,
+		description
+	},
+	twitter: {
+		...twitter,
+		description
+	}
+}
 
 export default function Page() {
 	return (

@@ -1,3 +1,29 @@
+import { openGraph, twitter } from '@/app/shared-metadata'
+import type { Metadata } from 'next/types'
+
+const title = 'О компании',
+	description = 'Узнайте больше о компании Ювелир Трейд и нашей миссии.',
+	url = '/about'
+
+export const metadata: Metadata = {
+	title,
+	description,
+	alternates: {
+		canonical: url
+	},
+	openGraph: {
+		...openGraph,
+		url,
+		title,
+		description
+	},
+	twitter: {
+		...twitter,
+		description,
+		title
+	}
+}
+
 export default function Page() {
 	return (
 		<>

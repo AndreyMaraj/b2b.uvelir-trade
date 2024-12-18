@@ -1,6 +1,31 @@
 import Link from '@/components/link'
 import RegisterForm from '@/components/register-form'
 import { Card, CardBody } from '@nextui-org/card'
+import { openGraph, twitter } from '@/app/shared-metadata'
+import type { Metadata } from 'next/types'
+
+const title = 'Регистрация',
+	description = 'Создайте учетную запись на Ювелир Трейд Опт.',
+	url = '/auth/register'
+
+export const metadata: Metadata = {
+	title,
+	description,
+	alternates: {
+		canonical: url
+	},
+	openGraph: {
+		...openGraph,
+		url,
+		title,
+		description
+	},
+	twitter: {
+		...twitter,
+		description,
+		title
+	}
+}
 
 export default function Page() {
 	return (

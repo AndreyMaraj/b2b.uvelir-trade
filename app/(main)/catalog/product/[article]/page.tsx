@@ -5,6 +5,38 @@ import ProductVariants from './product-variants'
 import ProductTabs from './tabs'
 import ProductCard from '../../product-card'
 import AddToShoppingBagButton from './add-to-shopping-bag-button'
+import { openGraph, twitter } from '@/app/shared-metadata'
+import type { Metadata } from 'next/types'
+import { auth } from '@/auth'
+
+interface CurrentPageProps extends PageProps<'article', never> { }
+
+export async function generateMetadata({ params }: CurrentPageProps): Promise<Metadata> {
+	const article = decodeURIComponent((await params).article),
+		url = `/catalog/product/${article}`,
+		product = await getProductByArticle(article),
+		title = product ? `${product.visibleModelModification.productModel.productPrototyp.type.name} ${product.article}` : '',
+		description = 'Подробная информация о товаре.'
+
+	return {
+		title,
+		description,
+		alternates: {
+			canonical: url
+		},
+		openGraph: {
+			...openGraph,
+			url,
+			title,
+			description
+		},
+		twitter: {
+			...twitter,
+			description,
+			title
+		}
+	}
+}
 
 interface Characteristic {
 	label: string,
@@ -18,17 +50,18 @@ interface CharacteristicGroup {
 
 const youMayLikeBlockProductCount = 20
 
-export default async function Page(props: PageProps<'article', never>) {
-	const params = await props.params,
-		article = decodeURIComponent(params.article),
+export default async function Page({ params }: CurrentPageProps) {
+	const session = await auth()
+
+	if (!session?.user.id) {
+		return
+	}
+
+	const article = decodeURIComponent((await params).article),
 		product = await getProductByArticle(article)
 
 	if (!product) {
-		return (
-			<>
-				Товара с артикулом {article} не существует
-			</>
-		)
+		return
 	}
 
 	const productPrototype = await getProductVariants(product.visibleModelModification.productModel.productPrototypId),

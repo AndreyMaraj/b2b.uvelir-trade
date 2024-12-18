@@ -7,6 +7,31 @@ import ClearFilterButton from '@/components/clear-filter-button'
 import { QueryParam } from '@/consts'
 import ProductCard from './product-card'
 import PaginationClient from './pagination'
+import { openGraph, twitter } from '@/app/shared-metadata'
+import type { Metadata } from 'next/types'
+
+const title = 'Каталог',
+	description = 'Просмотрите наш каталог ювелирных изделий, доступных для авторизованных пользователей.',
+	url = '/catalog'
+
+export const metadata: Metadata = {
+	title,
+	description,
+	alternates: {
+		canonical: url
+	},
+	openGraph: {
+		...openGraph,
+		url,
+		title,
+		description
+	},
+	twitter: {
+		...twitter,
+		description,
+		title
+	}
+}
 
 const numberOfProductsPerPage = 15
 

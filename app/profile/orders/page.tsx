@@ -1,6 +1,30 @@
-
 import { auth } from '@/auth'
 import OrdersTable from './orders-table'
+import { openGraph, twitter } from '@/app/shared-metadata'
+import type { Metadata } from 'next/types'
+
+const title = 'Заказы',
+	description = 'Просмотрите историю ваших заказов.',
+	url = '/profile/orders'
+
+export const metadata: Metadata = {
+	title,
+	description,
+	alternates: {
+		canonical: url
+	},
+	openGraph: {
+		...openGraph,
+		url,
+		title,
+		description
+	},
+	twitter: {
+		...twitter,
+		description,
+		title
+	}
+}
 
 export default async function Page() {
 	const session = await auth()

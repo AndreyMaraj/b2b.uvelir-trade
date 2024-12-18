@@ -1,4 +1,29 @@
+import { openGraph, twitter } from '@/app/shared-metadata'
 import Link from '@/components/link'
+import type { Metadata } from 'next/types'
+
+const title = 'Контакты',
+	description = 'Свяжитесь с нами для получения дополнительной информации.',
+	url = '/contacts'
+
+export const metadata: Metadata = {
+	title,
+	description,
+	alternates: {
+		canonical: url
+	},
+	openGraph: {
+		...openGraph,
+		url,
+		title,
+		description
+	},
+	twitter: {
+		...twitter,
+		description,
+		title
+	}
+}
 
 const contacts = [{
 	department: 'Менеджер',
