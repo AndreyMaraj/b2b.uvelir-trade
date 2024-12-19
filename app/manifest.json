@@ -1,0 +1,40 @@
+{
+	"background_color": "#000000",
+	"categories": [
+		"business",
+		"e-commerce",
+		"jewelry",
+		"shopping"
+	],
+	"description": "Ювелир Трейд - ваш надежный партнер в оптовой торговле ювелирными изделиями.",
+	"dir": "ltr",
+	"display": "standalone",
+	"icons": [
+		{
+			"src": "/manifest-icons/icon-192.png",
+			"type": "image/png",
+			"sizes": "192x192"
+		},
+		{
+			"src": "/manifest-icons/icon-mask.png",
+			"type": "image/png",
+			"sizes": "512x512",
+			"purpose": "maskable"
+		},
+		{
+			"src": "/manifest-icons/icon-512.png",
+			"type": "image/png",
+			"sizes": "512x512"
+		}
+	],
+	"lang": "ru",
+	"launch_handler": {
+		"client_mode": "auto"
+	},
+	"name": "Ювелир Трейд Опт",
+	"orientation": "portrait-primary",
+	"scope": "/",
+	"short_name": "ЮТ Опт",
+	"start_url": "/catalog",
+	"theme_color": "#000000"
+}
