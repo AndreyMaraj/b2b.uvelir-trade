@@ -2,7 +2,7 @@ import Link from '@/components/link'
 import LoginForm from '@/components/login-form'
 import { Card, CardBody, CardFooter, CardHeader } from '@nextui-org/card'
 import { openGraph, twitter } from '@/app/shared-metadata'
-import type { Metadata } from 'next/types'
+import type { Metadata } from 'next'
 
 const title = 'Вход',
 	description = 'Войдите в свою учетную запись на Ювелир Трейд Опт.',

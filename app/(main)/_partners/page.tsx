@@ -1,6 +1,6 @@
 import { Button } from '@nextui-org/button'
 import { openGraph, twitter } from '@/app/shared-metadata'
-import type { Metadata } from 'next/types'
+import type { Metadata } from 'next'
 
 const title = 'Партнеры',
 	description = 'Информация о наших партнерах и условиях сотрудничества.',

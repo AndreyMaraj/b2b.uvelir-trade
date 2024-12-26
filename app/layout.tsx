@@ -6,12 +6,13 @@ import { Providers } from '@/app/providers'
 import Footer from '@/components/footer'
 import { auth } from '@/auth'
 import type { Metadata } from 'next'
+import { NEXT_PUBLIC_BASE_URL } from '@/consts'
 
 const title = {
 	default: 'Ювелир Трейд Опт',
 	template: '%s | Ювелир Трейд Опт'
 },
-	url = 'https://b2b.uvelir-trade.ru'
+	url = NEXT_PUBLIC_BASE_URL
 
 export const metadata: Metadata = {
 	metadataBase: new URL(url),

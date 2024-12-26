@@ -7,6 +7,7 @@ import { Prisma } from '@prisma/client'
 import { useCallback } from 'react'
 import { getProductVariants } from '@/data/product'
 import { useRouter } from 'next/navigation'
+import { FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
 
 export default function ProductVariants({ currentProductArcticle, productPrototype }: { currentProductArcticle: string, productPrototype: NonNullable<Prisma.PromiseReturnType<typeof getProductVariants>> }) {
 	const router = useRouter(),
@@ -22,7 +23,7 @@ export default function ProductVariants({ currentProductArcticle, productPrototy
 						<Image
 							as={NextImage}
 							key={index}
-							src={visibleProductModification.media.length > 0 ? `${process.env.NEXT_PUBLIC_IMAGE_UPLOAD_API_URL}${visibleProductModification.media[0].path}` : EmptyProductMedia.src}
+							src={visibleProductModification.media.length > 0 ? `${FILE_SERVER_GET_IMAGE_PATH}${visibleProductModification.media[0].path}` : EmptyProductMedia.src}
 							alt={invisibleModelModification.article}
 							width={55}
 							height={55}

@@ -1,14 +1,13 @@
-import type { OpenGraph } from 'next/dist/lib/metadata/types/opengraph-types'
-import type { Twitter } from 'next/dist/lib/metadata/types/twitter-types'
+import type { Metadata } from 'next'
 
-export const openGraph: OpenGraph = {
+export const openGraph: Metadata['openGraph'] = {
 	determiner: 'the',
 	type: 'website',
 	locale: 'ru_RU',
-	siteName: 'Ювелир Трейд',
+	siteName: 'Ювелир Трейд Опт',
 	countryName: 'Россия'
 }
 
-export const twitter: Twitter = {
+export const twitter: Metadata['twitter'] = {
 	card: 'summary_large_image'
 }

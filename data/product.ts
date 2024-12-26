@@ -2,7 +2,8 @@
 
 import { prisma } from '@/prisma'
 import type { SerializedPrismaEntity } from '@/types'
-import { Prisma, type EarringDimensions, type InvisibleModelModification, type Metal, type ModelComponent, type ProductModel, type ProductPrototype, type RingDimensions, type Stone, type VisibleModelModification } from '@prisma/client'
+import { Prisma } from '@prisma/client'
+import type { EarringDimensions, InvisibleModelModification, Metal, ModelComponent, ProductModel, ProductPrototype, RingDimensions, Stone, VisibleModelModification } from '@prisma/client'
 
 const SELECT_ID = {
 	select: {

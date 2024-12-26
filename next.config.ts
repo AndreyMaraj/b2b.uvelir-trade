@@ -1,6 +1,7 @@
 import type { NextConfig } from 'next'
+import { FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
 
-const parsedUrl = new URL(process.env.NEXT_PUBLIC_IMAGE_UPLOAD_API_URL ?? ''),
+const parsedUrl = new URL(FILE_SERVER_GET_IMAGE_PATH),
 	nextConfig: NextConfig = {
 		images: {
 			remotePatterns: [{

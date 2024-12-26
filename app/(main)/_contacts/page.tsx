@@ -1,6 +1,6 @@
 import { openGraph, twitter } from '@/app/shared-metadata'
 import Link from '@/components/link'
-import type { Metadata } from 'next/types'
+import type { Metadata } from 'next'
 
 const title = 'Контакты',
 	description = 'Свяжитесь с нами для получения дополнительной информации.',
