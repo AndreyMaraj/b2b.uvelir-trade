@@ -1,7 +1,8 @@
 'use server'
 
 import { prisma } from '@/prisma'
-import { Prisma, type User } from '@prisma/client'
+import { Prisma } from '@prisma/client'
+import type { User } from '@prisma/client'
 
 export async function updateShoppingBag(userId: string, invisibleModelModificationId: number, count: number) {
 	const where = Prisma.validator<Prisma.ShoppingBagsProductWhereUniqueInput>()({

@@ -1,7 +1,7 @@
 import { auth } from '@/auth'
 import OrdersTable from './orders-table'
 import { openGraph, twitter } from '@/app/shared-metadata'
-import type { Metadata } from 'next/types'
+import type { Metadata } from 'next'
 
 const title = 'Заказы',
 	description = 'Просмотрите историю ваших заказов.',

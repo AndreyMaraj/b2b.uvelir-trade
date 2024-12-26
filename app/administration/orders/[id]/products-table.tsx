@@ -2,7 +2,8 @@
 
 import { Pagination } from '@nextui-org/pagination'
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table'
-import { type Key, useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import type { Key } from 'react'
 import type { InvisibleModelModification, OrderItem } from '@prisma/client'
 import { Image } from '@nextui-org/image'
 import NextImage from 'next/image'

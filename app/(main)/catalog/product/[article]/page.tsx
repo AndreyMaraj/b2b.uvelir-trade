@@ -6,7 +6,7 @@ import ProductTabs from './tabs'
 import ProductCard from '../../product-card'
 import AddToShoppingBagButton from './add-to-shopping-bag-button'
 import { openGraph, twitter } from '@/app/shared-metadata'
-import type { Metadata } from 'next/types'
+import type { Metadata } from 'next'
 import { auth } from '@/auth'
 
 interface CurrentPageProps extends PageProps<'article', never> { }

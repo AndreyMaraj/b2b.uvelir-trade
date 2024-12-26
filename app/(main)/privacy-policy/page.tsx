@@ -1,5 +1,5 @@
 import { openGraph, twitter } from '@/app/shared-metadata'
-import type { Metadata } from 'next/types'
+import type { Metadata } from 'next'
 
 const title = 'Политика конфиденциальности',
 	description = 'Узнайте о нашей политике конфиденциальности и защите ваших данных.',

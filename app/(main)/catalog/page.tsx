@@ -8,7 +8,7 @@ import { QueryParam } from '@/consts'
 import ProductCard from './product-card'
 import PaginationClient from './pagination'
 import { openGraph, twitter } from '@/app/shared-metadata'
-import type { Metadata } from 'next/types'
+import type { Metadata } from 'next'
 
 const title = 'Каталог',
 	description = 'Просмотрите наш каталог ювелирных изделий, доступных для авторизованных пользователей.',

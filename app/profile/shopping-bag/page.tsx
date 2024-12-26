@@ -1,7 +1,7 @@
 import ProductsTable from './products-table'
 import { auth } from '@/auth'
 import { openGraph, twitter } from '@/app/shared-metadata'
-import type { Metadata } from 'next/types'
+import type { Metadata } from 'next'
 
 const title = 'Корзина',
 	description = 'Просмотрите товары в вашей корзине.',

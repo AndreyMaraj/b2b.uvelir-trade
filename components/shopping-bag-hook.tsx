@@ -3,7 +3,8 @@
 import { clearUsersShoppingBag, getShoppingBagsProducts, updateShoppingBag } from '@/actions/shopping-bag'
 import type { ShoppingBagsProduct, User } from '@prisma/client'
 import { useSession } from 'next-auth/react'
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
+import type { ReactNode } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 
 interface ShoppingBagContextType {

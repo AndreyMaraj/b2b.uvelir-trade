@@ -4,7 +4,8 @@ import { getShoppingBagsWithProducts } from '@/actions/shopping-bag'
 import { useShoppingBag } from '@/components/shopping-bag-hook'
 import { Pagination } from '@nextui-org/pagination'
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table'
-import { type Key, useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import type { Key } from 'react'
 import EmptyProductMedia from '@/public/empty-product-media.jpg'
 import type { InvisibleModelModification, Order, ShoppingBagsProduct } from '@prisma/client'
 import { Image } from '@nextui-org/image'
@@ -13,6 +14,7 @@ import NextImage from 'next/image'
 import Link from '@/components/link'
 import { createOrder } from '@/actions/order'
 import { Tooltip } from '@nextui-org/tooltip'
+import { FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
 
 interface ProductRow {
 	id: InvisibleModelModification['id'],
@@ -86,7 +88,7 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 				id: product.invisibleModelModification.id,
 				count: product.count,
 				article: product.invisibleModelModification.article,
-				photo: product.invisibleModelModification.visibleModelModification.media.length === 1 ? `${process.env.NEXT_PUBLIC_IMAGE_UPLOAD_API_URL}${product.invisibleModelModification.visibleModelModification.media[0].path}` : EmptyProductMedia.src
+				photo: product.invisibleModelModification.visibleModelModification.media.length === 1 ? `${FILE_SERVER_GET_IMAGE_PATH}${product.invisibleModelModification.visibleModelModification.media[0].path}` : EmptyProductMedia.src
 			})) ?? [])
 
 		if (!isPending) {

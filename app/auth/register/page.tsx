@@ -2,7 +2,7 @@ import Link from '@/components/link'
 import RegisterForm from '@/components/register-form'
 import { Card, CardBody } from '@nextui-org/card'
 import { openGraph, twitter } from '@/app/shared-metadata'
-import type { Metadata } from 'next/types'
+import type { Metadata } from 'next'
 
 const title = 'Регистрация',
 	description = 'Создайте учетную запись на Ювелир Трейд Опт.',

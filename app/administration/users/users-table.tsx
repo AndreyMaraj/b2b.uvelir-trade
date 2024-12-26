@@ -5,8 +5,10 @@ import { Chip } from '@nextui-org/chip'
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/dropdown'
 import { Pagination } from '@nextui-org/pagination'
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table'
-import { type Key, useCallback, useEffect, useMemo, useState } from 'react'
-import { type User, UserRole } from '@prisma/client'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import type { Key } from 'react'
+import { UserRole } from '@prisma/client'
+import type { User } from '@prisma/client'
 import { getUsers, setUserRole, setUserVerified } from '@/data/user'
 
 interface UserRow extends Omit<User, 'updatedAt' | 'password'> { }

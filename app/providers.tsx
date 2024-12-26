@@ -5,7 +5,8 @@ import { NextUIProvider } from '@nextui-org/react'
 import type { Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { useMemo, type ReactNode } from 'react'
+import { useMemo } from 'react'
+import type { ReactNode } from 'react'
 
 type ProvidersProps = {
 	children: ReactNode

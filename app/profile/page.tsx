@@ -2,7 +2,7 @@ import { auth } from '@/auth'
 import PrifileForm from './profile-form'
 import { getUserById } from '@/data/user'
 import { openGraph, twitter } from '@/app/shared-metadata'
-import type { Metadata } from 'next/types'
+import type { Metadata } from 'next'
 
 const description = 'Просмотрите и обновите информацию о своем профиле.',
 	url = '/profile'

@@ -1,7 +1,8 @@
 'use server'
 
 import { prisma } from '@/prisma'
-import { Prisma, type User } from '@prisma/client'
+import { Prisma } from '@prisma/client'
+import type { User } from '@prisma/client'
 
 export const getUserByEmail = async (email: User['email']) => {
 	try {

@@ -1,7 +1,7 @@
 import UsersTable from './users-table'
 import { auth } from '@/auth'
 import { openGraph, twitter } from '@/app/shared-metadata'
-import type { Metadata } from 'next/types'
+import type { Metadata } from 'next'
 
 const title = 'Пользователи',
 	description = 'Управление пользователями в системе.',

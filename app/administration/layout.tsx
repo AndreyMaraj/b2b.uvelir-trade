@@ -1,6 +1,6 @@
 import NavLinks from '@/components/nav-links'
 import type { ReactNode } from 'react'
-import type { Metadata } from 'next/types'
+import type { Metadata } from 'next'
 
 const title = {
 	template: '%s | Администрирование | Ювелир Трейд Опт',

@@ -1,5 +1,5 @@
 import { openGraph, twitter } from '@/app/shared-metadata'
-import type { Metadata } from 'next/types'
+import type { Metadata } from 'next'
 
 const title = 'О компании',
 	description = 'Узнайте больше о компании Ювелир Трейд и нашей миссии.',
