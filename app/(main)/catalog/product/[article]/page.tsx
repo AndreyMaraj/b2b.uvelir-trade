@@ -7,7 +7,6 @@ import ProductCard from '../../product-card'
 import AddToShoppingBagButton from './add-to-shopping-bag-button'
 import { openGraph, twitter } from '@/app/shared-metadata'
 import type { Metadata } from 'next'
-import { auth } from '@/auth'
 
 interface CurrentPageProps extends PageProps<'article', never> { }
 
@@ -51,12 +50,6 @@ interface CharacteristicGroup {
 const youMayLikeBlockProductCount = 20
 
 export default async function Page({ params }: CurrentPageProps) {
-	const session = await auth()
-
-	if (!session?.user.id) {
-		return
-	}
-
 	const article = decodeURIComponent((await params).article),
 		product = await getProductByArticle(article)
 

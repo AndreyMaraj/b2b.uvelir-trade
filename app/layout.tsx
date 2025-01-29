@@ -6,21 +6,20 @@ import { Providers } from '@/app/providers'
 import Footer from '@/components/footer'
 import { auth } from '@/auth'
 import type { Metadata } from 'next'
-import { NEXT_PUBLIC_BASE_URL } from '@/consts'
+import { BASE_URL } from '@/consts'
 
 const title = {
 	default: 'Ювелир Трейд Опт',
 	template: '%s | Ювелир Трейд Опт'
-},
-	url = NEXT_PUBLIC_BASE_URL
+}
 
 export const metadata: Metadata = {
-	metadataBase: new URL(url),
+	metadataBase: new URL(BASE_URL),
 	title,
 	applicationName: 'Ювелир Трейд Опт',
 	authors: [{
 		name: 'Команда разработки Ювелир Трейд',
-		url
+		url: BASE_URL
 	}],
 	generator: 'Next.js',
 	keywords: ['ювелирные изделия', 'оптовая торговля ювелиркой', 'ювелирный опт', 'дизайнерские украшения', 'золотые изделия оптом', 'серебряные украшения', 'ювелирные аксессуары', 'оптовые цены на ювелирные изделия', 'поставщики ювелирных изделий'],
@@ -57,8 +56,8 @@ export default async function Layout({ children }: Readonly<{ children: ReactNod
 		sessionKey = new Date().valueOf()
 
 	return (
-		<html lang='ru'>
-			<body className={inter.className}>
+		<html lang='ru' className={inter.className}>
+			<body>
 				<Providers className='min-h-screen bg-white flex flex-col' session={sessions} sessionKey={sessionKey}>
 					<Header />
 					{children}

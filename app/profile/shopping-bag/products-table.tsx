@@ -14,7 +14,7 @@ import NextImage from 'next/image'
 import Link from '@/components/link'
 import { createOrder } from '@/actions/order'
 import { Tooltip } from '@nextui-org/tooltip'
-import { FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
+import { NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
 
 interface ProductRow {
 	id: InvisibleModelModification['id'],
@@ -88,7 +88,7 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 				id: product.invisibleModelModification.id,
 				count: product.count,
 				article: product.invisibleModelModification.article,
-				photo: product.invisibleModelModification.visibleModelModification.media.length === 1 ? `${FILE_SERVER_GET_IMAGE_PATH}${product.invisibleModelModification.visibleModelModification.media[0].path}` : EmptyProductMedia.src
+				photo: product.invisibleModelModification.visibleModelModification.media.length === 1 ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${product.invisibleModelModification.visibleModelModification.media[0].path}` : EmptyProductMedia.src
 			})) ?? [])
 
 		if (!isPending) {

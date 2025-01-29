@@ -1,7 +1,7 @@
 import type { NextConfig } from 'next'
-import { FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
+import { NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
 
-const parsedUrl = new URL(FILE_SERVER_GET_IMAGE_PATH),
+const parsedUrl = new URL(NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH),
 	nextConfig: NextConfig = {
 		images: {
 			remotePatterns: [{
@@ -9,6 +9,15 @@ const parsedUrl = new URL(FILE_SERVER_GET_IMAGE_PATH),
 				hostname: parsedUrl.hostname,
 				port: parsedUrl.port,
 				pathname: `${parsedUrl.pathname}/**`
+			}]
+		},
+		async headers() {
+			return [{
+				source: '/:path*{/}?',
+				headers: [{
+					key: 'X-Accel-Buffering',
+					value: 'no'
+				}]
 			}]
 		}
 	}

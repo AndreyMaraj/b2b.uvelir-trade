@@ -5,7 +5,7 @@ import NextImage from 'next/image'
 import EmptyProductMedia from '@/public/empty-product-media.jpg'
 import { Media } from '@prisma/client'
 import { useState } from 'react'
-import { FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
+import { NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
 
 export default function ProductImages({ media }: { media: Media[] }) {
 	const [selectedImage, setSelectedImage] = useState(media.length > 0 ? media[0] : undefined)
@@ -15,7 +15,7 @@ export default function ProductImages({ media }: { media: Media[] }) {
 			<div className='flex justify-center items-center h-full'>
 				<Image
 					as={NextImage}
-					src={selectedImage ? `${FILE_SERVER_GET_IMAGE_PATH}${selectedImage.path}` : EmptyProductMedia.src}
+					src={selectedImage ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${selectedImage.path}` : EmptyProductMedia.src}
 					alt=''
 					width={557}
 					height={557}
@@ -31,7 +31,7 @@ export default function ProductImages({ media }: { media: Media[] }) {
 						<Image
 							as={NextImage}
 							key={index}
-							src={`${FILE_SERVER_GET_IMAGE_PATH}${mediaFile.path}`}
+							src={`${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${mediaFile.path}`}
 							alt=''
 							width={55}
 							height={55}

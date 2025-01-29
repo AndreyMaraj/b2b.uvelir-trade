@@ -14,15 +14,10 @@ export const getUserByEmail = async (email: User['email']) => {
 }
 
 const userWithoutPassword = Prisma.validator<Prisma.UserDefaultArgs>()({
-	select: {
-		id: true,
-		name: true,
-		tin: true,
-		city: true,
-		email: true,
-		phone: true,
-		role: true,
-		verified: true
+	omit: {
+		password: true,
+		createdAt: true,
+		updatedAt: true
 	}
 })
 
@@ -31,16 +26,7 @@ export type UserWithoutPassword = Prisma.UserGetPayload<typeof userWithoutPasswo
 export const getUserById = async (id: User['id']): Promise<UserWithoutPassword | null> => {
 	try {
 		return await prisma.user.findUnique({
-			select: {
-				id: true,
-				name: true,
-				tin: true,
-				city: true,
-				email: true,
-				phone: true,
-				role: true,
-				verified: true
-			},
+			...userWithoutPassword,
 			where: { id }
 		})
 	} catch (e) {
