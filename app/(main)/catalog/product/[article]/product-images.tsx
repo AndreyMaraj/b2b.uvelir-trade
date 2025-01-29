@@ -17,6 +17,7 @@ export default function ProductImages({ media }: { media: Media[] }) {
 					as={NextImage}
 					src={selectedImage ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${selectedImage.path}` : EmptyProductMedia.src}
 					alt=''
+					isZoomed
 					width={557}
 					height={557}
 					quality={100}
