@@ -1,6 +1,9 @@
 'use client'
 
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Button, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Badge, Popover, PopoverTrigger, PopoverContent } from '@nextui-org/react'
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem } from '@nextui-org/navbar'
+import { Button } from '@nextui-org/button'
+import { Badge } from '@nextui-org/badge'
+import { Popover, PopoverTrigger, PopoverContent } from '@nextui-org/popover'
 import { useCallback, useMemo, useState } from 'react'
 import Link from '@/components/link'
 import { signIn, useSession } from 'next-auth/react'
@@ -43,7 +46,7 @@ function ShoppingBagButton({ productsCount, positionCount, isBadgeInvisible }: {
 									href='/profile/shopping-bag'
 									size='sm'
 									color='foreground'
-									onClick={() => setIsOpen(false)}
+									onPress={() => setIsOpen(false)}
 								>
 									Оформить заказ
 								</Link>
@@ -91,7 +94,7 @@ export default function Header() {
 			<div className='flex w-full flex-nowrap items-center justify-between container'>
 				<NavbarContent justify='start'>
 					<NavbarItem className='sm:hidden'>
-						<NavbarMenuToggle />
+						<NavbarMenuToggle icon={<span className='iconify mdi--hamburger-menu text-2xl' />} />
 					</NavbarItem>
 					{!!products.length &&
 						<NavbarItem className='hidden sm:flex'>
@@ -114,10 +117,10 @@ export default function Header() {
 						</NavbarItem>
 					}
 					<NavbarItem>
-						<Button className='hidden sm:flex text-white hover:text-black' variant='ghost' startContent={<span className='iconify mdi--account-outline text-2xl' />} onClick={onProfileButtonClick}>
+						<Button className='hidden sm:flex text-white hover:text-black' variant='ghost' startContent={<span className='iconify mdi--account-outline text-2xl' />} onPress={onProfileButtonClick}>
 							{session.data ? 'Личный кабинет' : 'Вход для партнеров'}
 						</Button>
-						<Button className='sm:hidden text-white hover:text-black' variant='ghost' isIconOnly onClick={onProfileButtonClick}>
+						<Button className='sm:hidden text-white hover:text-black' variant='ghost' isIconOnly onPress={onProfileButtonClick}>
 							<span className='iconify mdi--account-outline text-2xl' />
 						</Button>
 					</NavbarItem>
@@ -130,7 +133,7 @@ export default function Header() {
 								href={item.href}
 								size='lg'
 								color='foreground'
-								onClick={() => setIsMenuOpen(false)}
+								onPress={() => setIsMenuOpen(false)}
 							>
 								{item.label}
 							</Link>

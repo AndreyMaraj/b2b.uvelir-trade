@@ -4,10 +4,12 @@ import { login } from '@/actions/login'
 import { LoginSchema } from '@/schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@nextui-org/button'
-import { Code, Input } from '@nextui-org/react'
+import { Code } from '@nextui-org/code'
+import { Input } from '@nextui-org/input'
 import { useCallback, useState, useTransition } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { Form } from '@nextui-org/form'
 
 export default function LoginForm() {
 	const [isVisiblePassword, setIsVisiblePassword] = useState(false),
@@ -20,11 +22,15 @@ export default function LoginForm() {
 				password: ''
 			}
 		}),
-		onSubmit = useCallback((values: z.infer<typeof LoginSchema>) => startTransition(() => login(values).then(data => setError(data?.error))), []),
+		onSubmit = useCallback((values: z.infer<typeof LoginSchema>) => {
+			startTransition(() => {
+				login(values).then(data => setError(data?.error))
+			})
+		}, []),
 		changeIsVisiblePassword = useCallback(() => setIsVisiblePassword(!isVisiblePassword), [isVisiblePassword])
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)}>
+		<Form onSubmit={handleSubmit(onSubmit)}>
 			<Controller
 				control={control}
 				name='email'
@@ -57,7 +63,7 @@ export default function LoginForm() {
 						isInvalid={fieldState.invalid}
 						errorMessage={fieldState.error?.message}
 						endContent={
-							<Button isIconOnly variant='light' onClick={changeIsVisiblePassword}>
+							<Button isIconOnly variant='light' onPress={changeIsVisiblePassword}>
 								<span className={`iconify ${isVisiblePassword ? 'mdi--eye-off-outline' : 'mdi--eye-outline'} text-2xl`} />
 							</Button>
 						}
@@ -72,6 +78,6 @@ export default function LoginForm() {
 			<Button type='submit' className='w-full' isDisabled={isPending}>
 				Войти
 			</Button>
-		</form>
+		</Form>
 	)
 }

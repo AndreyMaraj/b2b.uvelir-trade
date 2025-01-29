@@ -1,8 +1,27 @@
 import { auth } from '@/auth'
 import PrifileForm from './profile-form'
 import { getUserById } from '@/data/user'
-import { Button } from '@nextui-org/react'
-import { signOut } from '@/auth'
+import { openGraph, twitter } from '@/app/shared-metadata'
+import type { Metadata } from 'next'
+
+const description = 'Просмотрите и обновите информацию о своем профиле.',
+	url = '/profile'
+
+export const metadata: Metadata = {
+	description,
+	alternates: {
+		canonical: url
+	},
+	openGraph: {
+		...openGraph,
+		url,
+		description
+	},
+	twitter: {
+		...twitter,
+		description
+	}
+}
 
 export default async function Page() {
 	const session = await auth()
@@ -11,15 +30,10 @@ export default async function Page() {
 		return
 	}
 
-	const user = await getUserById(session?.user.id)
+	const user = await getUserById(session.user.id)
 
 	if (!user) {
 		return
-	}
-
-	const onSignOutButtonClick = async () => {
-		'use server'
-		await signOut({ redirectTo: '/' })
 	}
 
 	return (
@@ -28,11 +42,6 @@ export default async function Page() {
 				Личные данные
 			</h1>
 			<PrifileForm user={user} />
-			<form action={onSignOutButtonClick} className='mt-5'>
-				<Button type='submit' color='danger' variant='light' fullWidth>
-					Выход
-				</Button>
-			</form>
 		</div>
 	)
 }

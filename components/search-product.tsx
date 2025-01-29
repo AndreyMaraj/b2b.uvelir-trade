@@ -1,6 +1,6 @@
 'use client'
 
-import { Input } from '@nextui-org/react'
+import { Input } from '@nextui-org/input'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
 import { useDebouncedCallback } from 'use-debounce'

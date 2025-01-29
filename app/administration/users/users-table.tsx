@@ -1,8 +1,14 @@
 'use client'
 
-import { Button, Chip, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react'
-import { type Key, useCallback, useEffect, useMemo, useState } from 'react'
-import { type User, UserRole } from '@prisma/client'
+import { Button } from '@nextui-org/button'
+import { Chip } from '@nextui-org/chip'
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/dropdown'
+import { Pagination } from '@nextui-org/pagination'
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import type { Key } from 'react'
+import { UserRole } from '@prisma/client'
+import type { User } from '@prisma/client'
 import { getUsers, setUserRole, setUserVerified } from '@/data/user'
 
 interface UserRow extends Omit<User, 'updatedAt' | 'password'> { }
@@ -47,15 +53,14 @@ export default function UsersTable({ userId }: { userId: User['id'] }) {
 								</Button>
 							</DropdownTrigger>
 							<DropdownMenu disabledKeys={userId === user.id ? ['verified', 'admin'] : undefined}>
-								<DropdownItem key='verified' onClick={async () => {
+								<DropdownItem key='verified' onPress={async () => {
 									const updatedUser = await setUserVerified(user.id, !user.verified)
 									updatedUser && setRows(prevRows => prevRows.map(row => row.id === updatedUser.id ? { ...row, verified: updatedUser.verified } : row))
 								}}>
 									{user.verified ? 'Отменить верификацию' : 'Верифицивровать'}
 								</DropdownItem>
-								<DropdownItem key='admin' onClick={async () => {
+								<DropdownItem key='admin' onPress={async () => {
 									const updatedUser = await setUserRole(user.id, user.role === UserRole.ADMIN ? UserRole.USER : UserRole.ADMIN)
-
 									updatedUser && setRows(prevRows => prevRows.map(row => row.id === updatedUser.id ? { ...row, role: updatedUser.role } : row))
 								}}>
 									{user.role === UserRole.ADMIN ? 'Удалить права администратора' : 'Дать права администратора'}

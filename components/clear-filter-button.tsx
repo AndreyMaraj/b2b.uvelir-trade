@@ -1,7 +1,7 @@
 'use client'
 
 import { QueryParam } from '@/consts'
-import { Button } from '@nextui-org/react'
+import { Button } from '@nextui-org/button'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
 
@@ -23,7 +23,7 @@ export default function ClearFilterButton() {
 		}, [pathname, searchParams, router])
 
 	return (
-		<Button variant='light' className='self-center' size='sm' onClick={onClick}>
+		<Button variant='light' className='self-center' size='sm' onPress={onClick}>
 			Сбросить фильтр
 		</Button>
 	)

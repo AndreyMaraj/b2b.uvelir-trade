@@ -1,5 +1,21 @@
 import type { ReactNode } from 'react'
 import NavLinks from '@/components/nav-links'
+import type { Metadata } from 'next'
+
+const title = {
+	template: '%s | Личный кабинет | Ювелир Трейд Опт',
+	default: 'Личный кабинет'
+}
+
+export const metadata: Metadata = {
+	title,
+	robots: {
+		index: false,
+		follow: true
+	},
+	openGraph: { title },
+	twitter: { title }
+}
 
 const menuItems = [{
 	label: 'Личная информация',

@@ -2,14 +2,19 @@
 
 import { getShoppingBagsWithProducts } from '@/actions/shopping-bag'
 import { useShoppingBag } from '@/components/shopping-bag-hook'
-import { Button, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from '@nextui-org/react'
-import { type Key, useCallback, useEffect, useMemo, useState } from 'react'
+import { Pagination } from '@nextui-org/pagination'
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import type { Key } from 'react'
 import EmptyProductMedia from '@/public/empty-product-media.jpg'
 import type { InvisibleModelModification, Order, ShoppingBagsProduct } from '@prisma/client'
-import { Image } from '@nextui-org/react'
+import { Image } from '@nextui-org/image'
+import { Button } from '@nextui-org/button'
 import NextImage from 'next/image'
 import Link from '@/components/link'
 import { createOrder } from '@/actions/order'
+import { Tooltip } from '@nextui-org/tooltip'
+import { NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
 
 interface ProductRow {
 	id: InvisibleModelModification['id'],
@@ -64,7 +69,7 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 				case 'remove':
 					return (
 						<Tooltip color='danger' content='Удалить товар'>
-							<Button variant='ghost' isIconOnly onClick={() => updateProducts(product.id, 0)}>
+							<Button variant='ghost' isIconOnly onPress={() => updateProducts(product.id, 0)}>
 								<span className='iconify mdi--delete-outline text-2xl' />
 							</Button>
 						</Tooltip>
@@ -83,7 +88,7 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 				id: product.invisibleModelModification.id,
 				count: product.count,
 				article: product.invisibleModelModification.article,
-				photo: product.invisibleModelModification.visibleModelModification.media.length === 1 ? `${process.env.NEXT_PUBLIC_IMAGE_UPLOAD_API_URL}${product.invisibleModelModification.visibleModelModification.media[0].path}` : EmptyProductMedia.src
+				photo: product.invisibleModelModification.visibleModelModification.media.length === 1 ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${product.invisibleModelModification.visibleModelModification.media[0].path}` : EmptyProductMedia.src
 			})) ?? [])
 
 		if (!isPending) {
@@ -100,7 +105,7 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 						<Button
 							color='danger'
 							endContent={<span className='iconify mdi--delete-outline text-2xl' />}
-							onClick={() => clearShoppingBag()}
+							onPress={() => clearShoppingBag()}
 						>
 							Очистить
 						</Button>
@@ -149,7 +154,7 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 			</Table>
 			{!!rows.length &&
 				<div className='flex justify-center mt-5'>
-					<Button as={Link} color='primary' onClick={onCreateOrderClick} href='/profile/orders'>
+					<Button as={Link} color='primary' onPress={onCreateOrderClick} href='/profile/orders'>
 						Отправить заказ
 					</Button>
 				</div>

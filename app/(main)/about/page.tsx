@@ -1,7 +1,35 @@
+import { openGraph, twitter } from '@/app/shared-metadata'
+import type { Metadata } from 'next'
+
+const title = 'О компании',
+	description = 'Узнайте больше о компании Ювелир Трейд и нашей миссии.',
+	url = '/about'
+
+export const metadata: Metadata = {
+	title,
+	description,
+	alternates: {
+		canonical: url
+	},
+	openGraph: {
+		...openGraph,
+		url,
+		title,
+		description
+	},
+	twitter: {
+		...twitter,
+		description,
+		title
+	}
+}
+
 export default function Page() {
 	return (
 		<>
-			<h1 className='text-3xl mb-6'>О Компании</h1>
+			<h1 className='text-3xl mb-6'>
+				О Компании
+			</h1>
 			<iframe
 				className='w-full aspect-video'
 				src='https://vk.com/video_ext.php?oid=-223654603&id=456239312&hd=2&autoplay=1'

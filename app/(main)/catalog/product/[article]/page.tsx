@@ -1,11 +1,41 @@
 import { getAdditionalProducts, getProductByArticle, getProductVariants } from '@/data/product'
-import { Card, CardBody, CardHeader } from '@nextui-org/react'
+import { Card, CardBody, CardHeader } from '@nextui-org/card'
 import ProductImages from './product-images'
 import ProductVariants from './product-variants'
 import ProductTabs from './tabs'
-import { Prisma } from '@prisma/client'
 import ProductCard from '../../product-card'
 import AddToShoppingBagButton from './add-to-shopping-bag-button'
+import { openGraph, twitter } from '@/app/shared-metadata'
+import type { Metadata } from 'next'
+
+interface CurrentPageProps extends PageProps<'article', never> { }
+
+export async function generateMetadata({ params }: CurrentPageProps): Promise<Metadata> {
+	const article = decodeURIComponent((await params).article),
+		url = `/catalog/product/${article}`,
+		product = await getProductByArticle(article),
+		title = product ? `${product.visibleModelModification.productModel.productPrototyp.type.name} ${product.article}` : '',
+		description = 'Подробная информация о товаре.'
+
+	return {
+		title,
+		description,
+		alternates: {
+			canonical: url
+		},
+		openGraph: {
+			...openGraph,
+			url,
+			title,
+			description
+		},
+		twitter: {
+			...twitter,
+			description,
+			title
+		}
+	}
+}
 
 interface Characteristic {
 	label: string,
@@ -19,7 +49,14 @@ interface CharacteristicGroup {
 
 const youMayLikeBlockProductCount = 20
 
-async function ProductPage({ product }: { product: NonNullable<Prisma.PromiseReturnType<typeof getProductByArticle>> }) {
+export default async function Page({ params }: CurrentPageProps) {
+	const article = decodeURIComponent((await params).article),
+		product = await getProductByArticle(article)
+
+	if (!product) {
+		return
+	}
+
 	const productPrototype = await getProductVariants(product.visibleModelModification.productModel.productPrototypId),
 		additionalProducts = await getAdditionalProducts({
 			take: youMayLikeBlockProductCount,
@@ -210,16 +247,4 @@ async function ProductPage({ product }: { product: NonNullable<Prisma.PromiseRet
 			}
 		</>
 	)
-}
-
-export default async function Page({ params }: Omit<PageProps<'article', never>, 'searchParams'>) {
-	const article = decodeURIComponent(params.article),
-		product = await getProductByArticle(article)
-
-	return product ?
-		<ProductPage product={product} />
-		:
-		<>
-			Товара с артикулом {article} не существует
-		</>
 }

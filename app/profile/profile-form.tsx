@@ -5,10 +5,13 @@ import { UserWithoutPassword } from '@/data/user'
 import { ProfileSchema } from '@/schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@nextui-org/button'
-import { Code, Input } from '@nextui-org/react'
+import { Code } from '@nextui-org/code'
+import { Input } from '@nextui-org/input'
 import { useCallback, useState, useTransition } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { signOut } from 'next-auth/react'
+import { Form } from '@nextui-org/form'
 
 export default function PrifileForm({ user }: { user: UserWithoutPassword }) {
 	const [isPending, startTransition] = useTransition(),
@@ -25,10 +28,10 @@ export default function PrifileForm({ user }: { user: UserWithoutPassword }) {
 		}),
 		onSubmit = useCallback((values: z.infer<typeof ProfileSchema>) => startTransition(() => {
 			updateProfile(values, user.id).then(data => setError(data?.error))
-		}), [])
+		}), [user.id])
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)}>
+		<Form onSubmit={handleSubmit(onSubmit)}>
 			<Controller
 				control={control}
 				name='name'
@@ -122,6 +125,9 @@ export default function PrifileForm({ user }: { user: UserWithoutPassword }) {
 			<Button type='submit' className='w-full' isDisabled={isPending}>
 				Сохранить
 			</Button>
-		</form>
+			<Button color='danger' variant='light' fullWidth className='mt-5' onPress={() => signOut()}>
+				Выход
+			</Button>
+		</Form>
 	)
 }

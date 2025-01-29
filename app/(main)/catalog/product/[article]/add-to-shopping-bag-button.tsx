@@ -1,6 +1,7 @@
 'use client'
 
-import { Button, Input } from '@nextui-org/react'
+import { Button } from '@nextui-org/button'
+import { Input } from '@nextui-org/input'
 import { useCallback, useEffect, useState } from 'react'
 import { useShoppingBag } from '@/components/shopping-bag-hook'
 
@@ -28,7 +29,7 @@ export default function AddToShoppingBagButton({ productId }: { productId: numbe
 			className='w-40'
 			color='primary'
 			disabled={isPending}
-			onClick={() => onCountChange(1)}
+			onPress={() => onCountChange(1)}
 		>
 			Добавить в корзину
 		</Button>

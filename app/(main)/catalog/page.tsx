@@ -7,10 +7,59 @@ import ClearFilterButton from '@/components/clear-filter-button'
 import { QueryParam } from '@/consts'
 import ProductCard from './product-card'
 import PaginationClient from './pagination'
+import { openGraph, twitter } from '@/app/shared-metadata'
+import type { Metadata } from 'next'
+
+const title = 'Каталог',
+	description = 'Просмотрите наш каталог ювелирных изделий, доступных для авторизованных пользователей.',
+	url = '/catalog'
+
+export const metadata: Metadata = {
+	title,
+	description,
+	alternates: {
+		canonical: url
+	},
+	openGraph: {
+		...openGraph,
+		url,
+		title,
+		description
+	},
+	twitter: {
+		...twitter,
+		description,
+		title
+	}
+}
 
 const numberOfProductsPerPage = 15
 
-async function ProductsPage({ searchParams }: Omit<PageProps<never, `${QueryParam}`>, 'params'>) {
+export default async function Page(props: PageProps<never, QueryParam>) {
+	const session = await auth(),
+		searchParams = await props.searchParams
+
+	if (!session?.user) {
+		return (
+			<>
+				<h1 className='text-3xl'>
+					Доступ только для зарегистрированных пользователей
+				</h1>
+				<p className='mt-5'>
+					Необходимо&nbsp;
+					<Link href='/login'>
+						авторизоваться
+					</Link>
+					&nbsp;или&nbsp;
+					<Link href='/register'>
+						зарегистрироваться
+					</Link>
+					.
+				</p>
+			</>
+		)
+	}
+
 	const currentPage = Number(searchParams[QueryParam.PAGE]) || 1,
 		{ products, productsCount } = await getProducts({
 			skip: (currentPage - 1) * numberOfProductsPerPage,
@@ -71,36 +120,5 @@ async function ProductsPage({ searchParams }: Omit<PageProps<never, `${QueryPara
 				</div>
 			</div>
 		</>
-	)
-}
-
-function NotLoggedInPage() {
-	return (
-		<>
-			<h1 className='text-3xl'>
-				Доступ только для зарегистрированных пользователей
-			</h1>
-			<p className='mt-5'>
-				Необходимо&nbsp;
-				<Link href='/login'>
-					авторизоваться
-				</Link>
-				&nbsp;или&nbsp;
-				<Link href='/register'>
-					зарегистрироваться
-				</Link>
-				.
-			</p>
-		</>
-	)
-}
-
-export default async function Page({ searchParams }: PageProps<never, 'page' | 'query'>) {
-	const session = await auth()
-
-	return session?.user ? (
-		<ProductsPage searchParams={searchParams} />
-	) : (
-		<NotLoggedInPage />
 	)
 }

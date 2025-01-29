@@ -1,8 +1,10 @@
-import { Card, CardBody, CardHeader, Image } from '@nextui-org/react'
+import { Card, CardBody, CardHeader } from '@nextui-org/card'
+import { Image } from '@nextui-org/image'
 import NextImage from 'next/image'
 import { Prisma } from '@prisma/client'
 import EmptyProductMedia from '@/public/empty-product-media.jpg'
 import Link from '@/components/link'
+import { NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
 
 const ProductCardData = Prisma.validator<Prisma.InvisibleModelModificationDefaultArgs>()({
 	include: {
@@ -37,7 +39,7 @@ export default function ProductCard({ product, className }: ProductCardProps) {
 			<CardBody className='overflow-visible py-2 items-center justify-end'>
 				<Image
 					as={NextImage}
-					src={product.visibleModelModification.media.length > 0 ? `${process.env.NEXT_PUBLIC_IMAGE_UPLOAD_API_URL}${product.visibleModelModification.media[0].path}` : EmptyProductMedia.src}
+					src={product.visibleModelModification.media.length > 0 ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${product.visibleModelModification.media[0].path}` : EmptyProductMedia.src}
 					alt=''
 					width={160}
 					height={160}

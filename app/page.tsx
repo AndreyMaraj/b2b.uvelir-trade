@@ -7,10 +7,32 @@ import Slider5 from '@/public/slider-14.jpg'
 import Slider6 from '@/public/slider-15.jpg'
 import Slider7 from '@/public/slider-16.jpg'
 import Slider8 from '@/public/slider-17.jpg'
-import { Button, Image } from '@nextui-org/react'
 import NextImage from 'next/image'
 import DiamondIcon from '@/public/diamond-icon.svg'
 import Link from '@/components/link'
+import { Button } from '@nextui-org/button'
+import { Image } from '@nextui-org/image'
+import { openGraph, twitter } from '@/app/shared-metadata'
+import type { Metadata } from 'next'
+
+const description = 'Ювелир Трейд предлагает широкий ассортимент ювелирных изделий оптом: от золотых и серебряных украшений до дизайнерских аксессуаров. Мы гарантируем высокое качество и конкурентные цены для оптовых покупателей в России И СНГ.',
+	url = '/'
+
+export const metadata: Metadata = {
+	description,
+	alternates: {
+		canonical: url
+	},
+	openGraph: {
+		...openGraph,
+		url,
+		description
+	},
+	twitter: {
+		...twitter,
+		description
+	}
+}
 
 export default function Page() {
 	return (

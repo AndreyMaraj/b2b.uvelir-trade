@@ -1,7 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { Button, Image } from '@nextui-org/react'
+import { Button } from '@nextui-org/button'
+import { Image } from '@nextui-org/image'
 import NextImage from 'next/image'
 
 type CarouselProps = {
@@ -20,7 +21,7 @@ type ArrowButtonProps = {
 
 function ArrowButton(props: ArrowButtonProps) {
 	return (
-		<Button isIconOnly variant='light' radius='full' onClick={props.onClick}>
+		<Button isIconOnly variant='light' radius='full' onPress={props.onClick}>
 			<span className={`iconify ${props.icon} text-3xl rounded-full`} />
 		</Button>
 	)

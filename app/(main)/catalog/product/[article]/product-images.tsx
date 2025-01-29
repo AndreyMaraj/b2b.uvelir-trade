@@ -1,10 +1,11 @@
 'use client'
 
-import { Image } from '@nextui-org/react'
+import { Image } from '@nextui-org/image'
 import NextImage from 'next/image'
 import EmptyProductMedia from '@/public/empty-product-media.jpg'
 import { Media } from '@prisma/client'
 import { useState } from 'react'
+import { NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
 
 export default function ProductImages({ media }: { media: Media[] }) {
 	const [selectedImage, setSelectedImage] = useState(media.length > 0 ? media[0] : undefined)
@@ -14,8 +15,9 @@ export default function ProductImages({ media }: { media: Media[] }) {
 			<div className='flex justify-center items-center h-full'>
 				<Image
 					as={NextImage}
-					src={selectedImage ? `${process.env.NEXT_PUBLIC_IMAGE_UPLOAD_API_URL}${selectedImage.path}` : EmptyProductMedia.src}
+					src={selectedImage ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${selectedImage.path}` : EmptyProductMedia.src}
 					alt=''
+					isZoomed
 					width={557}
 					height={557}
 					quality={100}
@@ -30,7 +32,7 @@ export default function ProductImages({ media }: { media: Media[] }) {
 						<Image
 							as={NextImage}
 							key={index}
-							src={`${process.env.NEXT_PUBLIC_IMAGE_UPLOAD_API_URL}${mediaFile.path}`}
+							src={`${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${mediaFile.path}`}
 							alt=''
 							width={55}
 							height={55}

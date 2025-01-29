@@ -2,7 +2,7 @@
 
 import { forwardRef, ForwardedRef } from 'react'
 import NextLink, { LinkProps as NextLinkProps } from 'next/link'
-import { Link as NextUILink, LinkProps as NextUILinkProps } from '@nextui-org/react'
+import { Link as NextUILink, LinkProps as NextUILinkProps } from '@nextui-org/link'
 
 export type LinkProps = Omit<NextUILinkProps, 'as' | 'href'> &
 	Pick<NextLinkProps, 'replace' | 'scroll' | 'shallow' | 'passHref' | 'prefetch' | 'locale'> & {

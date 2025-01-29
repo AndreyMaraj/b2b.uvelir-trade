@@ -3,11 +3,12 @@
 import type { NextRequest } from 'next/server'
 import * as fs from 'fs'
 import { ElementCompact, xml2js } from 'xml-js'
-import { upsertProductModel, upsertInvisibleModelModification, upsertEarringDimensions, upsertModelComponent, upsertMetal, upsertVisibleModelModification, upsertProductPrototyp, upsertRingDimensions, upsertStone, upsertWeavingType, upsertWireType, upsertMetalCoating, upsertColor, upsertSex, upsertProductTheme, upsertProductStyle, upsertProductLockType, upsertAgeCategory, upsertProductType, upsertMetalType, upsertStoneType, upsertCutType } from '@/data/product'
+import { upsertProductModel, upsertInvisibleModelModification, upsertEarringDimensions, upsertModelComponent, upsertMetal, upsertProductPrototyp, upsertRingDimensions, upsertStone, upsertWeavingType, upsertWireType, upsertMetalCoating, upsertColor, upsertSex, upsertProductTheme, upsertProductStyle, upsertProductLockType, upsertAgeCategory, upsertProductType, upsertMetalType, upsertStoneType, upsertCutType } from '@/data/product'
 import { prisma } from '@/prisma'
 import path from 'path'
 import FormData from 'form-data'
 import fetch from 'node-fetch'
+import { FILE_SERVER_UPLOAD_IMAGE_PATH } from '@/consts'
 
 enum RequestMode {
 	CheckAuth = 'checkauth',
@@ -316,10 +317,6 @@ function getArticleFromFile(fileArticle?: string) {
 }
 
 async function uploadImage(filesPaths: string[], folderPath: string): Promise<string[]> {
-	if (!process.env.IMAGE_API_URL) {
-		throw new Error('Env property IMAGE_API_URL is empty')
-	}
-
 	const formData = new FormData()
 	filesPaths.forEach(filePath => {
 		const fileBuffer = fs.readFileSync(filePath),
@@ -329,7 +326,7 @@ async function uploadImage(filesPaths: string[], folderPath: string): Promise<st
 	})
 	formData.append('folderPath', folderPath)
 
-	const response = await fetch(process.env.IMAGE_API_URL, {
+	const response = await fetch(FILE_SERVER_UPLOAD_IMAGE_PATH, {
 		method: 'POST',
 		body: formData
 	})

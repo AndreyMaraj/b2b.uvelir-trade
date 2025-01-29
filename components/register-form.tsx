@@ -4,11 +4,13 @@ import { register } from '@/actions/register'
 import { RegisterSchema } from '@/schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@nextui-org/button'
-import { Code, Input } from '@nextui-org/react'
+import { Code } from '@nextui-org/code'
+import { Input } from '@nextui-org/input'
 import { useRouter } from 'next/navigation'
 import { useCallback, useState, useTransition } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { Form } from '@nextui-org/form'
 
 export default function RegisterForm() {
 	const router = useRouter(),
@@ -35,16 +37,18 @@ export default function RegisterForm() {
 				setError('Пароли не совпадают')
 				return
 			}
-			startTransition(() => register(values).then(data => {
-				setError(data?.error)
-				if (data.success) {
-					router.push('/auth/login')
-				}
-			}))
+			startTransition(() => {
+				register(values).then(data => {
+					setError(data?.error)
+					if (data.success) {
+						router.push('/auth/login')
+					}
+				})
+			})
 		}, [router])
 
 	return (
-		<form onSubmit={handleSubmit(onSubmit)}>
+		<Form onSubmit={handleSubmit(onSubmit)}>
 			<Controller
 				control={control}
 				name='name'
@@ -145,7 +149,7 @@ export default function RegisterForm() {
 						isInvalid={fieldState.invalid}
 						errorMessage={fieldState.error?.message}
 						endContent={
-							<Button isIconOnly variant='light' onClick={changeIsVisiblePassword}>
+							<Button isIconOnly variant='light' onPress={changeIsVisiblePassword}>
 								<span className={`iconify ${isVisiblePassword ? 'mdi--eye-off-outline' : 'mdi--eye-outline'} text-2xl`} />
 							</Button>
 						}
@@ -167,7 +171,7 @@ export default function RegisterForm() {
 						isInvalid={fieldState.invalid}
 						errorMessage={fieldState.error?.message}
 						endContent={
-							<Button isIconOnly variant='light' onClick={changeIsVisibleConfirmPassword}>
+							<Button isIconOnly variant='light' onPress={changeIsVisibleConfirmPassword}>
 								<span className={`iconify ${isVisibleConfirmPassword ? 'mdi--eye-off-outline' : 'mdi--eye-outline'} text-2xl`} />
 							</Button>
 						}
@@ -182,6 +186,6 @@ export default function RegisterForm() {
 			<Button type='submit' className='w-full' isDisabled={isPending}>
 				Зарегестрироваться
 			</Button>
-		</form>
+		</Form>
 	)
 }
