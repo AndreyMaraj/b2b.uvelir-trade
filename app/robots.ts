@@ -1,4 +1,4 @@
-import { NEXT_PUBLIC_BASE_URL } from '@/consts'
+import { BASE_URL } from '@/consts'
 import type { MetadataRoute } from 'next'
 
 export default function robots(): MetadataRoute.Robots {
@@ -12,7 +12,7 @@ export default function robots(): MetadataRoute.Robots {
 				'/privacy-policy'
 			]
 		},
-		sitemap: `${NEXT_PUBLIC_BASE_URL}/sitemap.xml`,
-		host: NEXT_PUBLIC_BASE_URL
+		sitemap: `${BASE_URL}/sitemap.xml`,
+		host: BASE_URL
 	}
 }

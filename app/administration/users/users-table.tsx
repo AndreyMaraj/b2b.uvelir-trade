@@ -61,7 +61,6 @@ export default function UsersTable({ userId }: { userId: User['id'] }) {
 								</DropdownItem>
 								<DropdownItem key='admin' onPress={async () => {
 									const updatedUser = await setUserRole(user.id, user.role === UserRole.ADMIN ? UserRole.USER : UserRole.ADMIN)
-
 									updatedUser && setRows(prevRows => prevRows.map(row => row.id === updatedUser.id ? { ...row, role: updatedUser.role } : row))
 								}}>
 									{user.role === UserRole.ADMIN ? 'Удалить права администратора' : 'Дать права администратора'}

@@ -1,10 +1,9 @@
-import { auth } from '@/auth'
 import ProductsTable from './products-table'
 import { getOrder } from '@/actions/order'
 import EmptyProductMedia from '@/public/empty-product-media.jpg'
 import { openGraph, twitter } from '@/app/shared-metadata'
 import type { Metadata } from 'next'
-import { FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
+import { NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
 
 interface CurrentPageProps extends PageProps<'id', never> { }
 
@@ -36,12 +35,6 @@ export async function generateMetadata({ params }: CurrentPageProps): Promise<Me
 }
 
 export default async function Page({ params }: CurrentPageProps) {
-	const session = await auth()
-
-	if (!session?.user.id) {
-		return
-	}
-
 	const order = await getOrder(Number((await params).id))
 
 	if (!order) {
@@ -51,7 +44,7 @@ export default async function Page({ params }: CurrentPageProps) {
 		id: item.invisibleModelModification.id,
 		count: item.count,
 		article: item.invisibleModelModification.article,
-		photo: item.invisibleModelModification.visibleModelModification.media.length === 1 ? `${FILE_SERVER_GET_IMAGE_PATH}${item.invisibleModelModification.visibleModelModification.media[0].path}` : EmptyProductMedia.src
+		photo: item.invisibleModelModification.visibleModelModification.media.length === 1 ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${item.invisibleModelModification.visibleModelModification.media[0].path}` : EmptyProductMedia.src
 	})) ?? []
 
 	return (

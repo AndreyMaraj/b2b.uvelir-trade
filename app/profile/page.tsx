@@ -30,7 +30,7 @@ export default async function Page() {
 		return
 	}
 
-	const user = await getUserById(session?.user.id)
+	const user = await getUserById(session.user.id)
 
 	if (!user) {
 		return

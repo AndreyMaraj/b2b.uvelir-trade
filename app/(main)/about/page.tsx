@@ -27,7 +27,9 @@ export const metadata: Metadata = {
 export default function Page() {
 	return (
 		<>
-			<h1 className='text-3xl mb-6'>О Компании</h1>
+			<h1 className='text-3xl mb-6'>
+				О Компании
+			</h1>
 			<iframe
 				className='w-full aspect-video'
 				src='https://vk.com/video_ext.php?oid=-223654603&id=456239312&hd=2&autoplay=1'

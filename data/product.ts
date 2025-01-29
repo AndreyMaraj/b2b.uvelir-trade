@@ -195,22 +195,6 @@ export async function upsertInvisibleModelModification(data: SerializedPrismaEnt
 	})).id
 }
 
-export async function upsertVisibleModelModification(data: SerializedPrismaEntity<Omit<VisibleModelModification, 'id'>>) {
-	return (await prisma.visibleModelModification.upsert({
-		...SELECT_ID,
-		where: {
-			code_productModelId: {
-				code: data.code,
-				productModelId: data.productModelId
-			}
-		},
-		create: { ...data },
-		update: {
-			wireDiameter: data.wireDiameter
-		}
-	})).id
-}
-
 export async function upsertProductModel(data: Omit<ProductModel, 'id'>) {
 	return (await prisma.productModel.upsert({
 		...SELECT_ID,
