@@ -6,7 +6,9 @@ export default function Footer() {
 			<div className='container text-white flex flex-col md:flex-row justify-between gap-8 px-3'>
 				<div className='mt-8 text-sm'>
 					<p>
-						© 2024, UvelirTrade
+						© {new Date().getFullYear()}, ООО «Ювелир Трейд»<br />
+						Все права защищены<br />
+						Информация на сайте не является публичной офертой
 					</p>
 					<Link href='/privacy-policy'>
 						Политика конфиденциальности
