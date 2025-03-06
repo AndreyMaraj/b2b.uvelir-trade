@@ -27,8 +27,8 @@ export async function getUserOrders(userId: Order['userId']) {
 			where: { userId },
 			include: {
 				orderItems: {
-					include: {
-						invisibleModelModification: true
+					select: {
+						count: true
 					}
 				}
 			}
@@ -51,8 +51,8 @@ export async function getOrders() {
 					}
 				},
 				orderItems: {
-					include: {
-						invisibleModelModification: true
+					select: {
+						count: true
 					}
 				}
 			}

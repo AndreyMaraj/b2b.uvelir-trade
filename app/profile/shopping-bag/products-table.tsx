@@ -59,7 +59,7 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 					return (
 						<Link
 							className='hover:underline'
-							href={`/catalog/product/${cellValue}`}
+							href={`/catalog/${cellValue}`}
 							size='sm'
 							color='foreground'
 						>

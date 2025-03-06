@@ -2,7 +2,7 @@ import { nextui } from '@nextui-org/react'
 import type { Config } from 'tailwindcss'
 import { addIconSelectors } from '@iconify/tailwind'
 
-const config: Config = {
+export default {
 	content: [
 		'./components/**/*.{js,ts,jsx,tsx,mdx}',
 		'./app/**/*.{js,ts,jsx,tsx,mdx}',
@@ -18,6 +18,4 @@ const config: Config = {
 		nextui(),
 		addIconSelectors(['mdi'])
 	]
-}
-
-export default config
+} as Config
