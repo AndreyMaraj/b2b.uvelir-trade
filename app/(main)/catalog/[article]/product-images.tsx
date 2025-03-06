@@ -7,7 +7,7 @@ import { Media } from '@prisma/client'
 import { useState } from 'react'
 import { NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
 
-export default function ProductImages({ media }: { media: Media[] }) {
+export default function ProductImages({ media }: { media: Media['path'][] }) {
 	const [selectedImage, setSelectedImage] = useState(media.length > 0 ? media[0] : undefined)
 
 	return (
@@ -15,7 +15,7 @@ export default function ProductImages({ media }: { media: Media[] }) {
 			<div className='flex justify-center items-center h-full'>
 				<Image
 					as={NextImage}
-					src={selectedImage ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${selectedImage.path}` : EmptyProductMedia.src}
+					src={selectedImage ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${selectedImage}` : EmptyProductMedia.src}
 					alt=''
 					isZoomed
 					width={557}
@@ -32,14 +32,14 @@ export default function ProductImages({ media }: { media: Media[] }) {
 						<Image
 							as={NextImage}
 							key={index}
-							src={`${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${mediaFile.path}`}
+							src={`${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${mediaFile}`}
 							alt=''
 							width={55}
 							height={55}
 							quality={100}
 							radius='none'
 							sizes='100vw'
-							className={`object-cover rounded-lg border-2 hover:border-sky-300${mediaFile.id === selectedImage?.id ? ' border-sky-500' : ''}`}
+							className={`object-cover rounded-lg border-2 hover:border-sky-300${mediaFile === selectedImage ? ' border-sky-500' : ''}`}
 							onClick={() => setSelectedImage(mediaFile)}
 						/>
 					)}

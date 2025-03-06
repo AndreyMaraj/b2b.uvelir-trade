@@ -12,7 +12,7 @@ import { NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
 export default function ProductVariants({ currentProductArcticle, productPrototype }: { currentProductArcticle: string, productPrototype: NonNullable<Prisma.PromiseReturnType<typeof getProductVariants>> }) {
 	const router = useRouter(),
 		onVariantClick = useCallback((article: string) => {
-			router.push(`/catalog/product/${article}`)
+			router.push(`/catalog/${article}`)
 		}, [router])
 
 	return (

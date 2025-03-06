@@ -50,7 +50,7 @@ export default function ProductsTable({ rows }: { rows: ProductRow[] }) {
 					return (
 						<Link
 							className='hover:underline'
-							href={`/catalog/product/${cellValue}`}
+							href={`/catalog/${cellValue}`}
 							size='sm'
 							color='foreground'
 						>

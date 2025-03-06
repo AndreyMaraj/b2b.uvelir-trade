@@ -298,38 +298,99 @@ export async function getProductByArticle(article: string) {
 		return await prisma.invisibleModelModification.findUnique({
 			where: { article },
 			include: {
-				wireType: true,
+				wireType: {
+					select: {
+						name: true
+					}
+				},
 				visibleModelModification: {
-					include: {
-						media: true,
+					select: {
+						wireDiameter: true,
+						media: {
+							select: {
+								path: true
+							}
+						},
 						productModel: {
-							include: {
+							select: {
 								productPrototyp: {
-									include: {
-										type: true,
+									select: {
+										id: true,
+										type: {
+											select: {
+												name: true
+											}
+										},
 										sex: true,
-										ringDimensions: true,
-										earringDimensions: true,
-										weavingType: true,
-										lockType: true
+										ringDimensions: {
+											select: {
+												tireWidth: true
+											}
+										},
+										earringDimensions: {
+											select: {
+												depth: true,
+												pinLowering: true,
+												pinWorkingArea: true
+											}
+										},
+										weavingType: {
+											select: {
+												name: true
+											}
+										},
+										lockType: {
+											select: {
+												name: true
+											}
+										}
 									}
 								},
 								metal: {
-									include: {
-										color: true,
-										metalType: true,
-										metalCoating: true
+									select: {
+										standard: true,
+										color: {
+											select: {
+												name: true
+											}
+										},
+										metalType: {
+											select: {
+												name: true
+											}
+										},
+										metalCoating: {
+											select: {
+												name: true
+											}
+										},
 									}
 								}
 							}
 						},
 						modelComponents: {
-							include: {
+							select: {
+								count: true,
+								weight: true,
 								stone: {
-									include: {
-										stoneType: true,
-										color: true,
-										cutType: true
+									select: {
+										chroma: true,
+										purity: true,
+										stoneType: {
+											select: {
+												name: true
+											}
+										},
+										color: {
+											select: {
+												name: true
+											}
+										},
+										cutType: {
+											select: {
+												name: true
+											}
+										}
 									}
 								}
 							}
@@ -348,13 +409,22 @@ export async function getProductVariants(id: number) {
 	try {
 		return await prisma.productPrototype.findUnique({
 			where: { id },
-			include: {
+			select: {
 				productModels: {
-					include: {
+					select: {
 						visibleProductModifications: {
-							include: {
-								invisibleModelModifications: true,
-								media: true
+							select: {
+								invisibleModelModifications: {
+									select: {
+										id: true,
+										article: true
+									}
+								},
+								media: {
+									select: {
+										path: true
+									}
+								}
 							}
 						}
 					}

@@ -30,7 +30,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, className }: ProductCardProps) {
 	return (
-		<Card className={`p-3.5 flex-grow-0 flex-shrink-0${className ? ` ${className}` : ''}`} radius='none' isPressable isHoverable as={Link} href={`/catalog/product/${product.article}`}>
+		<Card className={`p-3.5 flex-grow-0 flex-shrink-0${className ? ` ${className}` : ''}`} radius='none' isPressable isHoverable as={Link} href={`/catalog/${product.article}`}>
 			<CardHeader>
 				<p className='mx-auto'>
 					{product.visibleModelModification.productModel.productPrototyp.type.name} {product.article}
