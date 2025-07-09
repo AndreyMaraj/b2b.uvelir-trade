@@ -12,6 +12,10 @@ enum UserRole {
     USER
 }
 
+enum MenuType {
+    CATALOG
+}
+
 model User {
     id                   String                @id @default(cuid())
     name                 String
@@ -59,6 +63,20 @@ model VerificationToken {
     @@id([identifier, token])
 }
 
+model MenuItem {
+    id        Int        @id @default(autoincrement()) @db.SmallInt
+    menuType  MenuType
+    name      String
+    urlParams String?
+    order     Int        @default(autoincrement()) @db.SmallInt
+    parent    MenuItem?  @relation("Parent", fields: [parentId], references: [id], onDelete: Cascade)
+    parentId  Int?
+    children  MenuItem[] @relation("Parent")
+
+    @@unique([menuType, name])
+    @@unique([menuType, urlParams])
+}
+
 model Media {
     id                         Int                      @id @default(autoincrement())
     path                       String
@@ -92,6 +110,12 @@ model ShoppingBagsProduct {
     count                        Int                        @db.SmallInt
 
     @@id([userId, invisibleModelModificationId])
+}
+
+model NomenclatureGroup {
+    id                          Int                          @id @default(autoincrement()) @db.SmallInt
+    name                        String                       @unique
+    invisibleModelModifications InvisibleModelModification[]
 }
 
 model Sex {
@@ -240,6 +264,8 @@ model InvisibleModelModification {
     description                String?
     wireType                   WireType?                @relation(fields: [wireTypeId], references: [id])
     wireTypeId                 Int?                     @db.SmallInt
+    nomenclatureGroup          NomenclatureGroup?       @relation(fields: [nomenclatureGroupId], references: [id])
+    nomenclatureGroupId        Int?                     @db.SmallInt
     visibleModelModification   VisibleModelModification @relation(fields: [visibleModelModificationId], references: [id], onDelete: Cascade)
     visibleModelModificationId Int
     shoppingBagsProducts       ShoppingBagsProduct[]
