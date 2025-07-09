@@ -121,9 +121,9 @@ export default async function Page({ params }: CurrentPageProps) {
 			}, ...(modelComponent.stone.color ? [{
 				label: 'Цвет',
 				value: modelComponent.stone.color.name
-			}] : []), ...(modelComponent.weight ? [{
-				label: 'Вес',
-				value: modelComponent.weight.toNumber()
+				// }] : []), ...(modelComponent.weight ? [{
+				// 	label: 'Вес',
+				// 	value: modelComponent.weight.toNumber()
 			}] : []), ...(modelComponent.stone.chroma ? [{
 				label: 'Цветность',
 				value: modelComponent.stone.chroma
