@@ -1,7 +1,7 @@
 import { auth } from '@/auth'
 import Link from '@/components/link'
 import SelectFilter from '@/components/select-filter'
-import { getMetalColors, getMetalTypes, getProducts, getProductTypes, getStoneTypes } from '@/data/product'
+import { getMetalColors, getMetalTypes, getProducts, getStoneTypes } from '@/data/product'
 import SearchProduct from '@/components/search-product'
 import ClearFilterButton from '@/components/clear-filter-button'
 import { QueryParam } from '@/consts'
@@ -9,6 +9,8 @@ import ProductCard from './product-card'
 import PaginationClient from './pagination'
 import { openGraph, twitter } from '@/app/shared-metadata'
 import type { Metadata } from 'next'
+import { getMenuItems } from '@/data/menu-item'
+import Menu from './menu'
 
 const title = 'Каталог',
 	description = 'Просмотрите наш каталог ювелирных изделий, доступных для авторизованных пользователей.',
@@ -36,8 +38,7 @@ export const metadata: Metadata = {
 const numberOfProductsPerPage = 15
 
 export default async function Page(props: PageProps<never, QueryParam>) {
-	const session = await auth(),
-		searchParams = await props.searchParams
+	const session = await auth()
 
 	if (!session?.user) {
 		return (
@@ -60,7 +61,8 @@ export default async function Page(props: PageProps<never, QueryParam>) {
 		)
 	}
 
-	const currentPage = Number(searchParams[QueryParam.PAGE]) || 1,
+	const searchParams = await props.searchParams,
+		currentPage = Number(searchParams[QueryParam.PAGE]) || 1,
 		{ products, productsCount } = await getProducts({
 			skip: (currentPage - 1) * numberOfProductsPerPage,
 			take: numberOfProductsPerPage,
@@ -68,13 +70,13 @@ export default async function Page(props: PageProps<never, QueryParam>) {
 			stoneTypeId: Number(searchParams[QueryParam.STONE_TYPE]) || undefined,
 			metalTypeId: Number(searchParams[QueryParam.METAL_TYPE]) || undefined,
 			colorId: Number(searchParams[QueryParam.METAL_COLOR]) || undefined,
-			typeId: Number(searchParams[QueryParam.PRODUCT_TYPE]) || undefined
+			nomenclatureGroupId: Number(searchParams[QueryParam.NOMENCLATURE_GROUP]) || undefined
 		}) ?? { products: [], productsCount: 0 },
 		productsPagesCount = Math.ceil(productsCount / numberOfProductsPerPage),
 		stoneTypes = await getStoneTypes() ?? [],
 		metalTypes = await getMetalTypes() ?? [],
 		metalColors = await getMetalColors() ?? [],
-		productTypes = await getProductTypes() ?? []
+		menuItems = await getMenuItems() ?? []
 
 	return (
 		<>
@@ -85,15 +87,7 @@ export default async function Page(props: PageProps<never, QueryParam>) {
 				<div className='md:basis-1/3 lg:basis-1/4'>
 					<div className='p-5 shadow-lg sticky top-28'>
 						<SearchProduct />
-						<ul className='mt-8'>
-							{productTypes.map(productType =>
-								<li key={productType.id} className={`transition ease-in-out duration-300 hover:bg-black${productType.id === Number(searchParams[QueryParam.PRODUCT_TYPE]) ? ' bg-black' : ''}`}>
-									<Link href={`/catalog?productType=${productType.id}`} color='foreground' className={`transition ease-in-out duration-300 p-2.5 uppercase w-full hover:text-white${productType.id === Number(searchParams[QueryParam.PRODUCT_TYPE]) ? ' text-white' : ''}`}>
-										{productType.name}
-									</Link>
-								</li>
-							)}
-						</ul>
+						<Menu menuItems={menuItems} />
 					</div>
 				</div>
 				<div className='flex flex-col gap-4 flex-1'>

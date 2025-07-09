@@ -6,7 +6,11 @@ export enum QueryParam {
 	STONE_TYPE = 'stoneType',
 	METAL_TYPE = 'metalType',
 	METAL_COLOR = 'metalColor',
-	PRODUCT_TYPE = 'productType',
+	NOMENCLATURE_GROUP = 'nomenclatureGroup',
 	PAGE = 'page',
 	QUERY = 'query'
+}
+
+export function getNomenclatureGroupQueryParam(nomenclatureGroupId: number) {
+	return `${QueryParam.NOMENCLATURE_GROUP}=${nomenclatureGroupId}`
 }

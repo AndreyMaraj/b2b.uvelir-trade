@@ -3,12 +3,13 @@
 import type { NextRequest } from 'next/server'
 import * as fs from 'fs'
 import { ElementCompact, xml2js } from 'xml-js'
-import { upsertProductModel, upsertInvisibleModelModification, upsertEarringDimensions, upsertModelComponent, upsertMetal, upsertProductPrototyp, upsertRingDimensions, upsertStone, upsertWeavingType, upsertWireType, upsertMetalCoating, upsertColor, upsertSex, upsertProductTheme, upsertProductStyle, upsertProductLockType, upsertAgeCategory, upsertProductType, upsertMetalType, upsertStoneType, upsertCutType } from '@/data/product'
+import { upsertProductModel, upsertInvisibleModelModification, upsertEarringDimensions, upsertModelComponent, upsertMetal, upsertProductPrototyp, upsertRingDimensions, upsertStone, upsertWeavingType, upsertWireType, upsertMetalCoating, upsertColor, upsertSex, upsertProductTheme, upsertProductStyle, upsertProductLockType, upsertAgeCategory, upsertProductType, upsertMetalType, upsertStoneType, upsertCutType, upsertNomenclatureGroupe } from '@/data/product'
 import { prisma } from '@/prisma'
 import path from 'path'
 import FormData from 'form-data'
 import fetch from 'node-fetch'
 import { FILE_SERVER_UPLOAD_IMAGE_PATH } from '@/consts'
+import { updateMenuItemsFromNomenclatureGroups } from '@/data/menu-item'
 
 enum RequestMode {
 	CheckAuth = 'checkauth',
@@ -48,7 +49,8 @@ enum XMLFileKey {
 	StoneColor = 'ЦветКамня',
 	TypeCut = 'ТипОгранки',
 	Chroma = 'Цветность',
-	Purity = 'Чистота'
+	Purity = 'Чистота',
+	NomenclatureGroup = 'НоменклатурнаяГруппа'
 }
 
 enum PropType {
@@ -363,6 +365,9 @@ async function handleExchangeFileProducts(fileProducts: ElementCompact, file: st
 				throw new TypeError(`Product '${article}' doesn't have a standard`)
 			}
 
+			const nomenclatureGroup = fileProduct[XMLFileKey.NomenclatureGroup]?._text
+			!nomenclatureGroup && console.warn(`Product '${article}' doesn't have a nomenclature group`)
+
 			const images = fileProduct[XMLFileKey.Picture] && (Array.isArray(fileProduct[XMLFileKey.Picture]) ? fileProduct[XMLFileKey.Picture] : [fileProduct[XMLFileKey.Picture]]).map(image => path.join(process.cwd(), DATA_EXCHANGE_FOLDER, image._text.replaceAll('\\', '/')))
 			!images && console.warn(`Product '${article}' doesn't have images`)
 
@@ -372,6 +377,7 @@ async function handleExchangeFileProducts(fileProducts: ElementCompact, file: st
 			const propValues = dataExchangeProps && getPropValuesFromFileProduct(article, fileProduct[XMLFileKey.PropertiesValues]?.[XMLFileKey.PropertyValues], dataExchangeProps),
 				modelComponents = getModelComponentsFromFileProduct(article, fileProduct[XMLFileKey.ProductCharacteristics]?.[XMLFileKey.ProductCharacteristic]),
 				typeId = await upsertProductType(productType),
+				nomenclatureGroupId = await upsertNomenclatureGroupe(nomenclatureGroup),
 				productPrototypId = await upsertProductPrototyp({
 					code: prototypCode,
 					typeId,
@@ -474,11 +480,13 @@ async function handleExchangeFileProducts(fileProducts: ElementCompact, file: st
 				...propValues ? {
 					wireTypeId: propValues[PropName.WireType] ?? null,
 					height: propValues[PropName.Height] ?? null,
-					width: propValues[PropName.Width] ?? null
+					width: propValues[PropName.Width] ?? null,
+					nomenclatureGroupId
 				} : {
 					wireTypeId: null,
 					height: null,
-					width: null
+					width: null,
+					nomenclatureGroupId: null
 				}
 			})
 		} catch (e) {
@@ -578,11 +586,12 @@ async function handleExchangeFiles() {
 			if (!file.isFile()) {
 				return
 			}
-			if (file.name.includes(IMPORT_PREFIX)) {
-				importFiles.push(file.name)
-			} else {
+			if (!file.name.includes(IMPORT_PREFIX)) {
 				console.warn(`Unknown file '${file.name}'`)
+				return
 			}
+
+			importFiles.push(file.name)
 		})
 
 		let props: DataExchangeProp[] | undefined
@@ -591,6 +600,8 @@ async function handleExchangeFiles() {
 			props ??= await handleExchangeFileProps(data[XMLFileKey.CommercialInformation]?.[XMLFileKey.Classifier]?.[XMLFileKey.Properties]?.[XMLFileKey.Property], file)
 			await handleExchangeFileProducts(data[XMLFileKey.CommercialInformation]?.[XMLFileKey.Catalog]?.[XMLFileKey.Products]?.[XMLFileKey.Product], file, props)
 		}
+
+		updateMenuItemsFromNomenclatureGroups()
 
 		fs.rmSync(DATA_EXCHANGE_FOLDER, { recursive: true })
 	} catch (e) {

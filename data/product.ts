@@ -3,7 +3,7 @@
 import { prisma } from '@/prisma'
 import type { SerializedPrismaEntity } from '@/types'
 import { Prisma } from '@prisma/client'
-import type { EarringDimensions, InvisibleModelModification, Metal, ModelComponent, ProductModel, ProductPrototype, RingDimensions, Stone, VisibleModelModification } from '@prisma/client'
+import type { EarringDimensions, InvisibleModelModification, Metal, ModelComponent, ProductModel, ProductPrototype, RingDimensions, Stone } from '@prisma/client'
 
 const SELECT_ID = {
 	select: {
@@ -87,6 +87,15 @@ export async function upsertProductStyle(name: string) {
 
 export async function upsertProductType(name: string) {
 	return (await prisma.productType.upsert({
+		...SELECT_ID,
+		where: { name },
+		create: { name },
+		update: {}
+	})).id
+}
+
+export async function upsertNomenclatureGroupe(name: string) {
+	return (await prisma.nomenclatureGroup.upsert({
 		...SELECT_ID,
 		where: { name },
 		create: { name },
@@ -190,7 +199,8 @@ export async function upsertInvisibleModelModification(data: SerializedPrismaEnt
 			height: data.height,
 			width: data.width,
 			description: data.description,
-			wireTypeId: data.wireTypeId
+			wireTypeId: data.wireTypeId,
+			nomenclatureGroupId: data.nomenclatureGroupId
 		}
 	})).id
 }
@@ -240,11 +250,11 @@ interface GetProductsProps {
 	stoneTypeId?: number,
 	metalTypeId?: number,
 	colorId?: number,
-	typeId?: number,
+	nomenclatureGroupId?: number,
 	sort?: string
 }
 
-export async function getProducts({ skip, take, articleQuery, stoneTypeId, metalTypeId, colorId, typeId }: GetProductsProps) {
+export async function getProducts({ skip, take, articleQuery, stoneTypeId, metalTypeId, colorId, nomenclatureGroupId }: GetProductsProps) {
 	try {
 		const where = Prisma.validator<Prisma.InvisibleModelModificationWhereInput>()({
 			article: { contains: articleQuery },
@@ -256,9 +266,13 @@ export async function getProducts({ skip, take, articleQuery, stoneTypeId, metal
 						}
 					}
 				}),
+				...(nomenclatureGroupId && {
+					invisibleModelModifications: {
+						some: { nomenclatureGroupId }
+					}
+				}),
 				productModel: {
-					metal: { metalTypeId, colorId },
-					productPrototyp: { typeId }
+					metal: { metalTypeId, colorId }
 				}
 			}
 		})
@@ -498,9 +512,9 @@ export async function getMetalColors() {
 	}
 }
 
-export async function getProductTypes() {
+export async function getNomenclatureGroups() {
 	try {
-		return await prisma.productType.findMany()
+		return await prisma.nomenclatureGroup.findMany()
 	} catch (e) {
 		console.log(e)
 		return
