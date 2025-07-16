@@ -1,16 +1,27 @@
 'use server'
 
 import { prisma } from '@/prisma'
-import type { Order, Prisma } from '@prisma/client'
+import type { Order } from '@prisma/client'
+import { getShoppingBagsProducts } from './shopping-bag'
 
-export async function createOrder(userId: Order['userId'], orderItems: Prisma.OrderItemCreateManyOrderInput[]) {
+export async function createOrder(userId: Order['userId']) {
+	const shoppingBagsProducts = await getShoppingBagsProducts(userId)
+
+	if (!shoppingBagsProducts || !shoppingBagsProducts.length) {
+		return
+	}
+
 	try {
 		return await prisma.order.create({
 			data: {
 				userId,
 				orderItems: {
 					createMany: {
-						data: orderItems.map(orderItem => ({ ...orderItem }))
+						data: shoppingBagsProducts.map(shoppingBagsProduct => ({
+							invisibleModelModificationId: shoppingBagsProduct.invisibleModelModificationId,
+							invisibleModelModificationSizeId: shoppingBagsProduct.invisibleModelModificationSizeId,
+							count: shoppingBagsProduct.count
+						}))
 					}
 				}
 			}
@@ -27,8 +38,8 @@ export async function getUserOrders(userId: Order['userId']) {
 			where: { userId },
 			include: {
 				orderItems: {
-					include: {
-						invisibleModelModification: true
+					select: {
+						count: true
 					}
 				}
 			}
@@ -51,8 +62,8 @@ export async function getOrders() {
 					}
 				},
 				orderItems: {
-					include: {
-						invisibleModelModification: true
+					select: {
+						count: true
 					}
 				}
 			}
@@ -63,41 +74,79 @@ export async function getOrders() {
 	}
 }
 
-export async function getOrder(id: Order['id'], withUser: boolean = false) {
+export async function getOrder(orderId: Order['id'], withUser: boolean = false) {
 	try {
-		return await prisma.order.findUnique({
-			where: { id },
-			select: {
-				id: true,
-				date: true,
-				orderItems: {
-					include: {
-						invisibleModelModification: {
+		return {
+			order: await prisma.order.findUnique({
+				where: { id: orderId },
+				select: {
+					id: true,
+					date: true,
+					...(withUser && {
+						user: {
 							select: {
-								id: true,
-								article: true,
-								visibleModelModification: {
-									select: {
-										media: { take: 1 }
+								name: true,
+								tin: true,
+								city: true
+							}
+						}
+					})
+				}
+			}),
+			invisibleModelModifications: (await prisma.invisibleModelModification.findMany({
+				where: {
+					orderItems: {
+						some: { orderId }
+					}
+				},
+				select: {
+					id: true,
+					article: true,
+					averageWeight: true,
+					visibleModelModification: {
+						select: {
+							media: {
+								take: 1
+							}
+						}
+					},
+					orderItems: {
+						where: { orderId },
+						select: {
+							id: true,
+							count: true,
+							invisibleModelModificationSize: {
+								select: {
+									id: true,
+									averageWeight: true,
+									size: {
+										select: {
+											value: true
+										}
 									}
 								}
 							}
 						}
 					}
-				},
-				...(withUser && {
-					user: {
-						select: {
-							name: true,
-							tin: true,
-							city: true
+				}
+			})).map(invisibleModelModification => ({
+				...invisibleModelModification,
+				averageWeight: invisibleModelModification.averageWeight.toNumber(),
+				orderItems: invisibleModelModification.orderItems.map(orderItem => ({
+					...orderItem,
+					invisibleModelModificationSize: orderItem.invisibleModelModificationSize && {
+						...orderItem.invisibleModelModificationSize,
+						averageWeight: orderItem.invisibleModelModificationSize.averageWeight.toNumber(),
+						size: {
+							...orderItem.invisibleModelModificationSize.size,
+							value: orderItem.invisibleModelModificationSize.size.value.toNumber()
 						}
 					}
-				})
-			}
-		})
+				}))
+			}))
+		}
 	} catch (e) {
 		console.log(e)
-		return
+		return { order: null, invisibleModelModifications: [] }
 	}
 }

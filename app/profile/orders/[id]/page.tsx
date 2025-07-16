@@ -10,7 +10,7 @@ interface CurrentPageProps extends PageProps<'id', never> { }
 export async function generateMetadata({ params }: CurrentPageProps): Promise<Metadata> {
 	const id = (await params).id,
 		url = `/profile/orders/${id}`,
-		order = await getOrder(Number(id)),
+		{ order } = await getOrder(Number(id)),
 		title = order ? `Заказ от ${new Date(order.date).toLocaleDateString('ru-RU')}` : '',
 		description = 'Подробная информация о вашем заказе.'
 
@@ -35,16 +35,21 @@ export async function generateMetadata({ params }: CurrentPageProps): Promise<Me
 }
 
 export default async function Page({ params }: CurrentPageProps) {
-	const order = await getOrder(Number((await params).id))
+	const { order, invisibleModelModifications } = await getOrder(Number((await params).id))
 
 	if (!order) {
 		return
 	}
-	const orderItems = order?.orderItems.map(item => ({
-		id: item.invisibleModelModification.id,
-		count: item.count,
-		article: item.invisibleModelModification.article,
-		photo: item.invisibleModelModification.visibleModelModification.media.length === 1 ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${item.invisibleModelModification.visibleModelModification.media[0].path}` : EmptyProductMedia.src
+
+	const orderItems = invisibleModelModifications.map(invisibleModelModification => ({
+		id: invisibleModelModification.id,
+		photo: invisibleModelModification.visibleModelModification.media.length ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${invisibleModelModification.visibleModelModification.media[0].path}` : EmptyProductMedia.src,
+		article: invisibleModelModification.article,
+		...invisibleModelModification.orderItems.reduce((sum, orderItem) => ({
+			sizes: orderItem.invisibleModelModificationSize ? `${sum.sizes ? sum.sizes + ' / ' : ''} ${orderItem.invisibleModelModificationSize.size.value} - ${orderItem.count}` : '',
+			count: sum.count + orderItem.count,
+			weight: sum.weight + orderItem.count * (orderItem.invisibleModelModificationSize?.averageWeight ?? invisibleModelModification.averageWeight)
+		}), { sizes: '', count: 0, weight: 0 })
 	})) ?? []
 
 	return (

@@ -3,7 +3,7 @@
 import { prisma } from '@/prisma'
 import type { SerializedPrismaEntity } from '@/types'
 import { Prisma } from '@prisma/client'
-import type { EarringDimensions, InvisibleModelModification, Metal, ModelComponent, ProductModel, ProductPrototype, RingDimensions, Stone, VisibleModelModification } from '@prisma/client'
+import type { EarringDimensions, InvisibleModelModification, InvisibleModelModificationSize, Metal, ModelComponent, ProductModel, ProductPrototype, RingDimensions, Stone } from '@prisma/client'
 
 const SELECT_ID = {
 	select: {
@@ -11,15 +11,38 @@ const SELECT_ID = {
 	}
 } as const
 
+export async function upsertSize(value: number) {
+	return (await prisma.size.upsert({
+		...SELECT_ID,
+		where: { value },
+		create: { value },
+		update: {}
+	})).id
+}
+
+export async function upsertInvisibleModelModificationSize(data: SerializedPrismaEntity<Omit<InvisibleModelModificationSize, 'id'>>) {
+	return (await prisma.invisibleModelModificationSize.upsert({
+		...SELECT_ID,
+		where: {
+			sizeId_invisibleModelModificationId: {
+				sizeId: data.sizeId,
+				invisibleModelModificationId: data.invisibleModelModificationId
+			}
+		},
+		create: { ...data },
+		update: {
+			averageWeight: data.averageWeight
+		}
+	})).id
+}
+
 export async function upsertCutType(name: string) {
-	const { id } = await prisma.cutType.upsert({
+	return (await prisma.cutType.upsert({
 		...SELECT_ID,
 		where: { name },
 		create: { name },
 		update: {}
-	})
-
-	return id
+	})).id
 }
 
 export async function upsertStoneType(name: string) {
@@ -87,6 +110,15 @@ export async function upsertProductStyle(name: string) {
 
 export async function upsertProductType(name: string) {
 	return (await prisma.productType.upsert({
+		...SELECT_ID,
+		where: { name },
+		create: { name },
+		update: {}
+	})).id
+}
+
+export async function upsertNomenclatureGroupe(name: string) {
+	return (await prisma.nomenclatureGroup.upsert({
 		...SELECT_ID,
 		where: { name },
 		create: { name },
@@ -165,7 +197,7 @@ export async function upsertModelComponent(data: SerializedPrismaEntity<Omit<Mod
 		...SELECT_ID,
 		where: {
 			stoneId: data.stoneId,
-			weight: data.weight,
+			averageWeight: data.averageWeight,
 			visibleModelModificationId: data.visibleModelModificationId
 		}
 	})
@@ -190,7 +222,9 @@ export async function upsertInvisibleModelModification(data: SerializedPrismaEnt
 			height: data.height,
 			width: data.width,
 			description: data.description,
-			wireTypeId: data.wireTypeId
+			wireTypeId: data.wireTypeId,
+			nomenclatureGroupId: data.nomenclatureGroupId,
+			averageWeight: data.averageWeight
 		}
 	})).id
 }
@@ -240,11 +274,11 @@ interface GetProductsProps {
 	stoneTypeId?: number,
 	metalTypeId?: number,
 	colorId?: number,
-	typeId?: number,
+	nomenclatureGroupId?: number,
 	sort?: string
 }
 
-export async function getProducts({ skip, take, articleQuery, stoneTypeId, metalTypeId, colorId, typeId }: GetProductsProps) {
+export async function getProducts({ skip, take, articleQuery, stoneTypeId, metalTypeId, colorId, nomenclatureGroupId }: GetProductsProps) {
 	try {
 		const where = Prisma.validator<Prisma.InvisibleModelModificationWhereInput>()({
 			article: { contains: articleQuery },
@@ -256,9 +290,13 @@ export async function getProducts({ skip, take, articleQuery, stoneTypeId, metal
 						}
 					}
 				}),
+				...(nomenclatureGroupId && {
+					invisibleModelModifications: {
+						some: { nomenclatureGroupId }
+					}
+				}),
 				productModel: {
-					metal: { metalTypeId, colorId },
-					productPrototyp: { typeId }
+					metal: { metalTypeId, colorId }
 				}
 			}
 		})
@@ -298,41 +336,118 @@ export async function getProductByArticle(article: string) {
 		return await prisma.invisibleModelModification.findUnique({
 			where: { article },
 			include: {
-				wireType: true,
+				wireType: {
+					select: {
+						name: true
+					}
+				},
 				visibleModelModification: {
-					include: {
-						media: true,
+					select: {
+						wireDiameter: true,
+						media: {
+							select: {
+								path: true
+							}
+						},
 						productModel: {
-							include: {
+							select: {
 								productPrototyp: {
-									include: {
-										type: true,
+									select: {
+										id: true,
+										type: {
+											select: {
+												name: true
+											}
+										},
 										sex: true,
-										ringDimensions: true,
-										earringDimensions: true,
-										weavingType: true,
-										lockType: true
+										ringDimensions: {
+											select: {
+												tireWidth: true
+											}
+										},
+										earringDimensions: {
+											select: {
+												depth: true,
+												pinLowering: true,
+												pinWorkingArea: true
+											}
+										},
+										weavingType: {
+											select: {
+												name: true
+											}
+										},
+										lockType: {
+											select: {
+												name: true
+											}
+										}
 									}
 								},
 								metal: {
-									include: {
-										color: true,
-										metalType: true,
-										metalCoating: true
+									select: {
+										standard: true,
+										color: {
+											select: {
+												name: true
+											}
+										},
+										metalType: {
+											select: {
+												name: true
+											}
+										},
+										metalCoating: {
+											select: {
+												name: true
+											}
+										},
 									}
 								}
 							}
 						},
 						modelComponents: {
-							include: {
+							select: {
+								count: true,
+								averageWeight: true,
 								stone: {
-									include: {
-										stoneType: true,
-										color: true,
-										cutType: true
+									select: {
+										chroma: true,
+										purity: true,
+										stoneType: {
+											select: {
+												name: true
+											}
+										},
+										color: {
+											select: {
+												name: true
+											}
+										},
+										cutType: {
+											select: {
+												name: true
+											}
+										}
 									}
 								}
 							}
+						}
+					}
+				},
+				invisibleModelModificationSizes: {
+					select: {
+						id: true,
+						averageWeight: true,
+						size: {
+							select: {
+								value: true
+							}
+						}
+					},
+					orderBy: {
+						size: {
+							value: 'asc'
 						}
 					}
 				}
@@ -348,13 +463,22 @@ export async function getProductVariants(id: number) {
 	try {
 		return await prisma.productPrototype.findUnique({
 			where: { id },
-			include: {
+			select: {
 				productModels: {
-					include: {
+					select: {
 						visibleProductModifications: {
-							include: {
-								invisibleModelModifications: true,
-								media: true
+							select: {
+								invisibleModelModifications: {
+									select: {
+										id: true,
+										article: true
+									}
+								},
+								media: {
+									select: {
+										path: true
+									}
+								}
 							}
 						}
 					}
@@ -428,9 +552,9 @@ export async function getMetalColors() {
 	}
 }
 
-export async function getProductTypes() {
+export async function getNomenclatureGroups() {
 	try {
-		return await prisma.productType.findMany()
+		return await prisma.nomenclatureGroup.findMany()
 	} catch (e) {
 		console.log(e)
 		return

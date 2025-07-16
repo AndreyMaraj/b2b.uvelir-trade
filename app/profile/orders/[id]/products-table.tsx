@@ -11,9 +11,11 @@ import Link from '@/components/link'
 
 interface ProductRow {
 	id: InvisibleModelModification['id'],
-	count: OrderItem['count'],
+	photo: string,
 	article: InvisibleModelModification['article'],
-	photo: string
+	sizes: string,
+	count: OrderItem['count'],
+	weight: number
 }
 
 const rowsPerPage = 25
@@ -50,7 +52,7 @@ export default function ProductsTable({ rows }: { rows: ProductRow[] }) {
 					return (
 						<Link
 							className='hover:underline'
-							href={`/catalog/product/${cellValue}`}
+							href={`/catalog/${cellValue}`}
 							size='sm'
 							color='foreground'
 						>
@@ -82,8 +84,14 @@ export default function ProductsTable({ rows }: { rows: ProductRow[] }) {
 				<TableColumn key='article'>
 					Артикул
 				</TableColumn>
+				<TableColumn key='sizes'>
+					Размеры
+				</TableColumn>
 				<TableColumn key='count'>
 					Количество
+				</TableColumn>
+				<TableColumn key='weight'>
+					Вес
 				</TableColumn>
 			</TableHeader>
 			<TableBody items={items}>

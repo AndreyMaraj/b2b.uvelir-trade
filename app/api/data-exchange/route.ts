@@ -3,12 +3,13 @@
 import type { NextRequest } from 'next/server'
 import * as fs from 'fs'
 import { ElementCompact, xml2js } from 'xml-js'
-import { upsertProductModel, upsertInvisibleModelModification, upsertEarringDimensions, upsertModelComponent, upsertMetal, upsertProductPrototyp, upsertRingDimensions, upsertStone, upsertWeavingType, upsertWireType, upsertMetalCoating, upsertColor, upsertSex, upsertProductTheme, upsertProductStyle, upsertProductLockType, upsertAgeCategory, upsertProductType, upsertMetalType, upsertStoneType, upsertCutType } from '@/data/product'
+import { upsertProductModel, upsertInvisibleModelModification, upsertEarringDimensions, upsertModelComponent, upsertMetal, upsertProductPrototyp, upsertRingDimensions, upsertStone, upsertWeavingType, upsertWireType, upsertMetalCoating, upsertColor, upsertSex, upsertProductTheme, upsertProductStyle, upsertProductLockType, upsertAgeCategory, upsertProductType, upsertMetalType, upsertStoneType, upsertCutType, upsertNomenclatureGroupe, upsertSize, upsertInvisibleModelModificationSize } from '@/data/product'
 import { prisma } from '@/prisma'
 import path from 'path'
 import FormData from 'form-data'
 import fetch from 'node-fetch'
 import { FILE_SERVER_UPLOAD_IMAGE_PATH } from '@/consts'
+import { updateMenuItemsFromNomenclatureGroups } from '@/data/menu-item'
 
 enum RequestMode {
 	CheckAuth = 'checkauth',
@@ -48,7 +49,12 @@ enum XMLFileKey {
 	StoneColor = 'ЦветКамня',
 	TypeCut = 'ТипОгранки',
 	Chroma = 'Цветность',
-	Purity = 'Чистота'
+	Purity = 'Чистота',
+	NomenclatureGroup = 'НоменклатурнаяГруппа',
+	AverageWeight = 'СреднийВес',
+	SizesProperties = 'СвойстваРазмеров',
+	SizeProperties = 'СвойстваРазмера',
+	Size = 'Размер'
 }
 
 enum PropType {
@@ -104,12 +110,17 @@ type DataExchangeProp = Prop & {
 
 type DataExchangeProductInlay = {
 	stoneType: string,
-	weight: number | null,
+	averageWeight: number,
 	count: number,
 	color: string | null,
 	cutType: string,
 	chroma: string | null,
 	purity: string | null
+}
+
+type DataExchangeProductSizeProperties = {
+	size: number,
+	averageWeight: number
 }
 
 const COOKIE_NAME = 'Cookie',
@@ -175,9 +186,6 @@ const COOKIE_NAME = 'Cookie',
 		},
 		[PropName.TireWidth]: {
 			type: PropType.Number
-			// },
-			// ['Размер']: {
-			// 	type: PropType.Number
 		}
 	}
 
@@ -201,12 +209,37 @@ function getModelComponentsFromFileProduct(article: string, modelComponents: Ele
 				throw new TypeError(`Article '${article}' inlay doesn't have a count`)
 			}
 
-			const weight = Number.isFinite(+modelComponent[XMLFileKey.Weight]?._text) ? +modelComponent[XMLFileKey.Weight]?._text : null,
-				color = modelComponent[XMLFileKey.StoneColor]?._text ?? null,
-				chroma = modelComponent[XMLFileKey.Chroma]?._text ?? null,
-				purity = modelComponent[XMLFileKey.Purity]?._text ?? null
+			result.push({
+				stoneType,
+				cutType,
+				count,
+				averageWeight: Number.isFinite(+modelComponent[XMLFileKey.Weight]?._text) ? +modelComponent[XMLFileKey.Weight]?._text : 0,
+				color: modelComponent[XMLFileKey.StoneColor]?._text ?? null,
+				chroma: modelComponent[XMLFileKey.Chroma]?._text ?? null,
+				purity: modelComponent[XMLFileKey.Purity]?._text ?? null
+			})
+		} catch (e) {
+			console.warn(e)
+		}
+	})
 
-			result.push({ stoneType, weight, count, color, cutType, chroma, purity })
+	return result
+}
+
+function getSizesPropertiesFromFileProduct(article: string, sizesProperties: ElementCompact) {
+	const result: DataExchangeProductSizeProperties[] = []
+
+	sizesProperties && (Array.isArray(sizesProperties) ? sizesProperties : [sizesProperties]).forEach((sizeProperties: ElementCompact) => {
+		try {
+			const size = +sizeProperties[XMLFileKey.Size]?._text
+			if (!Number.isFinite(size)) {
+				throw new TypeError(`Article '${article}' size properties doesn't have a size`)
+			}
+
+			result.push({
+				size,
+				averageWeight: Number.isFinite(+sizeProperties[XMLFileKey.AverageWeight]?._text) ? +sizeProperties[XMLFileKey.AverageWeight]?._text : 0
+			})
 		} catch (e) {
 			console.warn(e)
 		}
@@ -363,15 +396,15 @@ async function handleExchangeFileProducts(fileProducts: ElementCompact, file: st
 				throw new TypeError(`Product '${article}' doesn't have a standard`)
 			}
 
-			const images = fileProduct[XMLFileKey.Picture] && (Array.isArray(fileProduct[XMLFileKey.Picture]) ? fileProduct[XMLFileKey.Picture] : [fileProduct[XMLFileKey.Picture]]).map(image => path.join(process.cwd(), DATA_EXCHANGE_FOLDER, image._text.replaceAll('\\', '/')))
-			!images && console.warn(`Product '${article}' doesn't have images`)
-
-			const description = fileProduct[XMLFileKey.Description]?._text
-			!description && console.warn(`Product '${article}' doesn't have a description`)
-
 			const propValues = dataExchangeProps && getPropValuesFromFileProduct(article, fileProduct[XMLFileKey.PropertiesValues]?.[XMLFileKey.PropertyValues], dataExchangeProps),
 				modelComponents = getModelComponentsFromFileProduct(article, fileProduct[XMLFileKey.ProductCharacteristics]?.[XMLFileKey.ProductCharacteristic]),
+				nomenclatureGroup = fileProduct[XMLFileKey.NomenclatureGroup]?._text,
+				images = fileProduct[XMLFileKey.Picture] && (Array.isArray(fileProduct[XMLFileKey.Picture]) ? fileProduct[XMLFileKey.Picture] : [fileProduct[XMLFileKey.Picture]]).map(image => path.join(process.cwd(), DATA_EXCHANGE_FOLDER, image._text.replaceAll('\\', '/'))),
+				description = fileProduct[XMLFileKey.Description]?._text,
+				averageWeight = Number.isFinite(+fileProduct[XMLFileKey.AverageWeight]?._text) ? +fileProduct[XMLFileKey.AverageWeight]?._text : 0,
+				sizesProperties = getSizesPropertiesFromFileProduct(article, fileProduct[XMLFileKey.SizesProperties]?.[XMLFileKey.SizeProperties]),
 				typeId = await upsertProductType(productType),
+				nomenclatureGroupId = await upsertNomenclatureGroupe(nomenclatureGroup),
 				productPrototypId = await upsertProductPrototyp({
 					code: prototypCode,
 					typeId,
@@ -461,26 +494,36 @@ async function handleExchangeFileProducts(fileProducts: ElementCompact, file: st
 
 				await upsertModelComponent({
 					count: modelComponent.count,
-					weight: modelComponent.weight,
+					averageWeight: modelComponent.averageWeight,
 					stoneId,
 					visibleModelModificationId
 				})
 			}
 
-			await upsertInvisibleModelModification({
+			const invisibleModelModificationId = await upsertInvisibleModelModification({
 				article,
 				description,
 				visibleModelModificationId,
+				averageWeight,
+				nomenclatureGroupId,
 				...propValues ? {
 					wireTypeId: propValues[PropName.WireType] ?? null,
-					height: propValues[PropName.Height] ?? null,
-					width: propValues[PropName.Width] ?? null
+					height: propValues[PropName.Height] ?? 0,
+					width: propValues[PropName.Width] ?? 0,
 				} : {
 					wireTypeId: null,
-					height: null,
-					width: null
+					height: 0,
+					width: 0
 				}
 			})
+
+			for (const sizeProperties of sizesProperties) {
+				await upsertInvisibleModelModificationSize({
+					invisibleModelModificationId,
+					sizeId: await upsertSize(sizeProperties.size),
+					averageWeight: sizeProperties.averageWeight
+				})
+			}
 		} catch (e) {
 			console.warn(e)
 		}
@@ -578,11 +621,12 @@ async function handleExchangeFiles() {
 			if (!file.isFile()) {
 				return
 			}
-			if (file.name.includes(IMPORT_PREFIX)) {
-				importFiles.push(file.name)
-			} else {
+			if (!file.name.includes(IMPORT_PREFIX)) {
 				console.warn(`Unknown file '${file.name}'`)
+				return
 			}
+
+			importFiles.push(file.name)
 		})
 
 		let props: DataExchangeProp[] | undefined
@@ -591,6 +635,8 @@ async function handleExchangeFiles() {
 			props ??= await handleExchangeFileProps(data[XMLFileKey.CommercialInformation]?.[XMLFileKey.Classifier]?.[XMLFileKey.Properties]?.[XMLFileKey.Property], file)
 			await handleExchangeFileProducts(data[XMLFileKey.CommercialInformation]?.[XMLFileKey.Catalog]?.[XMLFileKey.Products]?.[XMLFileKey.Product], file, props)
 		}
+
+		updateMenuItemsFromNomenclatureGroups()
 
 		fs.rmSync(DATA_EXCHANGE_FOLDER, { recursive: true })
 	} catch (e) {

@@ -3,7 +3,7 @@ import { Card, CardBody, CardHeader } from '@nextui-org/card'
 import ProductImages from './product-images'
 import ProductVariants from './product-variants'
 import ProductTabs from './tabs'
-import ProductCard from '../../product-card'
+import ProductCard from '../product-card'
 import AddToShoppingBagButton from './add-to-shopping-bag-button'
 import { openGraph, twitter } from '@/app/shared-metadata'
 import type { Metadata } from 'next'
@@ -12,7 +12,7 @@ interface CurrentPageProps extends PageProps<'article', never> { }
 
 export async function generateMetadata({ params }: CurrentPageProps): Promise<Metadata> {
 	const article = decodeURIComponent((await params).article),
-		url = `/catalog/product/${article}`,
+		url = `/catalog/${article}`,
 		product = await getProductByArticle(article),
 		title = product ? `${product.visibleModelModification.productModel.productPrototyp.type.name} ${product.article}` : '',
 		description = 'Подробная информация о товаре.'
@@ -50,14 +50,13 @@ interface CharacteristicGroup {
 const youMayLikeBlockProductCount = 20
 
 export default async function Page({ params }: CurrentPageProps) {
-	const article = decodeURIComponent((await params).article),
-		product = await getProductByArticle(article)
+	const product = await getProductByArticle(decodeURIComponent((await params).article))
 
 	if (!product) {
 		return
 	}
 
-	const productPrototype = await getProductVariants(product.visibleModelModification.productModel.productPrototypId),
+	const productPrototype = await getProductVariants(product.visibleModelModification.productModel.productPrototyp.id),
 		additionalProducts = await getAdditionalProducts({
 			take: youMayLikeBlockProductCount,
 			skipIds: productPrototype ? productPrototype.productModels.flatMap(productModel => productModel.visibleProductModifications.flatMap(visibleProductModification => visibleProductModification.invisibleModelModifications.map(invisibleModelModification => invisibleModelModification.id))) : undefined
@@ -71,6 +70,9 @@ export default async function Page({ params }: CurrentPageProps) {
 		}, ...(product.visibleModelModification.modelComponents.length > 0 ? [{
 			label: 'Вставка',
 			value: product.visibleModelModification.modelComponents.map(modelComponent => modelComponent.stone.stoneType.name).filter((value, index, array) => array.indexOf(value) === index).join(', ')
+		}] : []), ...(product.invisibleModelModificationSizes.length === 0 && product.averageWeight ? [{
+			label: 'Вес',
+			value: product.averageWeight.toNumber()
 		}] : [])],
 		characteristicsGroups: CharacteristicGroup[] = [{
 			groupLabel: 'Общие характеристики',
@@ -122,9 +124,6 @@ export default async function Page({ params }: CurrentPageProps) {
 			}, ...(modelComponent.stone.color ? [{
 				label: 'Цвет',
 				value: modelComponent.stone.color.name
-			}] : []), ...(modelComponent.weight ? [{
-				label: 'Вес',
-				value: modelComponent.weight.toString()
 			}] : []), ...(modelComponent.stone.chroma ? [{
 				label: 'Цветность',
 				value: modelComponent.stone.chroma
@@ -136,29 +135,29 @@ export default async function Page({ params }: CurrentPageProps) {
 			groupLabel: 'Размеры',
 			characteristics: [...(product.width ? [{
 				label: 'Ширина',
-				value: product.width.toString()
+				value: product.width.toNumber()
 			}] : []), ...(product.height ? [{
 				label: 'Высота',
-				value: product.height.toString()
+				value: product.height.toNumber()
 			}] : []), ...(product.visibleModelModification.productModel.productPrototyp.ringDimensions ? [{
 				label: 'Ширина шинки',
-				value: product.visibleModelModification.productModel.productPrototyp.ringDimensions.tireWidth.toString()
+				value: product.visibleModelModification.productModel.productPrototyp.ringDimensions.tireWidth.toNumber()
 			}] : [])], ...(product.visibleModelModification.productModel.productPrototyp.earringDimensions ? [...(product.visibleModelModification.productModel.productPrototyp.earringDimensions.depth ? [{
 				label: 'Глубина',
-				value: product.visibleModelModification.productModel.productPrototyp.earringDimensions.depth.toString()
+				value: product.visibleModelModification.productModel.productPrototyp.earringDimensions.depth.toNumber()
 			}] : []), ...(product.visibleModelModification.productModel.productPrototyp.earringDimensions.pinLowering ? [{
 				label: 'Занижение штифта',
-				value: product.visibleModelModification.productModel.productPrototyp.earringDimensions.pinLowering.toString()
+				value: product.visibleModelModification.productModel.productPrototyp.earringDimensions.pinLowering.toNumber()
 			}] : []), ...(product.visibleModelModification.productModel.productPrototyp.earringDimensions.pinWorkingArea ? [{
 				label: 'Рабочая зона штифта',
-				value: product.visibleModelModification.productModel.productPrototyp.earringDimensions.pinWorkingArea.toString()
+				value: product.visibleModelModification.productModel.productPrototyp.earringDimensions.pinWorkingArea.toNumber()
 			}] : [])] : [])
 		}] : [])]
 
 	return (
 		<>
 			<div className='flex flex-col md:flex-row gap-5 lg:gap-x-14'>
-				<ProductImages media={product.visibleModelModification.media} />
+				<ProductImages media={product.visibleModelModification.media.map(mediaFile => mediaFile.path)} />
 				<div className='md:w-1/2'>
 					<h1 className='text-3xl uppercase'>
 						{product.visibleModelModification.productModel.productPrototyp.type.name}
@@ -185,9 +184,28 @@ export default async function Page({ params }: CurrentPageProps) {
 						</div>
 
 					}
-					<div className='flex justify-end mt-4'>
-						<AddToShoppingBagButton productId={product.id} />
-					</div>
+					{product.invisibleModelModificationSizes.length ?
+						<div className='flex flex-wrap gap-2 mt-4'>
+							{product.invisibleModelModificationSizes.map(invisibleModelModificationSize => (
+								<div
+									key={invisibleModelModificationSize.id}
+									className='flex flex-col items-center border rounded-lg p-2 w-28 shadow-sm bg-white'
+								>
+									<div className='text-lg font-semibold mb-0.5'>
+										{invisibleModelModificationSize.size.value.toNumber()}
+									</div>
+									<div className='text-sm text-gray-500 mb-0.5'>
+										{invisibleModelModificationSize.averageWeight.toNumber()}
+									</div>
+									<AddToShoppingBagButton invisibleModelModificationId={product.id} invisibleModelModificationSizeId={invisibleModelModificationSize.id} />
+								</div>
+							))}
+						</div>
+						:
+						<div className='flex justify-end mt-4'>
+							<AddToShoppingBagButton invisibleModelModificationId={product.id} invisibleModelModificationSizeId={null} />
+						</div>
+					}
 					{productPrototype &&
 						<div className='mt-3'>
 							<h3 className='mb-3'>
@@ -239,8 +257,8 @@ export default async function Page({ params }: CurrentPageProps) {
 						Вам может понравиться
 					</h2>
 					<div className='flex overflow-x-auto p-3 gap-x-2.5'>
-						{additionalProducts.map(product =>
-							<ProductCard key={product.article} product={product} className='basis-[calc(50%-10px)] sm:basis-[calc(33.33%-10px)] md:basis-[calc(25%-10px)] lg:basis-[calc(20%-10px)]' />
+						{additionalProducts.map(additionalProduct =>
+							<ProductCard key={additionalProduct.article} product={additionalProduct} className='basis-[calc(50%-10px)] sm:basis-[calc(33.33%-10px)] md:basis-[calc(25%-10px)] lg:basis-[calc(20%-10px)]' />
 						)}
 					</div>
 				</section>
