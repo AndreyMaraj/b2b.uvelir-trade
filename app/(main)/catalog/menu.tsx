@@ -133,7 +133,7 @@ export default function Menu({ menuItems }: MenuProps) {
 
 	useEffect(() => {
 		setActiveIds(nomenclatureGroupId ? findMenuItem(menuItems, getNomenclatureGroupQueryParam(nomenclatureGroupId)) ?? [] : [])
-	}, [nomenclatureGroupId])
+	}, [nomenclatureGroupId, menuItems])
 
 	return (
 		<div>
