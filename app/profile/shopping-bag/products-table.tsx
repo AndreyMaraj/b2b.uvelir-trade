@@ -18,9 +18,11 @@ import { NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
 
 interface ProductRow {
 	id: InvisibleModelModification['id'],
-	count: ShoppingBagsProduct['count'],
+	photo: string,
 	article: InvisibleModelModification['article'],
-	photo: string
+	sizes: string,
+	count: ShoppingBagsProduct['count'],
+	weight: number
 }
 
 const rowsPerPage = 25
@@ -69,7 +71,7 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 				case 'remove':
 					return (
 						<Tooltip color='danger' content='Удалить товар'>
-							<Button variant='ghost' isIconOnly onPress={() => updateProducts(product.id, 0)}>
+							<Button variant='ghost' isIconOnly onPress={() => clearShoppingBag(product.id)} >
 								<span className='iconify mdi--delete-outline text-2xl' />
 							</Button>
 						</Tooltip>
@@ -78,22 +80,24 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 			}
 		}, [updateProducts]),
 		onCreateOrderClick = useCallback(async () => {
-			await createOrder(userId, rows.map(productRow => ({ invisibleModelModificationId: productRow.id, count: productRow.count })))
+			await createOrder(userId)
 			clearShoppingBag()
 		}, [userId, rows, clearShoppingBag])
 
 	useEffect(() => {
 		const fetchData = async () =>
-			setRows((await getShoppingBagsWithProducts(userId))?.map(product => ({
-				id: product.invisibleModelModification.id,
-				count: product.count,
-				article: product.invisibleModelModification.article,
-				photo: product.invisibleModelModification.visibleModelModification.media.length === 1 ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${product.invisibleModelModification.visibleModelModification.media[0].path}` : EmptyProductMedia.src
+			setRows((await getShoppingBagsWithProducts(userId))?.map(invisibleModelModification => ({
+				id: invisibleModelModification.id,
+				photo: invisibleModelModification.visibleModelModification.media.length ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${invisibleModelModification.visibleModelModification.media[0].path}` : EmptyProductMedia.src,
+				article: invisibleModelModification.article,
+				...invisibleModelModification.shoppingBagsProducts.reduce((sum, shoppingBagsProduct) => ({
+					sizes: shoppingBagsProduct.invisibleModelModificationSize ? `${sum.sizes ? sum.sizes + ' / ' : ''} ${shoppingBagsProduct.invisibleModelModificationSize.size.value} - ${shoppingBagsProduct.count}` : '',
+					count: sum.count + shoppingBagsProduct.count,
+					weight: sum.weight + shoppingBagsProduct.count * (shoppingBagsProduct.invisibleModelModificationSize?.averageWeight ?? invisibleModelModification.averageWeight)
+				}), { sizes: '', count: 0, weight: 0 })
 			})) ?? [])
 
-		if (!isPending) {
-			fetchData()
-		}
+		!isPending && fetchData()
 	}, [products, isPending, setRows, userId])
 
 	return (
@@ -130,8 +134,14 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 					<TableColumn key='article'>
 						Артикул
 					</TableColumn>
+					<TableColumn key='sizes'>
+						Размеры
+					</TableColumn>
 					<TableColumn key='count'>
 						Количество
+					</TableColumn>
+					<TableColumn key='weight'>
+						Вес
 					</TableColumn>
 					<TableColumn key='remove' align='end' width={90}>
 						Удалить

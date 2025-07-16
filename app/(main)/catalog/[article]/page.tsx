@@ -70,6 +70,9 @@ export default async function Page({ params }: CurrentPageProps) {
 		}, ...(product.visibleModelModification.modelComponents.length > 0 ? [{
 			label: 'Вставка',
 			value: product.visibleModelModification.modelComponents.map(modelComponent => modelComponent.stone.stoneType.name).filter((value, index, array) => array.indexOf(value) === index).join(', ')
+		}] : []), ...(product.invisibleModelModificationSizes.length === 0 && product.averageWeight ? [{
+			label: 'Вес',
+			value: product.averageWeight.toNumber()
 		}] : [])],
 		characteristicsGroups: CharacteristicGroup[] = [{
 			groupLabel: 'Общие характеристики',
@@ -121,9 +124,6 @@ export default async function Page({ params }: CurrentPageProps) {
 			}, ...(modelComponent.stone.color ? [{
 				label: 'Цвет',
 				value: modelComponent.stone.color.name
-				// }] : []), ...(modelComponent.weight ? [{
-				// 	label: 'Вес',
-				// 	value: modelComponent.weight.toNumber()
 			}] : []), ...(modelComponent.stone.chroma ? [{
 				label: 'Цветность',
 				value: modelComponent.stone.chroma
@@ -184,9 +184,28 @@ export default async function Page({ params }: CurrentPageProps) {
 						</div>
 
 					}
-					<div className='flex justify-end mt-4'>
-						<AddToShoppingBagButton productId={product.id} />
-					</div>
+					{product.invisibleModelModificationSizes.length ?
+						<div className='flex flex-wrap gap-2 mt-4'>
+							{product.invisibleModelModificationSizes.map(invisibleModelModificationSize => (
+								<div
+									key={invisibleModelModificationSize.id}
+									className='flex flex-col items-center border rounded-lg p-2 w-28 shadow-sm bg-white'
+								>
+									<div className='text-lg font-semibold mb-0.5'>
+										{invisibleModelModificationSize.size.value.toNumber()}
+									</div>
+									<div className='text-sm text-gray-500 mb-0.5'>
+										{invisibleModelModificationSize.averageWeight.toNumber()}
+									</div>
+									<AddToShoppingBagButton invisibleModelModificationId={product.id} invisibleModelModificationSizeId={invisibleModelModificationSize.id} />
+								</div>
+							))}
+						</div>
+						:
+						<div className='flex justify-end mt-4'>
+							<AddToShoppingBagButton invisibleModelModificationId={product.id} invisibleModelModificationSizeId={null} />
+						</div>
+					}
 					{productPrototype &&
 						<div className='mt-3'>
 							<h3 className='mb-3'>
