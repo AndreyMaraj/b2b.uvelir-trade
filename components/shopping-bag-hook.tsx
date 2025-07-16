@@ -9,8 +9,8 @@ import { useDebouncedCallback } from 'use-debounce'
 
 interface ShoppingBagContextType {
 	products: ShoppingBagsProduct[],
-	updateProducts: (productId: number, count: number) => void,
-	clearShoppingBag: () => void,
+	updateProducts: (count: number, invisibleModelModificationId: number, invisibleModelModificationSizeId: number | null) => void,
+	clearShoppingBag: (invisibleModelModificationId?: number) => void,
 	isPending: boolean
 }
 
@@ -22,7 +22,7 @@ export const ShoppingBagProvider = ({ children }: { children: ReactNode }) => {
 		session = useSession(),
 		previousUserIdRef = useRef<User['id'] | null>(null)
 
-	const updateProducts = useDebouncedCallback(async (productId: number, count: number) => {
+	const updateProducts = useDebouncedCallback(async (count: number, invisibleModelModificationId: number, invisibleModelModificationSizeId: number | null) => {
 		if (!session.data?.user.id) {
 			return
 		}
@@ -30,14 +30,19 @@ export const ShoppingBagProvider = ({ children }: { children: ReactNode }) => {
 		setIsPending(true)
 
 		try {
-			const shoppingBagProduct = await updateShoppingBag(session.data.user.id, productId, count)
-			setProducts((prevProducts: ShoppingBagsProduct[]) => {
+			const shoppingBagProduct = await updateShoppingBag({
+				userId: session.data.user.id,
+				count,
+				invisibleModelModificationId,
+				invisibleModelModificationSizeId
+			})
+			setProducts(prevProducts => {
 				if (!shoppingBagProduct) {
 					return prevProducts
 				}
 
 				if (count) {
-					const productIndex = prevProducts.findIndex(product => product.invisibleModelModificationId === productId)
+					const productIndex = prevProducts.findIndex(product => invisibleModelModificationId === product.invisibleModelModificationId && (!invisibleModelModificationSizeId || invisibleModelModificationSizeId === product.invisibleModelModificationSizeId))
 					if (productIndex !== -1) {
 						const updatedProducts = [...prevProducts]
 						updatedProducts[productIndex].count = count
@@ -47,14 +52,14 @@ export const ShoppingBagProvider = ({ children }: { children: ReactNode }) => {
 					return [...prevProducts, shoppingBagProduct]
 				}
 
-				return prevProducts.filter(product => product.invisibleModelModificationId !== productId)
+				return prevProducts.filter(product => invisibleModelModificationId !== product.invisibleModelModificationId || invisibleModelModificationSizeId !== product.invisibleModelModificationSizeId)
 			})
 		} finally {
 			setIsPending(false)
 		}
-	}, 800)
+	}, 500)
 
-	const clearShoppingBag = useCallback(async () => {
+	const clearShoppingBag = useCallback(async (invisibleModelModificationId?: number) => {
 		if (!session.data?.user.id) {
 			return
 		}
@@ -62,7 +67,7 @@ export const ShoppingBagProvider = ({ children }: { children: ReactNode }) => {
 		setIsPending(true)
 
 		try {
-			await clearUsersShoppingBag(session.data.user.id)
+			await clearUsersShoppingBag(session.data.user.id, invisibleModelModificationId)
 			setProducts([])
 		} finally {
 			setIsPending(false)

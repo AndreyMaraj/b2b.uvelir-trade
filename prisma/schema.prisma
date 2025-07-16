@@ -85,13 +85,16 @@ model Media {
 }
 
 model OrderItem {
-    order                        Order                      @relation(fields: [orderId], references: [id], onDelete: Cascade)
-    orderId                      Int
-    invisibleModelModification   InvisibleModelModification @relation(fields: [invisibleModelModificationId], references: [id], onDelete: Restrict)
-    invisibleModelModificationId Int
-    count                        Int                        @db.SmallInt
+    id                               Int                             @id @default(autoincrement())
+    count                            Int                             @db.SmallInt
+    order                            Order                           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+    orderId                          Int
+    invisibleModelModification       InvisibleModelModification      @relation(fields: [invisibleModelModificationId], references: [id], onDelete: Restrict)
+    invisibleModelModificationId     Int
+    invisibleModelModificationSize   InvisibleModelModificationSize? @relation(fields: [invisibleModelModificationSizeId], references: [id], onDelete: Restrict)
+    invisibleModelModificationSizeId Int?
 
-    @@id([orderId, invisibleModelModificationId])
+    @@unique([orderId, invisibleModelModificationId, invisibleModelModificationSizeId])
 }
 
 model Order {
@@ -103,13 +106,16 @@ model Order {
 }
 
 model ShoppingBagsProduct {
-    user                         User                       @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId                       String
-    invisibleModelModification   InvisibleModelModification @relation(fields: [invisibleModelModificationId], references: [id], onDelete: Cascade)
-    invisibleModelModificationId Int
-    count                        Int                        @db.SmallInt
+    id                               Int                             @id @default(autoincrement())
+    count                            Int                             @db.SmallInt
+    user                             User                            @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId                           String
+    invisibleModelModification       InvisibleModelModification      @relation(fields: [invisibleModelModificationId], references: [id], onDelete: Cascade)
+    invisibleModelModificationId     Int
+    invisibleModelModificationSize   InvisibleModelModificationSize? @relation(fields: [invisibleModelModificationSizeId], references: [id], onDelete: Cascade)
+    invisibleModelModificationSizeId Int?
 
-    @@id([userId, invisibleModelModificationId])
+    @@unique([userId, invisibleModelModificationId, invisibleModelModificationSizeId])
 }
 
 model NomenclatureGroup {
@@ -184,6 +190,12 @@ model ProductLockType {
     productPrototypes ProductPrototype[]
 }
 
+model Size {
+    id                              Int                              @id @default(autoincrement()) @db.SmallInt
+    value                           Decimal                          @unique @db.Decimal(3, 1)
+    invisibleModelModificationSizes InvisibleModelModificationSize[]
+}
+
 model MetalType {
     id     Int     @id @default(autoincrement()) @db.SmallInt
     name   String  @unique
@@ -247,29 +259,44 @@ model Stone {
 model ModelComponent {
     id                         Int                      @id @default(autoincrement())
     count                      Int                      @default(1) @db.SmallInt
-    weight                     Decimal?                 @db.Decimal(5, 3)
+    averageWeight              Decimal                  @default(0) @db.Decimal(5, 3)
     stone                      Stone                    @relation(fields: [stoneId], references: [id])
     stoneId                    Int                      @db.SmallInt
     visibleModelModification   VisibleModelModification @relation(fields: [visibleModelModificationId], references: [id], onDelete: Cascade)
     visibleModelModificationId Int
 
-    // @@unique([stoneId, weight, visibleModelModificationId])
+    // @@unique([stoneId, averageWeight, visibleModelModificationId])
+}
+
+model InvisibleModelModificationSize {
+    id                           Int                        @id @default(autoincrement())
+    averageWeight                Decimal                    @default(0) @db.Decimal(4, 2)
+    size                         Size                       @relation(fields: [sizeId], references: [id])
+    sizeId                       Int                        @db.SmallInt
+    invisibleModelModification   InvisibleModelModification @relation(fields: [invisibleModelModificationId], references: [id], onDelete: Cascade)
+    invisibleModelModificationId Int
+    shoppingBagsProducts         ShoppingBagsProduct[]
+    orderItems                   OrderItem[]
+
+    @@unique([sizeId, invisibleModelModificationId])
 }
 
 model InvisibleModelModification {
-    id                         Int                      @id @default(autoincrement())
-    article                    String                   @unique
-    height                     Decimal?                 @db.Decimal(4, 2)
-    width                      Decimal?                 @db.Decimal(4, 2)
-    description                String?
-    wireType                   WireType?                @relation(fields: [wireTypeId], references: [id])
-    wireTypeId                 Int?                     @db.SmallInt
-    nomenclatureGroup          NomenclatureGroup?       @relation(fields: [nomenclatureGroupId], references: [id])
-    nomenclatureGroupId        Int?                     @db.SmallInt
-    visibleModelModification   VisibleModelModification @relation(fields: [visibleModelModificationId], references: [id], onDelete: Cascade)
-    visibleModelModificationId Int
-    shoppingBagsProducts       ShoppingBagsProduct[]
-    orderItems                 OrderItem[]
+    id                              Int                              @id @default(autoincrement())
+    article                         String                           @unique
+    height                          Decimal                          @default(0) @db.Decimal(4, 2)
+    width                           Decimal                          @default(0) @db.Decimal(4, 2)
+    averageWeight                   Decimal                          @default(0) @db.Decimal(4, 2)
+    description                     String?
+    wireType                        WireType?                        @relation(fields: [wireTypeId], references: [id])
+    wireTypeId                      Int?                             @db.SmallInt
+    nomenclatureGroup               NomenclatureGroup?               @relation(fields: [nomenclatureGroupId], references: [id])
+    nomenclatureGroupId             Int?                             @db.SmallInt
+    visibleModelModification        VisibleModelModification         @relation(fields: [visibleModelModificationId], references: [id], onDelete: Cascade)
+    visibleModelModificationId      Int
+    invisibleModelModificationSizes InvisibleModelModificationSize[]
+    orderItems                      OrderItem[]
+    shoppingBagsProducts            ShoppingBagsProduct[]
 }
 
 model VisibleModelModification {

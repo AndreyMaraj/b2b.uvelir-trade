@@ -1,6 +1,9 @@
 -- CreateEnum
 CREATE TYPE "UserRole" AS ENUM ('ADMIN', 'USER');
 
+-- CreateEnum
+CREATE TYPE "MenuType" AS ENUM ('CATALOG');
+
 -- CreateTable
 CREATE TABLE "User" (
     "id" TEXT NOT NULL,
@@ -47,6 +50,18 @@ CREATE TABLE "VerificationToken" (
 );
 
 -- CreateTable
+CREATE TABLE "MenuItem" (
+    "id" SMALLSERIAL NOT NULL,
+    "menuType" "MenuType" NOT NULL,
+    "name" TEXT NOT NULL,
+    "urlParams" TEXT,
+    "order" SMALLSERIAL NOT NULL,
+    "parentId" INTEGER,
+
+    CONSTRAINT "MenuItem_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Media" (
     "id" SERIAL NOT NULL,
     "path" TEXT NOT NULL,
@@ -57,11 +72,13 @@ CREATE TABLE "Media" (
 
 -- CreateTable
 CREATE TABLE "OrderItem" (
+    "id" SERIAL NOT NULL,
+    "count" SMALLINT NOT NULL,
     "orderId" INTEGER NOT NULL,
     "invisibleModelModificationId" INTEGER NOT NULL,
-    "count" SMALLINT NOT NULL,
+    "invisibleModelModificationSizeId" INTEGER,
 
-    CONSTRAINT "OrderItem_pkey" PRIMARY KEY ("orderId","invisibleModelModificationId")
+    CONSTRAINT "OrderItem_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -75,11 +92,21 @@ CREATE TABLE "Order" (
 
 -- CreateTable
 CREATE TABLE "ShoppingBagsProduct" (
+    "id" SERIAL NOT NULL,
+    "count" SMALLINT NOT NULL,
     "userId" TEXT NOT NULL,
     "invisibleModelModificationId" INTEGER NOT NULL,
-    "count" SMALLINT NOT NULL,
+    "invisibleModelModificationSizeId" INTEGER,
 
-    CONSTRAINT "ShoppingBagsProduct_pkey" PRIMARY KEY ("userId","invisibleModelModificationId")
+    CONSTRAINT "ShoppingBagsProduct_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "NomenclatureGroup" (
+    "id" SMALLSERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+
+    CONSTRAINT "NomenclatureGroup_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -165,6 +192,14 @@ CREATE TABLE "ProductLockType" (
 );
 
 -- CreateTable
+CREATE TABLE "Size" (
+    "id" SMALLSERIAL NOT NULL,
+    "value" DECIMAL(3,1) NOT NULL,
+
+    CONSTRAINT "Size_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "MetalType" (
     "id" SMALLSERIAL NOT NULL,
     "name" TEXT NOT NULL,
@@ -231,7 +266,7 @@ CREATE TABLE "Stone" (
 CREATE TABLE "ModelComponent" (
     "id" SERIAL NOT NULL,
     "count" SMALLINT NOT NULL DEFAULT 1,
-    "weight" DECIMAL(5,3),
+    "averageWeight" DECIMAL(5,3) NOT NULL DEFAULT 0,
     "stoneId" SMALLINT NOT NULL,
     "visibleModelModificationId" INTEGER NOT NULL,
 
@@ -239,13 +274,25 @@ CREATE TABLE "ModelComponent" (
 );
 
 -- CreateTable
+CREATE TABLE "InvisibleModelModificationSize" (
+    "id" SERIAL NOT NULL,
+    "averageWeight" DECIMAL(4,2) NOT NULL DEFAULT 0,
+    "sizeId" SMALLINT NOT NULL,
+    "invisibleModelModificationId" INTEGER NOT NULL,
+
+    CONSTRAINT "InvisibleModelModificationSize_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "InvisibleModelModification" (
     "id" SERIAL NOT NULL,
     "article" TEXT NOT NULL,
-    "height" DECIMAL(4,2),
-    "width" DECIMAL(4,2),
+    "height" DECIMAL(4,2) NOT NULL DEFAULT 0,
+    "width" DECIMAL(4,2) NOT NULL DEFAULT 0,
+    "averageWeight" DECIMAL(4,2) NOT NULL DEFAULT 0,
     "description" TEXT,
     "wireTypeId" SMALLINT,
+    "nomenclatureGroupId" SMALLINT,
     "visibleModelModificationId" INTEGER NOT NULL,
 
     CONSTRAINT "InvisibleModelModification_pkey" PRIMARY KEY ("id")
@@ -297,6 +344,21 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "User_phone_key" ON "User"("phone");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "MenuItem_menuType_name_key" ON "MenuItem"("menuType", "name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "MenuItem_menuType_urlParams_key" ON "MenuItem"("menuType", "urlParams");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "OrderItem_orderId_invisibleModelModificationId_invisibleMod_key" ON "OrderItem"("orderId", "invisibleModelModificationId", "invisibleModelModificationSizeId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "ShoppingBagsProduct_userId_invisibleModelModificationId_inv_key" ON "ShoppingBagsProduct"("userId", "invisibleModelModificationId", "invisibleModelModificationSizeId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "NomenclatureGroup_name_key" ON "NomenclatureGroup"("name");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Sex_name_key" ON "Sex"("name");
 
 -- CreateIndex
@@ -324,6 +386,9 @@ CREATE UNIQUE INDEX "ProductTheme_name_key" ON "ProductTheme"("name");
 CREATE UNIQUE INDEX "ProductLockType_name_key" ON "ProductLockType"("name");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Size_value_key" ON "Size"("value");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "MetalType_name_key" ON "MetalType"("name");
 
 -- CreateIndex
@@ -337,6 +402,9 @@ CREATE UNIQUE INDEX "StoneType_name_key" ON "StoneType"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "CutType_name_key" ON "CutType"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "InvisibleModelModificationSize_sizeId_invisibleModelModific_key" ON "InvisibleModelModificationSize"("sizeId", "invisibleModelModificationId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "InvisibleModelModification_article_key" ON "InvisibleModelModification"("article");
@@ -354,6 +422,9 @@ CREATE UNIQUE INDEX "ProductPrototype_code_typeId_key" ON "ProductPrototype"("co
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "MenuItem" ADD CONSTRAINT "MenuItem_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "MenuItem"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Media" ADD CONSTRAINT "Media_visibleModelModificationId_fkey" FOREIGN KEY ("visibleModelModificationId") REFERENCES "VisibleModelModification"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -363,6 +434,9 @@ ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_orderId_fkey" FOREIGN KEY ("or
 ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_invisibleModelModificationId_fkey" FOREIGN KEY ("invisibleModelModificationId") REFERENCES "InvisibleModelModification"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "OrderItem" ADD CONSTRAINT "OrderItem_invisibleModelModificationSizeId_fkey" FOREIGN KEY ("invisibleModelModificationSizeId") REFERENCES "InvisibleModelModificationSize"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Order" ADD CONSTRAINT "Order_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -370,6 +444,9 @@ ALTER TABLE "ShoppingBagsProduct" ADD CONSTRAINT "ShoppingBagsProduct_userId_fke
 
 -- AddForeignKey
 ALTER TABLE "ShoppingBagsProduct" ADD CONSTRAINT "ShoppingBagsProduct_invisibleModelModificationId_fkey" FOREIGN KEY ("invisibleModelModificationId") REFERENCES "InvisibleModelModification"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ShoppingBagsProduct" ADD CONSTRAINT "ShoppingBagsProduct_invisibleModelModificationSizeId_fkey" FOREIGN KEY ("invisibleModelModificationSizeId") REFERENCES "InvisibleModelModificationSize"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Metal" ADD CONSTRAINT "Metal_metalTypeId_fkey" FOREIGN KEY ("metalTypeId") REFERENCES "MetalType"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -396,7 +473,16 @@ ALTER TABLE "ModelComponent" ADD CONSTRAINT "ModelComponent_stoneId_fkey" FOREIG
 ALTER TABLE "ModelComponent" ADD CONSTRAINT "ModelComponent_visibleModelModificationId_fkey" FOREIGN KEY ("visibleModelModificationId") REFERENCES "VisibleModelModification"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "InvisibleModelModificationSize" ADD CONSTRAINT "InvisibleModelModificationSize_sizeId_fkey" FOREIGN KEY ("sizeId") REFERENCES "Size"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "InvisibleModelModificationSize" ADD CONSTRAINT "InvisibleModelModificationSize_invisibleModelModificationI_fkey" FOREIGN KEY ("invisibleModelModificationId") REFERENCES "InvisibleModelModification"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "InvisibleModelModification" ADD CONSTRAINT "InvisibleModelModification_wireTypeId_fkey" FOREIGN KEY ("wireTypeId") REFERENCES "WireType"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "InvisibleModelModification" ADD CONSTRAINT "InvisibleModelModification_nomenclatureGroupId_fkey" FOREIGN KEY ("nomenclatureGroupId") REFERENCES "NomenclatureGroup"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "InvisibleModelModification" ADD CONSTRAINT "InvisibleModelModification_visibleModelModificationId_fkey" FOREIGN KEY ("visibleModelModificationId") REFERENCES "VisibleModelModification"("id") ON DELETE CASCADE ON UPDATE CASCADE;

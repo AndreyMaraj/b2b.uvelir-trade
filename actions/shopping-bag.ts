@@ -1,25 +1,39 @@
 'use server'
 
 import { prisma } from '@/prisma'
-import { Prisma } from '@prisma/client'
-import type { User } from '@prisma/client'
+import type { ShoppingBagsProduct } from '@prisma/client'
 
-export async function updateShoppingBag(userId: string, invisibleModelModificationId: number, count: number) {
-	const where = Prisma.validator<Prisma.ShoppingBagsProductWhereUniqueInput>()({
-		userId_invisibleModelModificationId: { userId, invisibleModelModificationId }
-	})
+export async function updateShoppingBag(data: Omit<ShoppingBagsProduct, 'id'>) {
 	try {
-		if (count) {
-			return await prisma.shoppingBagsProduct.upsert({
-				where,
-				create: { userId, invisibleModelModificationId, count },
-				update: { count }
-			})
+		const shoppingBagsProduct = await prisma.shoppingBagsProduct.findFirst({
+			where: {
+				userId: data.userId,
+				invisibleModelModificationId: data.invisibleModelModificationId,
+				invisibleModelModificationSizeId: data.invisibleModelModificationSizeId
+			}
+		})
+
+		if (data.count) {
+			if (shoppingBagsProduct) {
+				return await prisma.shoppingBagsProduct.update({
+					where: {
+						id: shoppingBagsProduct.id
+					},
+					data: {
+						count: data.count
+					}
+				})
+			} else {
+				return await prisma.shoppingBagsProduct.create({ data })
+			}
 		}
-		const shoppingBagsProduct = await prisma.shoppingBagsProduct.findUnique({ where })
 
 		if (shoppingBagsProduct) {
-			return await prisma.shoppingBagsProduct.delete({ where })
+			return await prisma.shoppingBagsProduct.delete({
+				where: {
+					id: shoppingBagsProduct.id
+				}
+			})
 		}
 
 		return null
@@ -29,16 +43,16 @@ export async function updateShoppingBag(userId: string, invisibleModelModificati
 	}
 }
 
-export async function clearUsersShoppingBag(userId: string) {
+export async function clearUsersShoppingBag(userId: ShoppingBagsProduct['userId'], invisibleModelModificationId?: ShoppingBagsProduct['invisibleModelModificationId']) {
 	try {
-		return await prisma.shoppingBagsProduct.deleteMany({ where: { userId } })
+		return await prisma.shoppingBagsProduct.deleteMany({ where: { userId, invisibleModelModificationId } })
 	} catch (e) {
 		console.log(e)
 		return
 	}
 }
 
-export async function getShoppingBagsProducts(userId: User['id']) {
+export async function getShoppingBagsProducts(userId: ShoppingBagsProduct['userId']) {
 	try {
 		return await prisma.shoppingBagsProduct.findMany({ where: { userId } })
 	} catch (e) {
@@ -47,25 +61,59 @@ export async function getShoppingBagsProducts(userId: User['id']) {
 	}
 }
 
-export async function getShoppingBagsWithProducts(userId: User['id']) {
+export async function getShoppingBagsWithProducts(userId: ShoppingBagsProduct['userId']) {
 	try {
-		return await prisma.shoppingBagsProduct.findMany({
-			where: { userId },
+		return (await prisma.invisibleModelModification.findMany({
+			where: {
+				shoppingBagsProducts: {
+					some: { userId }
+				}
+			},
 			select: {
-				count: true,
-				invisibleModelModification: {
+				id: true,
+				article: true,
+				averageWeight: true,
+				visibleModelModification: {
+					select: {
+						media: {
+							take: 1
+						}
+					}
+				},
+				shoppingBagsProducts: {
+					where: { userId },
 					select: {
 						id: true,
-						article: true,
-						visibleModelModification: {
+						count: true,
+						invisibleModelModificationSize: {
 							select: {
-								media: { take: 1 }
+								id: true,
+								averageWeight: true,
+								size: {
+									select: {
+										value: true
+									}
+								}
 							}
 						}
 					}
 				}
 			}
-		})
+		})).map(invisibleModelModification => ({
+			...invisibleModelModification,
+			averageWeight: invisibleModelModification.averageWeight.toNumber(),
+			shoppingBagsProducts: invisibleModelModification.shoppingBagsProducts.map(shoppingBagsProduct => ({
+				...shoppingBagsProduct,
+				invisibleModelModificationSize: shoppingBagsProduct.invisibleModelModificationSize && {
+					...shoppingBagsProduct.invisibleModelModificationSize,
+					averageWeight: shoppingBagsProduct.invisibleModelModificationSize.averageWeight.toNumber(),
+					size: {
+						...shoppingBagsProduct.invisibleModelModificationSize.size,
+						value: shoppingBagsProduct.invisibleModelModificationSize.size.value.toNumber()
+					}
+				}
+			}))
+		}))
 	} catch (e) {
 		console.log(e)
 		return

@@ -3,7 +3,7 @@
 import { prisma } from '@/prisma'
 import type { SerializedPrismaEntity } from '@/types'
 import { Prisma } from '@prisma/client'
-import type { EarringDimensions, InvisibleModelModification, Metal, ModelComponent, ProductModel, ProductPrototype, RingDimensions, Stone } from '@prisma/client'
+import type { EarringDimensions, InvisibleModelModification, InvisibleModelModificationSize, Metal, ModelComponent, ProductModel, ProductPrototype, RingDimensions, Stone } from '@prisma/client'
 
 const SELECT_ID = {
 	select: {
@@ -11,15 +11,38 @@ const SELECT_ID = {
 	}
 } as const
 
+export async function upsertSize(value: number) {
+	return (await prisma.size.upsert({
+		...SELECT_ID,
+		where: { value },
+		create: { value },
+		update: {}
+	})).id
+}
+
+export async function upsertInvisibleModelModificationSize(data: SerializedPrismaEntity<Omit<InvisibleModelModificationSize, 'id'>>) {
+	return (await prisma.invisibleModelModificationSize.upsert({
+		...SELECT_ID,
+		where: {
+			sizeId_invisibleModelModificationId: {
+				sizeId: data.sizeId,
+				invisibleModelModificationId: data.invisibleModelModificationId
+			}
+		},
+		create: { ...data },
+		update: {
+			averageWeight: data.averageWeight
+		}
+	})).id
+}
+
 export async function upsertCutType(name: string) {
-	const { id } = await prisma.cutType.upsert({
+	return (await prisma.cutType.upsert({
 		...SELECT_ID,
 		where: { name },
 		create: { name },
 		update: {}
-	})
-
-	return id
+	})).id
 }
 
 export async function upsertStoneType(name: string) {
@@ -174,7 +197,7 @@ export async function upsertModelComponent(data: SerializedPrismaEntity<Omit<Mod
 		...SELECT_ID,
 		where: {
 			stoneId: data.stoneId,
-			weight: data.weight,
+			averageWeight: data.averageWeight,
 			visibleModelModificationId: data.visibleModelModificationId
 		}
 	})
@@ -200,7 +223,8 @@ export async function upsertInvisibleModelModification(data: SerializedPrismaEnt
 			width: data.width,
 			description: data.description,
 			wireTypeId: data.wireTypeId,
-			nomenclatureGroupId: data.nomenclatureGroupId
+			nomenclatureGroupId: data.nomenclatureGroupId,
+			averageWeight: data.averageWeight
 		}
 	})).id
 }
@@ -385,7 +409,7 @@ export async function getProductByArticle(article: string) {
 						modelComponents: {
 							select: {
 								count: true,
-								weight: true,
+								averageWeight: true,
 								stone: {
 									select: {
 										chroma: true,
@@ -408,6 +432,22 @@ export async function getProductByArticle(article: string) {
 									}
 								}
 							}
+						}
+					}
+				},
+				invisibleModelModificationSizes: {
+					select: {
+						id: true,
+						averageWeight: true,
+						size: {
+							select: {
+								value: true
+							}
+						}
+					},
+					orderBy: {
+						size: {
+							value: 'asc'
 						}
 					}
 				}
