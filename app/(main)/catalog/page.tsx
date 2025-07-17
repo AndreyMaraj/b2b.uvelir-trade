@@ -100,9 +100,9 @@ export default async function Page(props: PageProps<never, QueryParam>) {
 						<ClearFilterButton />
 					</div>
 					<div>
-						<div className='flex flex-wrap gap-x-2.5 gap-y-4'>
+						<div className='grid w-full gap-4 grid-cols-2 md:grid-cols-3'>
 							{products.map(product =>
-								<ProductCard key={product.article} product={product} className='basis-[calc(50%-10px)] sm:basis-full md:basis-[calc(50%-10px)] lg:basis-[calc(33.333%-10px)]' />
+								<ProductCard key={product.article} product={product} />
 							)}
 						</div>
 						{productsPagesCount > 1 &&
