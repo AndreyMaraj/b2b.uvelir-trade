@@ -302,7 +302,7 @@ export async function getProducts({ skip, take, articleQuery, stoneTypeId, metal
 		})
 
 		return {
-			products: await prisma.invisibleModelModification.findMany({
+			products: (await prisma.invisibleModelModification.findMany({
 				where,
 				skip,
 				take,
@@ -320,14 +320,25 @@ export async function getProducts({ skip, take, articleQuery, stoneTypeId, metal
 								}
 							}
 						}
+					},
+					invisibleModelModificationSizes: {
+						take: 1,
+						select: {
+							averageWeight: true
+						},
+						orderBy: {
+							size: {
+								value: 'asc'
+							}
+						}
 					}
 				}
-			}),
+			})),
 			productsCount: await prisma.invisibleModelModification.count({ where })
 		}
 	} catch (e) {
 		console.log(e)
-		return
+		return { products: [], productsCount: 0 }
 	}
 }
 
@@ -509,6 +520,17 @@ export async function getAdditionalProducts({ take, skipIds }: { take?: number, 
 							}
 						},
 						media: true
+					}
+				},
+				invisibleModelModificationSizes: {
+					take: 1,
+					select: {
+						averageWeight: true
+					},
+					orderBy: {
+						size: {
+							value: 'asc'
+						}
 					}
 				}
 			}
