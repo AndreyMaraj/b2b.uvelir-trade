@@ -48,11 +48,11 @@ export default async function Page(props: PageProps<never, QueryParam>) {
 				</h1>
 				<p className='mt-5'>
 					Необходимо&nbsp;
-					<Link href='/login'>
+					<Link href='/auth/login'>
 						авторизоваться
 					</Link>
 					&nbsp;или&nbsp;
-					<Link href='/register'>
+					<Link href='/auth/register'>
 						зарегистрироваться
 					</Link>
 					.
