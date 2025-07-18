@@ -13,7 +13,8 @@ interface OrderRow {
 	date: Order['date'],
 	user: Pick<User, 'name' | 'tin' | 'city'>,
 	itemsCount: number,
-	totalCount: number
+	totalCount: number,
+	comment: string
 }
 
 const rowsPerPage = 25
@@ -54,7 +55,8 @@ export default function OrdersTable() {
 				date: order.date,
 				user: order.user,
 				itemsCount: order.orderItems.length,
-				totalCount: order.orderItems.reduce((sum, orderItem) => sum + orderItem.count, 0)
+				totalCount: order.orderItems.reduce((sum, orderItem) => sum + orderItem.count, 0),
+				comment: order.comment ?? ''
 			})) ?? [])
 
 		fetchData()
@@ -87,6 +89,9 @@ export default function OrdersTable() {
 				</TableColumn>
 				<TableColumn key='totalCount'>
 					Количество штук
+				</TableColumn>
+				<TableColumn key='comment'>
+					Комментарий
 				</TableColumn>
 			</TableHeader>
 			<TableBody

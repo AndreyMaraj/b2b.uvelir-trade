@@ -5,13 +5,15 @@ import EmptyProductMedia from '@/public/empty-product-media.jpg'
 import { openGraph, twitter } from '@/app/shared-metadata'
 import type { Metadata } from 'next'
 import { NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
+import { Textarea } from '@nextui-org/react'
 
 interface CurrentPageProps extends PageProps<'id', never> { }
 
 export async function generateMetadata({ params }: CurrentPageProps): Promise<Metadata> {
-	const id = (await params).id,
+	const session = await auth(),
+		id = (await params).id,
 		url = `/administration/orders/${id}`,
-		{ order } = await getOrder(Number(id)),
+		{ order } = (!session || !session.user.id || session.user.role !== 'ADMIN') ? { order: null } : await getOrder(Number(id)),
 		title = order ? `Заказ от ${new Date(order.date).toLocaleDateString('ru-RU')}` : '',
 		description = 'Подробная информация о заказе.'
 
@@ -42,7 +44,7 @@ export default async function Page({ params }: CurrentPageProps) {
 		return
 	}
 
-	const { order, invisibleModelModifications } = await getOrder(Number((await params).id), true)
+	const { order, invisibleModelModifications } = await getOrder(Number((await params).id))
 
 	if (!order) {
 		return
@@ -69,6 +71,14 @@ export default async function Page({ params }: CurrentPageProps) {
 			</div>
 			<div>
 				<ProductsTable rows={orderItems} />
+				{order.comment &&
+					<Textarea
+						label='Комментарий к заказу'
+						value={order.comment}
+						isReadOnly
+						className='mt-5'
+					/>
+				}
 			</div>
 		</>
 	)

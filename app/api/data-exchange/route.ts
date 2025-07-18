@@ -677,7 +677,7 @@ export async function POST(request: NextRequest) {
 					fs.mkdirSync(DATA_EXCHANGE_MEDIA_FOLDER_PATH)
 				}
 
-				const fileName = request.nextUrl.searchParams.get('filename')
+				const fileName = decodeURIComponent(request.nextUrl.searchParams.get('filename') ?? '')
 
 				if (!fileName) {
 					return new Response('File name is empty', { status: 400 })

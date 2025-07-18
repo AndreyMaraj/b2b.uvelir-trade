@@ -35,7 +35,7 @@ export const metadata: Metadata = {
 	}
 }
 
-const numberOfProductsPerPage = 15
+const numberOfProductsPerPage = 30
 
 export default async function Page(props: PageProps<never, QueryParam>) {
 	const session = await auth()
@@ -48,11 +48,11 @@ export default async function Page(props: PageProps<never, QueryParam>) {
 				</h1>
 				<p className='mt-5'>
 					Необходимо&nbsp;
-					<Link href='/login'>
+					<Link href='/auth/login'>
 						авторизоваться
 					</Link>
 					&nbsp;или&nbsp;
-					<Link href='/register'>
+					<Link href='/auth/register'>
 						зарегистрироваться
 					</Link>
 					.
@@ -100,9 +100,9 @@ export default async function Page(props: PageProps<never, QueryParam>) {
 						<ClearFilterButton />
 					</div>
 					<div>
-						<div className='flex flex-wrap gap-x-2.5 gap-y-4'>
+						<div className='grid w-full gap-4 grid-cols-2 md:grid-cols-3'>
 							{products.map(product =>
-								<ProductCard key={product.article} product={product} className='basis-[calc(50%-10px)] sm:basis-full md:basis-[calc(50%-10px)] lg:basis-[calc(33.333%-10px)]' />
+								<ProductCard key={product.article} product={product} />
 							)}
 						</div>
 						{productsPagesCount > 1 &&

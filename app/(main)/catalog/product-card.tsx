@@ -1,4 +1,4 @@
-import { Card, CardBody, CardHeader } from '@nextui-org/card'
+import { Card, CardBody, CardFooter } from '@nextui-org/card'
 import { Image } from '@nextui-org/image'
 import NextImage from 'next/image'
 import { Prisma } from '@prisma/client'
@@ -19,6 +19,11 @@ const ProductCardData = Prisma.validator<Prisma.InvisibleModelModificationDefaul
 				},
 				media: true
 			}
+		},
+		invisibleModelModificationSizes: {
+			select: {
+				averageWeight: true
+			}
 		}
 	}
 })
@@ -30,25 +35,28 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, className }: ProductCardProps) {
 	return (
-		<Card className={`p-3.5 flex-grow-0 flex-shrink-0${className ? ` ${className}` : ''}`} radius='none' isPressable isHoverable as={Link} href={`/catalog/${product.article}`}>
-			<CardHeader>
-				<p className='mx-auto'>
-					{product.visibleModelModification.productModel.productPrototyp.type.name} {product.article}
-				</p>
-			</CardHeader>
-			<CardBody className='overflow-visible py-2 items-center justify-end'>
-				<Image
-					as={NextImage}
-					src={product.visibleModelModification.media.length > 0 ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${product.visibleModelModification.media[0].path}` : EmptyProductMedia.src}
-					alt=''
-					width={160}
-					height={160}
-					quality={100}
-					radius='none'
-					sizes='100vw'
-					className='object-cover'
-				/>
-			</CardBody>
-		</Card>
+		<div key={product.article} className={`aspect-square w-full${className ? ` ${className}` : ''}`}>
+			<Card className='w-full h-full flex flex-col' isPressable isHoverable shadow='sm' as={Link} href={`/catalog/${product.article}`}>
+				<CardBody className='w-full h-full p-0'>
+					<div className='relative w-full h-full'>
+						<Image
+							as={NextImage}
+							src={product.visibleModelModification.media.length ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${product.visibleModelModification.media[0].path}` : EmptyProductMedia.src}
+							className='object-cover'
+							radius='lg'
+							alt=''
+							fill
+							quality={100}
+							sizes='(max-width: 640px) 50vw, 33vw'
+							removeWrapper
+						/>
+					</div>
+				</CardBody>
+				<CardFooter className='text-small justify-between'>
+					<b>{product.visibleModelModification.productModel.productPrototyp.type.name} {product.article}</b>
+					<p className='text-default-500'>{product.invisibleModelModificationSizes?.length ? product.invisibleModelModificationSizes[0].averageWeight.toNumber() : product.averageWeight.toNumber()}</p>
+				</CardFooter>
+			</Card>
+		</div>
 	)
 }

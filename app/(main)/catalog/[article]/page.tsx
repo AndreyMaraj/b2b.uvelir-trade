@@ -253,12 +253,12 @@ export default async function Page({ params }: CurrentPageProps) {
 			/>
 			{additionalProducts &&
 				<section>
-					<h2 className='my-12 text-xl font-semibold'>
+					<h2 className='mt-12 text-xl font-semibold'>
 						Вам может понравиться
 					</h2>
 					<div className='flex overflow-x-auto p-3 gap-x-2.5'>
 						{additionalProducts.map(additionalProduct =>
-							<ProductCard key={additionalProduct.article} product={additionalProduct} className='basis-[calc(50%-10px)] sm:basis-[calc(33.33%-10px)] md:basis-[calc(25%-10px)] lg:basis-[calc(20%-10px)]' />
+							<ProductCard key={additionalProduct.article} product={additionalProduct} className='w-56 flex-shrink-0' />
 						)}
 					</div>
 				</section>

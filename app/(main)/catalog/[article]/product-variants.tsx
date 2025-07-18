@@ -23,15 +23,15 @@ export default function ProductVariants({ currentProductArcticle, productPrototy
 						<Image
 							as={NextImage}
 							key={index}
-							src={visibleProductModification.media.length > 0 ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${visibleProductModification.media[0].path}` : EmptyProductMedia.src}
+							src={visibleProductModification.media.length ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${visibleProductModification.media[0].path}` : EmptyProductMedia.src}
 							alt={invisibleModelModification.article}
-							width={55}
-							height={55}
+							width={75}
+							height={75}
 							quality={100}
-							radius='none'
-							sizes='100vw'
-							classNames={{ 'wrapper': 'flex-shrink-0' }}
-							className={`object-cover rounded-lg border-2 hover:border-sky-300${invisibleModelModification.article === currentProductArcticle ? ' border-sky-500' : ''}`}
+							radius='lg'
+							sizes='75px'
+							classNames={{ 'wrapper': 'w-[75px] h-[75px] flex-shrink-0' }}
+							className={`object-cover border-2 hover:border-sky-300${invisibleModelModification.article === currentProductArcticle ? ' border-sky-500' : ''}`}
 							onClick={() => onVariantClick(invisibleModelModification.article)}
 						/>
 					)
