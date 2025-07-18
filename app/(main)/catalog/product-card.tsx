@@ -35,7 +35,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product, className }: ProductCardProps) {
 	return (
-		<div key={product.article} className={`aspect-square w-full${className ? ` ${className}` : ''}`}>
+		<div key={product.article} className={`aspect-square${className ? ` ${className}` : ''}`}>
 			<Card className='w-full h-full flex flex-col' isPressable isHoverable shadow='sm' as={Link} href={`/catalog/${product.article}`}>
 				<CardBody className='w-full h-full p-0'>
 					<div className='relative w-full h-full'>
