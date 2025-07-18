@@ -12,19 +12,21 @@ export default function ProductImages({ media }: { media: Media['path'][] }) {
 
 	return (
 		<div className='md:w-1/2 flex flex-col'>
-			<div className='flex justify-center items-center h-full'>
-				<Image
-					as={NextImage}
-					src={selectedImage ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${selectedImage}` : EmptyProductMedia.src}
-					alt=''
-					isZoomed
-					width={557}
-					height={557}
-					quality={100}
-					radius='none'
-					sizes='100vw'
-					className='object-cover'
-				/>
+			<div className='flex justify-center items-center w-full'>
+				<div className='relative w-full aspect-square max-w-[557px] overflow-hidden'>
+					<Image
+						as={NextImage}
+						src={selectedImage ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${selectedImage}` : EmptyProductMedia.src}
+						alt=''
+						isZoomed
+						quality={100}
+						radius='lg'
+						sizes='(max-width: 768px) 100vw, 557px'
+						className='object-cover'
+						fill
+						removeWrapper
+					/>
+				</div>
 			</div>
 			{media.length > 1 &&
 				<div className='flex justify-center mt-2 gap-x-2'>
@@ -37,9 +39,9 @@ export default function ProductImages({ media }: { media: Media['path'][] }) {
 							width={55}
 							height={55}
 							quality={100}
-							radius='none'
-							sizes='100vw'
-							className={`object-cover rounded-lg border-2 hover:border-sky-300${mediaFile === selectedImage ? ' border-sky-500' : ''}`}
+							radius='lg'
+							sizes='55px'
+							className={`object-cover border-2 hover:border-sky-300${mediaFile === selectedImage ? ' border-sky-500' : ''}`}
 							onClick={() => setSelectedImage(mediaFile)}
 						/>
 					)}

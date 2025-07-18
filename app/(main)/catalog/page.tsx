@@ -35,7 +35,7 @@ export const metadata: Metadata = {
 	}
 }
 
-const numberOfProductsPerPage = 15
+const numberOfProductsPerPage = 30
 
 export default async function Page(props: PageProps<never, QueryParam>) {
 	const session = await auth()
