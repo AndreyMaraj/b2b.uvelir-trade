@@ -4,7 +4,7 @@ import { prisma } from '@/prisma'
 import type { Order } from '@prisma/client'
 import { getShoppingBagsProducts } from './shopping-bag'
 
-export async function createOrder(userId: Order['userId']) {
+export async function createOrder(userId: Order['userId'], comment: Order['comment']) {
 	const shoppingBagsProducts = await getShoppingBagsProducts(userId)
 
 	if (!shoppingBagsProducts || !shoppingBagsProducts.length) {
@@ -15,6 +15,7 @@ export async function createOrder(userId: Order['userId']) {
 		return await prisma.order.create({
 			data: {
 				userId,
+				comment,
 				orderItems: {
 					createMany: {
 						data: shoppingBagsProducts.map(shoppingBagsProduct => ({
@@ -82,6 +83,7 @@ export async function getOrder(orderId: Order['id'], withUser: boolean = false) 
 				select: {
 					id: true,
 					date: true,
+					comment: true,
 					...(withUser && {
 						user: {
 							select: {

@@ -15,6 +15,7 @@ import Link from '@/components/link'
 import { createOrder } from '@/actions/order'
 import { Tooltip } from '@nextui-org/tooltip'
 import { NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
+import { Textarea } from '@nextui-org/input'
 
 interface ProductRow {
 	id: InvisibleModelModification['id'],
@@ -31,6 +32,7 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 	const { products, isPending, updateProducts, clearShoppingBag } = useShoppingBag(),
 		[rows, setRows] = useState<ProductRow[]>([]),
 		[page, setPage] = useState(1),
+		[comment, setComment] = useState(''),
 		pages = Math.ceil(rows.length / rowsPerPage),
 		items = useMemo(() => {
 			const start = (page - 1) * rowsPerPage,
@@ -80,9 +82,9 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 			}
 		}, [updateProducts]),
 		onCreateOrderClick = useCallback(async () => {
-			await createOrder(userId)
+			await createOrder(userId, comment)
 			clearShoppingBag()
-		}, [userId, rows, clearShoppingBag])
+		}, [userId, rows, clearShoppingBag, comment])
 
 	useEffect(() => {
 		const fetchData = async () =>
@@ -163,7 +165,14 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 				</TableBody>
 			</Table>
 			{!!rows.length &&
-				<div className='flex justify-center mt-5'>
+				<div className='flex flex-col items-center mt-5 gap-3'>
+					<Textarea
+						label='Комментарий к заказу'
+						placeholder='Введите комментарий...'
+						value={comment}
+						onChange={e => setComment(e.target.value)}
+						fullWidth
+					/>
 					<Button as={Link} color='primary' onPress={onCreateOrderClick} href='/profile/orders'>
 						Отправить заказ
 					</Button>
