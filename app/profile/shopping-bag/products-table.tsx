@@ -84,7 +84,7 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 		onCreateOrderClick = useCallback(async () => {
 			await createOrder(userId, comment)
 			clearShoppingBag()
-		}, [userId, clearShoppingBag, comment])
+    }, [userId, clearShoppingBag, comment])
 
 	useEffect(() => {
 		const fetchData = async () =>
