@@ -29,7 +29,7 @@ interface ProductRow {
 const rowsPerPage = 25
 
 export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
-	const { products, isPending, updateProducts, clearShoppingBag } = useShoppingBag(),
+	const { products, isPending, clearShoppingBag } = useShoppingBag(),
 		[rows, setRows] = useState<ProductRow[]>([]),
 		[page, setPage] = useState(1),
 		[comment, setComment] = useState(''),
@@ -80,11 +80,11 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 					)
 				default: return cellValue
 			}
-		}, [updateProducts]),
+		}, [clearShoppingBag]),
 		onCreateOrderClick = useCallback(async () => {
 			await createOrder(userId, comment)
 			clearShoppingBag()
-		}, [userId, rows, clearShoppingBag, comment])
+		}, [userId, clearShoppingBag, comment])
 
 	useEffect(() => {
 		const fetchData = async () =>
