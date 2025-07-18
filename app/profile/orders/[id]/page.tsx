@@ -5,13 +5,15 @@ import { openGraph, twitter } from '@/app/shared-metadata'
 import type { Metadata } from 'next'
 import { NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
 import { Textarea } from '@nextui-org/input'
+import { auth } from '@/auth'
 
 interface CurrentPageProps extends PageProps<'id', never> { }
 
 export async function generateMetadata({ params }: CurrentPageProps): Promise<Metadata> {
-	const id = (await params).id,
+	const session = await auth(),
+		id = (await params).id,
 		url = `/profile/orders/${id}`,
-		{ order } = await getOrder(Number(id)),
+		{ order } = session?.user.id ? await getOrder(Number(id), session.user.id) : { order: null },
 		title = order ? `Заказ от ${new Date(order.date).toLocaleDateString('ru-RU')}` : '',
 		description = 'Подробная информация о вашем заказе.'
 
@@ -36,7 +38,13 @@ export async function generateMetadata({ params }: CurrentPageProps): Promise<Me
 }
 
 export default async function Page({ params }: CurrentPageProps) {
-	const { order, invisibleModelModifications } = await getOrder(Number((await params).id))
+	const session = await auth()
+
+	if (!session?.user.id) {
+		return
+	}
+
+	const { order, invisibleModelModifications } = await getOrder(Number((await params).id), session.user.id)
 
 	if (!order) {
 		return

@@ -75,16 +75,16 @@ export async function getOrders() {
 	}
 }
 
-export async function getOrder(orderId: Order['id'], withUser: boolean = false) {
+export async function getOrder(orderId: Order['id'], userId?: Order['userId']) {
 	try {
 		return {
 			order: await prisma.order.findUnique({
-				where: { id: orderId },
+				where: { id: orderId, userId },
 				select: {
 					id: true,
 					date: true,
 					comment: true,
-					...(withUser && {
+					...(!userId && {
 						user: {
 							select: {
 								name: true,
