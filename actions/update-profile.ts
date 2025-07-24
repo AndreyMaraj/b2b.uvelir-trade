@@ -12,7 +12,7 @@ export const updateProfile = async (values: z.infer<typeof ProfileSchema>, userI
 		return { error: 'Invalid fields' }
 	}
 
-	const { email, name } = validatedFields.data,
+	const { email, name, city, tin, phone } = validatedFields.data,
 		existingUser = await getUserByEmail(email)
 
 	if (existingUser && existingUser.id !== userId) {
@@ -23,7 +23,7 @@ export const updateProfile = async (values: z.infer<typeof ProfileSchema>, userI
 		where: {
 			id: userId
 		},
-		data: { name, email }
+		data: { name, city, tin, phone }
 	})
 
 	return { success: 'User updated' }
