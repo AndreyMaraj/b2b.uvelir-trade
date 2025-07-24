@@ -323,6 +323,11 @@ export async function getProducts({ skip, take, articleQuery, stoneTypeId, metal
 					},
 					invisibleModelModificationSizes: {
 						take: 1,
+						where: {
+							averageWeight: {
+								not: 0
+							}
+						},
 						select: {
 							averageWeight: true
 						},
