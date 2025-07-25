@@ -37,7 +37,7 @@ export default function Footer() {
 					</h3>
 					<ul className='space-y-2'>
 						<li>
-							Индустриальная 50/2
+							Кострома, Индустриальная 50/2
 						</li>
 					</ul>
 				</div>
