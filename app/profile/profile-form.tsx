@@ -94,7 +94,7 @@ export default function PrifileForm({ user }: { user: UserWithoutPassword }) {
 						className='mb-4'
 						type='email'
 						autoComplete='email'
-						isDisabled={isPending}
+						isDisabled={true}
 						isInvalid={fieldState.invalid}
 						errorMessage={fieldState.error?.message}
 					/>
