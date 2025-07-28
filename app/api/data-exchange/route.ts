@@ -1,7 +1,8 @@
 'use server'
 
 import type { NextRequest } from 'next/server'
-import * as fs from 'fs'
+import { promises as fs } from 'fs'
+import * as fsSync from 'fs'
 import { ElementCompact, xml2js } from 'xml-js'
 import { upsertProductModel, upsertInvisibleModelModification, upsertEarringDimensions, upsertModelComponent, upsertMetal, upsertProductPrototyp, upsertRingDimensions, upsertStone, upsertWeavingType, upsertWireType, upsertMetalCoating, upsertColor, upsertSex, upsertProductTheme, upsertProductStyle, upsertProductLockType, upsertAgeCategory, upsertProductType, upsertMetalType, upsertStoneType, upsertCutType, upsertNomenclatureGroupe, upsertSize, upsertInvisibleModelModificationSize } from '@/data/product'
 import { prisma } from '@/prisma'
@@ -10,6 +11,7 @@ import FormData from 'form-data'
 import fetch from 'node-fetch'
 import { FILE_SERVER_UPLOAD_IMAGE_PATH } from '@/consts'
 import { updateMenuItemsFromNomenclatureGroups } from '@/data/menu-item'
+import { transliterate } from '@/translate'
 
 enum RequestMode {
 	CheckAuth = 'checkauth',
@@ -349,15 +351,34 @@ function getArticleFromFile(fileArticle?: string) {
 	return { article, prototypCode, visibleModelModificationCode }
 }
 
-async function uploadImage(filesPaths: string[], folderPath: string): Promise<string[]> {
-	const formData = new FormData()
-	filesPaths.forEach(filePath => {
-		const fileBuffer = fs.readFileSync(filePath),
-			fileName = path.basename(filePath)
+function parseAndValidateImagePath(filePath: string) {
+	const parts = path.normalize(filePath).split(path.sep)
+	if (parts.length !== 3 || parts[0] !== DATA_EXCHANGE_MEDIA_FOLDER) return null
 
-		formData.append('files', fileBuffer, { filename: fileName })
-	})
-	formData.append('folderPath', folderPath)
+	const article = parts[1]
+	if (!article || article.includes(path.sep) || article === '.' || article === '..') return null
+
+	const encodedArticle = transliterate(article),
+		fileName = parts[2]
+
+	if (!fileName || !fileName.includes('.')) return null
+
+	return {
+		encodedArticle,
+		fileName,
+		fullPath: path.join(DATA_EXCHANGE_FOLDER, DATA_EXCHANGE_MEDIA_FOLDER, encodedArticle, fileName)
+	}
+}
+
+async function uploadImage(filesPaths: string[], article: string): Promise<string[]> {
+	const formData = new FormData()
+	for (const filePath of filesPaths) {
+		const parsed = parseAndValidateImagePath(path.relative(DATA_EXCHANGE_FOLDER, filePath))
+		if (!parsed) continue
+		const fileBuffer = fsSync.readFileSync(parsed.fullPath)
+		formData.append('files', fileBuffer, { filename: parsed.fileName })
+	}
+	formData.append('folderPath', path.join(`/${PRODUCT_FOLDER}`, transliterate(article)))
 
 	const response = await fetch(FILE_SERVER_UPLOAD_IMAGE_PATH, {
 		method: 'POST',
@@ -462,7 +483,7 @@ async function handleExchangeFileProducts(fileProducts: ElementCompact, file: st
 						...images && {
 							media: {
 								createMany: {
-									data: (await uploadImage(images, path.join(`/${PRODUCT_FOLDER}`, article))).map(path => ({ path }))
+									data: (await uploadImage(images, article)).map(path => ({ path }))
 								}
 							}
 						}
@@ -473,7 +494,7 @@ async function handleExchangeFileProducts(fileProducts: ElementCompact, file: st
 							deleteMany: {},
 							...images && {
 								createMany: {
-									data: (await uploadImage(images, path.join(`/${PRODUCT_FOLDER}`, article))).map(path => ({ path }))
+									data: (await uploadImage(images, article)).map(path => ({ path }))
 								}
 							}
 						}
@@ -606,39 +627,41 @@ async function handleExchangeFileProps(props: ElementCompact, file: string) {
 }
 
 async function handleExchangeFiles() {
-	if (!fs.existsSync(DATA_EXCHANGE_FOLDER)) {
+	if (!fsSync.existsSync(DATA_EXCHANGE_FOLDER)) {
 		throw new TypeError(`No folder ${DATA_EXCHANGE_FOLDER}`)
 	}
 	try {
 		const importFiles: string[] = []
 
-		fs.readdirSync(DATA_EXCHANGE_FOLDER, { withFileTypes: true }).sort((first, second) => {
-			const [firstCatalog, firstFileIndex] = first.name.split(/\D/).filter(s => s).map(s => +s),
-				[secondCatalog, secondFileIndex] = second.name.split(/\D/).filter(s => s).map(s => +s)
+		fsSync.readdirSync(DATA_EXCHANGE_FOLDER, { withFileTypes: true })
+			.sort((first: fsSync.Dirent, second: fsSync.Dirent) => {
+				const [firstCatalog, firstFileIndex] = first.name.split(/\D/).filter((s: string) => s).map((s: string) => +s),
+					[secondCatalog, secondFileIndex] = second.name.split(/\D/).filter((s: string) => s).map((s: string) => +s)
 
-			return firstCatalog > secondCatalog ? 1 : firstCatalog < secondCatalog ? -1 : firstFileIndex > secondFileIndex ? 1 : firstFileIndex < secondFileIndex ? -1 : 0
-		}).forEach(file => {
-			if (!file.isFile()) {
-				return
-			}
-			if (!file.name.includes(IMPORT_PREFIX)) {
-				console.warn(`Unknown file '${file.name}'`)
-				return
-			}
+				return firstCatalog > secondCatalog ? 1 : firstCatalog < secondCatalog ? -1 : firstFileIndex > secondFileIndex ? 1 : firstFileIndex < secondFileIndex ? -1 : 0
+			})
+			.forEach((file: fsSync.Dirent) => {
+				if (!file.isFile()) {
+					return
+				}
+				if (!file.name.includes(IMPORT_PREFIX)) {
+					console.warn(`Unknown file '${file.name}'`)
+					return
+				}
 
-			importFiles.push(file.name)
-		})
+				importFiles.push(file.name)
+			})
 
 		let props: DataExchangeProp[] | undefined
 		for (const file of importFiles) {
-			const data = xml2js(fs.readFileSync(`${DATA_EXCHANGE_FOLDER}/${file}`).toString(), { compact: true, trim: true, ignoreInstruction: true, ignoreDeclaration: true, ignoreAttributes: true, ignoreComment: true, ignoreCdata: true, ignoreDoctype: true }) as ElementCompact
+			const data = xml2js(fsSync.readFileSync(`${DATA_EXCHANGE_FOLDER}/${file}`).toString(), { compact: true, trim: true, ignoreInstruction: true, ignoreDeclaration: true, ignoreAttributes: true, ignoreComment: true, ignoreCdata: true, ignoreDoctype: true }) as ElementCompact
 			props ??= await handleExchangeFileProps(data[XMLFileKey.CommercialInformation]?.[XMLFileKey.Classifier]?.[XMLFileKey.Properties]?.[XMLFileKey.Property], file)
 			await handleExchangeFileProducts(data[XMLFileKey.CommercialInformation]?.[XMLFileKey.Catalog]?.[XMLFileKey.Products]?.[XMLFileKey.Product], file, props)
 		}
 
 		updateMenuItemsFromNomenclatureGroups()
 
-		fs.rmSync(DATA_EXCHANGE_FOLDER, { recursive: true })
+		fsSync.rmSync(DATA_EXCHANGE_FOLDER, { recursive: true })
 	} catch (e) {
 		console.warn(e)
 	}
@@ -670,33 +693,23 @@ export async function POST(request: NextRequest) {
 	switch (mode) {
 		case RequestMode.File:
 			try {
-				if (!fs.existsSync(DATA_EXCHANGE_FOLDER)) {
-					fs.mkdirSync(DATA_EXCHANGE_FOLDER)
-					fs.mkdirSync(DATA_EXCHANGE_MEDIA_FOLDER_PATH)
-				} else if (!fs.existsSync(DATA_EXCHANGE_MEDIA_FOLDER_PATH)) {
-					fs.mkdirSync(DATA_EXCHANGE_MEDIA_FOLDER_PATH)
-				}
+				await fs.mkdir(DATA_EXCHANGE_MEDIA_FOLDER_PATH, { recursive: true })
 
-				const fileName = decodeURIComponent(request.nextUrl.searchParams.get('filename') ?? '')
+				const fileName = request.nextUrl.searchParams.get('filename') ?? ''
 
 				if (!fileName) {
 					return new Response('File name is empty', { status: 400 })
 				}
 
 				if (fileName.includes(DATA_EXCHANGE_MEDIA_FOLDER)) {
-					const fileFolder = fileName.split('/')
-					if (fileFolder.length !== 3) {
+					const parsed = parseAndValidateImagePath(fileName)
+					if (!parsed) {
 						return new Response(`File name must match the mask: ${DATA_EXCHANGE_MEDIA_FOLDER}/{product article}/{index}.{extension}`, { status: 400 })
 					}
-
-					const dataExchangeMediaArticleFolderPath = path.join(DATA_EXCHANGE_MEDIA_FOLDER_PATH, fileFolder[1])
-					if (!fs.existsSync(dataExchangeMediaArticleFolderPath)) {
-						fs.mkdirSync(dataExchangeMediaArticleFolderPath)
-					}
-
-					fs.writeFileSync(path.join(DATA_EXCHANGE_FOLDER, fileName), Buffer.from(await request.arrayBuffer()))
+					await fs.mkdir(path.dirname(parsed.fullPath), { recursive: true })
+					await fs.writeFile(parsed.fullPath, Buffer.from(await request.arrayBuffer()))
 				} else {
-					fs.writeFileSync(path.join(DATA_EXCHANGE_FOLDER, fileName), await request.text())
+					await fs.writeFile(path.join(DATA_EXCHANGE_FOLDER, fileName), await request.text())
 				}
 			} catch (err) {
 				console.error(err)
