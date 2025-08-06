@@ -15,7 +15,7 @@ export default {
 	},
 	darkMode: 'class',
 	plugins: [
-		nextui(),
+		// nextui(),
 		addIconSelectors(['mdi'])
 	]
 } as Config
