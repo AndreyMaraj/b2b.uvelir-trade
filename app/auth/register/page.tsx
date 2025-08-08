@@ -1,6 +1,6 @@
 import Link from '@/components/link'
 import RegisterForm from '@/components/register-form'
-import { Card, CardBody } from '@nextui-org/card'
+import { Card, CardBody } from '@heroui/card'
 import { openGraph, twitter } from '@/app/shared-metadata'
 import type { Metadata } from 'next'
 

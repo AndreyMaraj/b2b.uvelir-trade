@@ -27,7 +27,7 @@ const menuItems = [{
 
 export default function Layout({ children }: Readonly<{ children: ReactNode }>) {
 	return (
-		<main className='flex-grow'>
+		<main className='grow'>
 			<div className='container px-4 py-3 flex flex-col lg:flex-row gap-5'>
 				<div className='lg:basis-1/5'>
 					<NavLinks menuItems={menuItems} />

@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 
 export default function Layout({ children }: Readonly<{ children: ReactNode }>) {
 	return (
-		<main className='flex flex-grow'>
+		<main className='flex grow'>
 			{children}
 		</main>
 	)

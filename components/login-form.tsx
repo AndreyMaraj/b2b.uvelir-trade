@@ -3,13 +3,13 @@
 import { login } from '@/actions/login'
 import { LoginSchema } from '@/schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Button } from '@nextui-org/button'
-import { Code } from '@nextui-org/code'
-import { Input } from '@nextui-org/input'
+import { Button } from '@heroui/button'
+import { Code } from '@heroui/code'
+import { Input } from '@heroui/input'
 import { useCallback, useState, useTransition } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { Form } from '@nextui-org/form'
+import { Form } from '@heroui/form'
 
 export default function LoginForm() {
 	const [isVisiblePassword, setIsVisiblePassword] = useState(false),
@@ -64,7 +64,7 @@ export default function LoginForm() {
 						errorMessage={fieldState.error?.message}
 						endContent={
 							<Button isIconOnly variant='light' onPress={changeIsVisiblePassword}>
-								<span className={`iconify ${isVisiblePassword ? 'mdi--eye-off-outline' : 'mdi--eye-outline'} text-2xl`} />
+								<span className={isVisiblePassword ? 'icon-[mdi--eye-off-outline]' : 'icon-[mdi--eye-outline]'} />
 							</Button>
 						}
 					/>

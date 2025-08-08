@@ -1,7 +1,7 @@
 'use client'
 
 import { ShoppingBagProvider } from '@/components/shopping-bag-hook'
-import { NextUIProvider } from '@nextui-org/react'
+import { HeroUIProvider } from '@heroui/system'
 import type { Session } from 'next-auth'
 import { SessionProvider } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
@@ -22,9 +22,9 @@ export function Providers({ children, className, session, sessionKey }: Provider
 	return (
 		<SessionProvider session={session} key={memoizedSessionKey}>
 			<ShoppingBagProvider>
-				<NextUIProvider navigate={router.push} className={className}>
+				<HeroUIProvider navigate={router.push} className={className}>
 					{children}
-				</NextUIProvider>
+				</HeroUIProvider>
 			</ShoppingBagProvider>
 		</SessionProvider>
 	)
