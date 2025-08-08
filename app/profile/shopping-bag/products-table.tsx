@@ -2,20 +2,20 @@
 
 import { getShoppingBagsWithProducts } from '@/actions/shopping-bag'
 import { useShoppingBag } from '@/components/shopping-bag-hook'
-import { Pagination } from '@nextui-org/pagination'
-import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table'
+import { Pagination } from '@heroui/pagination'
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/table'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { Key } from 'react'
 import EmptyProductMedia from '@/public/empty-product-media.jpg'
 import type { InvisibleModelModification, Order, ShoppingBagsProduct } from '@prisma/client'
-import { Image } from '@nextui-org/image'
-import { Button } from '@nextui-org/button'
+import { Image } from '@heroui/image'
+import { Button } from '@heroui/button'
 import NextImage from 'next/image'
 import Link from '@/components/link'
 import { createOrder } from '@/actions/order'
-import { Tooltip } from '@nextui-org/tooltip'
+import { Tooltip } from '@heroui/tooltip'
 import { NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
-import { Textarea } from '@nextui-org/input'
+import { Textarea } from '@heroui/input'
 
 interface ProductRow {
 	id: InvisibleModelModification['id'],
@@ -55,7 +55,7 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 							quality={100}
 							radius='none'
 							sizes='100vw'
-							classNames={{ 'wrapper': 'flex-shrink-0' }}
+							classNames={{ 'wrapper': 'shrink-0' }}
 							className='object-cover rounded-lg'
 						/>
 					)
@@ -74,7 +74,7 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 					return (
 						<Tooltip color='danger' content='Удалить товар'>
 							<Button variant='ghost' isIconOnly onPress={() => clearShoppingBag(product.id)} >
-								<span className='iconify mdi--delete-outline text-2xl' />
+								<span className='icon-[mdi--delete-outline]' />
 							</Button>
 						</Tooltip>
 					)
@@ -84,7 +84,7 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 		onCreateOrderClick = useCallback(async () => {
 			await createOrder(userId, comment)
 			clearShoppingBag()
-    }, [userId, clearShoppingBag, comment])
+		}, [userId, clearShoppingBag, comment])
 
 	useEffect(() => {
 		const fetchData = async () =>
@@ -110,7 +110,7 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 					<div className='flex justify-end'>
 						<Button
 							color='danger'
-							endContent={<span className='iconify mdi--delete-outline text-2xl' />}
+							endContent={<span className='icon-[mdi--delete-outline]' />}
 							onPress={() => clearShoppingBag()}
 						>
 							Очистить

@@ -10,8 +10,8 @@ import Slider8 from '@/public/slider-17.jpg'
 import NextImage from 'next/image'
 import DiamondIcon from '@/public/diamond-icon.svg'
 import Link from '@/components/link'
-import { Button } from '@nextui-org/button'
-import { Image } from '@nextui-org/image'
+import { Button } from '@heroui/button'
+import { Image } from '@heroui/image'
 import { openGraph, twitter } from '@/app/shared-metadata'
 import type { Metadata } from 'next'
 
@@ -36,8 +36,8 @@ export const metadata: Metadata = {
 
 export default function Page() {
 	return (
-		<main className='flex flex-col flex-grow'>
-			<div className='container md:h-[42rem] sm:h-[30rem] h-[21rem] py-3'>
+		<main className='flex flex-col grow'>
+			<div className='container md:h-168 sm:h-120 h-84 py-3'>
 				<Carousel images={[{
 					src: Slider1.src,
 					alt: ''
@@ -52,7 +52,7 @@ export default function Page() {
 					alt: ''
 				}]} hideArrows />
 			</div>
-			<div className='container xl:h-[48rem] md:h-[42rem] h-[102rem] py-3'>
+			<div className='container xl:h-192 md:h-168 h-408 py-3'>
 				<div className='flex w-full h-full flex-1 gap-10 md:flex-row flex-col'>
 					<Carousel images={[{
 						src: Slider5.src,
@@ -76,10 +76,10 @@ export default function Page() {
 							width={100}
 							height={89}
 						/>
-						<p className='text-center text-6xl md:text-5xl lg:text-6xl font-light !leading-[100px]'>
+						<p className='text-center text-6xl md:text-5xl lg:text-6xl font-light leading-[100px]!'>
 							Начните сотрудничать<br />с UvelirTrade уже сегодня!
 						</p>
-						<Button size='lg' variant='ghost' className='self-center border-black hover:!bg-black hover:text-white' as={Link} href='/auth/register'>
+						<Button size='lg' variant='ghost' className='self-center border-black hover:bg-black! hover:text-white' as={Link} href='/auth/register'>
 							Стать партнёром
 						</Button>
 					</div>

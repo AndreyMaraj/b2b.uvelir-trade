@@ -5,7 +5,7 @@ import EmptyProductMedia from '@/public/empty-product-media.jpg'
 import { openGraph, twitter } from '@/app/shared-metadata'
 import type { Metadata } from 'next'
 import { NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
-import { Textarea } from '@nextui-org/react'
+import { Textarea } from '@heroui/input'
 
 interface CurrentPageProps extends PageProps<'id', never> { }
 

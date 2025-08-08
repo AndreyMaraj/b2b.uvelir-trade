@@ -1,8 +1,8 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { Button } from '@nextui-org/button'
-import { Image } from '@nextui-org/image'
+import { Button } from '@heroui/button'
+import { Image } from '@heroui/image'
 import NextImage from 'next/image'
 
 type CarouselProps = {
@@ -22,7 +22,7 @@ type ArrowButtonProps = {
 function ArrowButton(props: ArrowButtonProps) {
 	return (
 		<Button isIconOnly variant='light' radius='full' onPress={props.onClick}>
-			<span className={`iconify ${props.icon} text-3xl rounded-full`} />
+			<span className={props.icon} />
 		</Button>
 	)
 }
@@ -53,15 +53,15 @@ export default function Carousel(props: CarouselProps) {
 						quality={100}
 						radius='none'
 						sizes='100vw'
-						classNames={{ 'wrapper': '!max-w-full h-full w-full  shrink-0', 'img': 'object-cover' }}
+						classNames={{ 'wrapper': 'max-w-full! h-full w-full  shrink-0', 'img': 'object-cover' }}
 					/>
 				)}
 			</div>
 
 			{!props.hideArrows &&
 				<div className='absolute top-0 h-full w-full justify-between items-center flex px-8 text-3xl'>
-					<ArrowButton icon='mdi--keyboard-arrow-left' onClick={previousSlide} />
-					<ArrowButton icon='mdi--keyboard-arrow-right' onClick={nextSlide} />
+					<ArrowButton icon='icon-[mdi--keyboard-arrow-left]' onClick={previousSlide} />
+					<ArrowButton icon='icon-[mdi--keyboard-arrow-right]' onClick={nextSlide} />
 				</div>
 			}
 

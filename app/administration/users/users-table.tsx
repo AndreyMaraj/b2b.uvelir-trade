@@ -1,10 +1,10 @@
 'use client'
 
-import { Button } from '@nextui-org/button'
-import { Chip } from '@nextui-org/chip'
-import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/dropdown'
-import { Pagination } from '@nextui-org/pagination'
-import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table'
+import { Button } from '@heroui/button'
+import { Chip } from '@heroui/chip'
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/dropdown'
+import { Pagination } from '@heroui/pagination'
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/table'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { Key } from 'react'
 import { UserRole } from '@prisma/client'
@@ -40,7 +40,7 @@ export default function UsersTable({ userId }: { userId: User['id'] }) {
 					)
 				case 'verified':
 					return (
-						<Chip color={cellValue ? 'success' : 'danger'} variant='flat' radius='full' startContent={<span className={`iconify ${cellValue ? 'mdi--check-circle' : 'mdi--close-circle'} text-2xl`} />}>
+						<Chip color={cellValue ? 'success' : 'danger'} variant='flat' radius='full' startContent={<span className={cellValue ? 'icon-[mdi--check-circle]' : 'icon-[mdi--close-circle]'} />}>
 							{cellValue ? 'Верифицирован' : 'Не верифицирован'}
 						</Chip>
 					)
@@ -49,7 +49,7 @@ export default function UsersTable({ userId }: { userId: User['id'] }) {
 						<Dropdown>
 							<DropdownTrigger>
 								<Button isIconOnly size='sm' radius='full' variant='light'>
-									<span className='iconify mdi--dots-vertical text-2xl' />
+									<span className='icon-[mdi--dots-vertical]' />
 								</Button>
 							</DropdownTrigger>
 							<DropdownMenu disabledKeys={userId === user.id ? ['verified', 'admin'] : undefined}>
