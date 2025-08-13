@@ -11,7 +11,7 @@ import type { Metadata } from 'next'
 interface CurrentPageProps extends PageProps<'article', never> { }
 
 export async function generateMetadata({ params }: CurrentPageProps): Promise<Metadata> {
-	const article = decodeURIComponent((await params).article),
+	const article = decodeURIComponent(decodeURIComponent((await params).article)),
 		url = `/catalog/${article}`,
 		product = await getProductByArticle(article),
 		title = product ? `${product.visibleModelModification.productModel.productPrototyp.type.name} ${product.article}` : '',
@@ -157,7 +157,7 @@ export default async function Page({ params }: CurrentPageProps) {
 	return (
 		<>
 			<div className='flex flex-col md:flex-row gap-5 lg:gap-x-14'>
-				<ProductImages media={product.visibleModelModification.media.map(mediaFile => mediaFile.path)} />
+				<ProductImages media={product.media.map(mediaFile => mediaFile.path)} />
 				<div className='md:w-1/2'>
 					<h1 className='text-3xl uppercase'>
 						{product.visibleModelModification.productModel.productPrototyp.type.name}

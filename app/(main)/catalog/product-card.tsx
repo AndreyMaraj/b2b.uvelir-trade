@@ -16,13 +16,17 @@ const ProductCardData = Prisma.validator<Prisma.InvisibleModelModificationDefaul
 							include: { type: true }
 						}
 					}
-				},
-				media: true
+				}
 			}
 		},
 		invisibleModelModificationSizes: {
 			select: {
 				averageWeight: true
+			}
+		},
+		media: {
+			select: {
+				path: true
 			}
 		}
 	}
@@ -41,7 +45,7 @@ export default function ProductCard({ product, className }: ProductCardProps) {
 					<div className='relative w-full h-full'>
 						<Image
 							as={NextImage}
-							src={product.visibleModelModification.media.length ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${product.visibleModelModification.media[0].path}` : EmptyProductMedia.src}
+							src={product.media.length ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${product.media[0].path}` : EmptyProductMedia.src}
 							className='object-cover'
 							radius='lg'
 							alt=''

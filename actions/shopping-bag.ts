@@ -73,11 +73,10 @@ export async function getShoppingBagsWithProducts(userId: ShoppingBagsProduct['u
 				id: true,
 				article: true,
 				averageWeight: true,
-				visibleModelModification: {
+				media: {
+					take: 1,
 					select: {
-						media: {
-							take: 1
-						}
+						path: true
 					}
 				},
 				shoppingBagsProducts: {

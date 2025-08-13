@@ -78,10 +78,10 @@ model MenuItem {
 }
 
 model Media {
-    id                         Int                      @id @default(autoincrement())
-    path                       String
-    visibleModelModification   VisibleModelModification @relation(fields: [visibleModelModificationId], references: [id], onDelete: Cascade)
-    visibleModelModificationId Int
+    id                           Int                         @id @default(autoincrement())
+    path                         String
+    invisibleModelModification   InvisibleModelModification? @relation(fields: [invisibleModelModificationId], references: [id], onDelete: Cascade)
+    invisibleModelModificationId Int?
 }
 
 model OrderItem {
@@ -298,6 +298,7 @@ model InvisibleModelModification {
     invisibleModelModificationSizes InvisibleModelModificationSize[]
     orderItems                      OrderItem[]
     shoppingBagsProducts            ShoppingBagsProduct[]
+    media                           Media[]
 }
 
 model VisibleModelModification {
@@ -306,7 +307,6 @@ model VisibleModelModification {
     wireDiameter                Decimal?                     @db.Decimal(3, 2)
     productModel                ProductModel                 @relation(fields: [productModelId], references: [id], onDelete: Cascade)
     productModelId              Int
-    media                       Media[]
     invisibleModelModifications InvisibleModelModification[]
     modelComponents             ModelComponent[]
 

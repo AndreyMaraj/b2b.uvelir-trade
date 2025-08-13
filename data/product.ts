@@ -211,24 +211,6 @@ export async function upsertModelComponent(data: SerializedPrismaEntity<Omit<Mod
 	})).id : (await prisma.modelComponent.create({ ...SELECT_ID, data })).id
 }
 
-export async function upsertInvisibleModelModification(data: SerializedPrismaEntity<Omit<InvisibleModelModification, 'id'>>) {
-	return (await prisma.invisibleModelModification.upsert({
-		...SELECT_ID,
-		where: {
-			article: data.article
-		},
-		create: { ...data },
-		update: {
-			height: data.height,
-			width: data.width,
-			description: data.description,
-			wireTypeId: data.wireTypeId,
-			nomenclatureGroupId: data.nomenclatureGroupId,
-			averageWeight: data.averageWeight
-		}
-	})).id
-}
-
 export async function upsertProductModel(data: Omit<ProductModel, 'id'>) {
 	return (await prisma.productModel.upsert({
 		...SELECT_ID,
@@ -309,7 +291,6 @@ export async function getProducts({ skip, take, articleQuery, stoneTypeId, metal
 				include: {
 					visibleModelModification: {
 						include: {
-							media: true,
 							productModel: {
 								include: {
 									productPrototyp: {
@@ -336,6 +317,12 @@ export async function getProducts({ skip, take, articleQuery, stoneTypeId, metal
 								value: 'asc'
 							}
 						}
+					},
+					media: {
+						take: 1,
+						select: {
+							path: true
+						}
 					}
 				}
 			})),
@@ -357,14 +344,14 @@ export async function getProductByArticle(article: string) {
 						name: true
 					}
 				},
+				media: {
+					select: {
+						path: true
+					}
+				},
 				visibleModelModification: {
 					select: {
 						wireDiameter: true,
-						media: {
-							select: {
-								path: true
-							}
-						},
 						productModel: {
 							select: {
 								productPrototyp: {
@@ -487,12 +474,13 @@ export async function getProductVariants(id: number) {
 								invisibleModelModifications: {
 									select: {
 										id: true,
-										article: true
-									}
-								},
-								media: {
-									select: {
-										path: true
+										article: true,
+										media: {
+											take: 1,
+											select: {
+												path: true
+											}
+										}
 									}
 								}
 							}
@@ -515,6 +503,12 @@ export async function getAdditionalProducts({ take, skipIds }: { take?: number, 
 				id: { notIn: skipIds }
 			},
 			include: {
+				media: {
+					take: 1,
+					select: {
+						path: true
+					}
+				},
 				visibleModelModification: {
 					include: {
 						productModel: {
@@ -523,8 +517,7 @@ export async function getAdditionalProducts({ take, skipIds }: { take?: number, 
 									include: { type: true }
 								}
 							}
-						},
-						media: true
+						}
 					}
 				},
 				invisibleModelModificationSizes: {

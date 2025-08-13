@@ -90,7 +90,7 @@ export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
 		const fetchData = async () =>
 			setRows((await getShoppingBagsWithProducts(userId))?.map(invisibleModelModification => ({
 				id: invisibleModelModification.id,
-				photo: invisibleModelModification.visibleModelModification.media.length ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${invisibleModelModification.visibleModelModification.media[0].path}` : EmptyProductMedia.src,
+				photo: invisibleModelModification.media.length ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${invisibleModelModification.media[0].path}` : EmptyProductMedia.src,
 				article: invisibleModelModification.article,
 				...invisibleModelModification.shoppingBagsProducts.reduce((sum, shoppingBagsProduct) => ({
 					sizes: shoppingBagsProduct.invisibleModelModificationSize ? `${sum.sizes ? sum.sizes + ' / ' : ''} ${shoppingBagsProduct.invisibleModelModificationSize.size.value} - ${shoppingBagsProduct.count}` : '',
