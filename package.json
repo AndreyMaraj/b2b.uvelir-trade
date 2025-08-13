@@ -30,7 +30,7 @@
 		"@heroui/theme": "^2.4.20",
 		"@heroui/tooltip": "^2.2.21",
 		"@hookform/resolvers": "^5.2.1",
-		"@prisma/client": "^6.13.0",
+		"@prisma/client": "^6.14.0",
 		"bcrypt": "^6.0.0",
 		"form-data": "^4.0.4",
 		"framer-motion": "^12.23.12",
@@ -42,21 +42,21 @@
 		"react-hook-form": "^7.62.0",
 		"use-debounce": "^10.0.5",
 		"xml-js": "^1.6.11",
-		"zod": "^4.0.15"
+		"zod": "^4.0.17"
 	},
 	"devDependencies": {
 		"@iconify-json/mdi": "^1.2.3",
 		"@iconify/tailwind4": "^1.0.6",
 		"@tailwindcss/postcss": "^4.1.11",
 		"@types/bcrypt": "^6.0.0",
-		"@types/node": "^24.2.0",
-		"@types/react": "^19.1.9",
+		"@types/node": "^24.2.1",
+		"@types/react": "^19.1.10",
 		"@types/react-dom": "^19.1.7",
-		"eslint": "^9.32.0",
+		"eslint": "^9.33.0",
 		"eslint-config-next": "^15.4.6",
 		"heroui-cli": "^1.2.3",
 		"postcss": "^8.5.6",
-		"prisma": "^6.13.0",
+		"prisma": "^6.14.0",
 		"tailwindcss": "^4.1.11",
 		"typescript": "^5.9.2"
 	}

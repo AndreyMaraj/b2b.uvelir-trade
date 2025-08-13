@@ -105,11 +105,10 @@ export async function getOrder(orderId: Order['id'], userId?: Order['userId']) {
 					id: true,
 					article: true,
 					averageWeight: true,
-					visibleModelModification: {
+					media: {
+						take: 1,
 						select: {
-							media: {
-								take: 1
-							}
+							path: true
 						}
 					},
 					orderItems: {
