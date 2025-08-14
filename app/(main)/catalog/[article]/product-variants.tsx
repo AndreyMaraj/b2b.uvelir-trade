@@ -1,6 +1,6 @@
 'use client'
 
-import { Image } from '@nextui-org/image'
+import { Image } from '@heroui/image'
 import NextImage from 'next/image'
 import EmptyProductMedia from '@/public/empty-product-media.jpg'
 import { Prisma } from '@prisma/client'
@@ -23,14 +23,14 @@ export default function ProductVariants({ currentProductArcticle, productPrototy
 						<Image
 							as={NextImage}
 							key={index}
-							src={visibleProductModification.media.length ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${visibleProductModification.media[0].path}` : EmptyProductMedia.src}
+							src={invisibleModelModification.media.length ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${invisibleModelModification.media[0].path}` : EmptyProductMedia.src}
 							alt={invisibleModelModification.article}
 							width={75}
 							height={75}
 							quality={100}
 							radius='lg'
 							sizes='75px'
-							classNames={{ 'wrapper': 'w-[75px] h-[75px] flex-shrink-0' }}
+							classNames={{ 'wrapper': 'w-[75px] h-[75px] shrink-0' }}
 							className={`object-cover border-2 hover:border-sky-300${invisibleModelModification.article === currentProductArcticle ? ' border-sky-500' : ''}`}
 							onClick={() => onVariantClick(invisibleModelModification.article)}
 						/>

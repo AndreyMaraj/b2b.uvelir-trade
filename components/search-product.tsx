@@ -1,6 +1,6 @@
 'use client'
 
-import { Input } from '@nextui-org/input'
+import { Input } from '@heroui/input'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
@@ -29,7 +29,7 @@ export default function SearchProduct() {
 			defaultValue={searchParams.get('query')?.toString()}
 			onChange={e => handleSearch(e.target.value)}
 			endContent={
-				<span className='iconify mdi--search text-xl' />
+				<span className='icon-[mdi--search]' />
 			}
 		/>
 	)

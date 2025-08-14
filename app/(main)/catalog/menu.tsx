@@ -2,7 +2,7 @@
 
 import Link from '@/components/link'
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { Button } from '@nextui-org/button'
+import { Button } from '@heroui/button'
 import { useSearchParams } from 'next/navigation'
 import { getNomenclatureGroupQueryParam, QueryParam } from '@/consts'
 import type { MenuItemWithChildren } from '@/data/menu-item'
@@ -77,7 +77,7 @@ const MenuItem = ({
 				endContent={item.children && item.children.length > 0 &&
 					<span
 						className={`
-							iconify mdi--keyboard-arrow-down text-xl transition-transform duration-300 ease-in-out
+							icon-[mdi--keyboard-arrow-down] text-xl transition-transform duration-300 ease-in-out
 							${isExpand ? 'rotate-0' : 'rotate-90'}
 						`}
 					/>

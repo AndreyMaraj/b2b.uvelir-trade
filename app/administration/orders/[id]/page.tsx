@@ -5,7 +5,7 @@ import EmptyProductMedia from '@/public/empty-product-media.jpg'
 import { openGraph, twitter } from '@/app/shared-metadata'
 import type { Metadata } from 'next'
 import { NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
-import { Textarea } from '@nextui-org/react'
+import { Textarea } from '@heroui/input'
 
 interface CurrentPageProps extends PageProps<'id', never> { }
 
@@ -52,7 +52,7 @@ export default async function Page({ params }: CurrentPageProps) {
 
 	const orderItems = invisibleModelModifications.map(invisibleModelModification => ({
 		id: invisibleModelModification.id,
-		photo: invisibleModelModification.visibleModelModification.media.length ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${invisibleModelModification.visibleModelModification.media[0].path}` : EmptyProductMedia.src,
+		photo: invisibleModelModification.media.length ? `${NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH}${invisibleModelModification.media[0].path}` : EmptyProductMedia.src,
 		article: invisibleModelModification.article,
 		...invisibleModelModification.orderItems.reduce((sum, orderItem) => ({
 			sizes: orderItem.invisibleModelModificationSize ? `${sum.sizes ? sum.sizes + ' / ' : ''} ${orderItem.invisibleModelModificationSize.size.value} - ${orderItem.count}` : '',

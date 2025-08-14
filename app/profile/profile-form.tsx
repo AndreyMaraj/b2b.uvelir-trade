@@ -4,14 +4,14 @@ import { updateProfile } from '@/actions/update-profile'
 import { UserWithoutPassword } from '@/data/user'
 import { ProfileSchema } from '@/schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Button } from '@nextui-org/button'
-import { Code } from '@nextui-org/code'
-import { Input } from '@nextui-org/input'
+import { Button } from '@heroui/button'
+import { Code } from '@heroui/code'
+import { Input } from '@heroui/input'
 import { useCallback, useState, useTransition } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { signOut } from 'next-auth/react'
-import { Form } from '@nextui-org/form'
+import { Form } from '@heroui/form'
 
 export default function PrifileForm({ user }: { user: UserWithoutPassword }) {
 	const [isPending, startTransition] = useTransition(),

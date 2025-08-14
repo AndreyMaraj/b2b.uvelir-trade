@@ -1,3 +1,11 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@plugin '../hero.ts';
+@source '../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
+
+@plugin "@iconify/tailwind4" {
+  scale: 1.75;
+}
+
+@utility container {
+  margin-inline: auto;
+}

@@ -1,7 +1,7 @@
 'use client'
 
-import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table'
-import { Pagination } from '@nextui-org/pagination'
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/table'
+import { Pagination } from '@heroui/pagination'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { Key } from 'react'
 import type { Order, User } from '@prisma/client'

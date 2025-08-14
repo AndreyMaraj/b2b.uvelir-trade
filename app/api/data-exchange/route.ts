@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server'
 import { promises as fs } from 'fs'
 import * as fsSync from 'fs'
 import { ElementCompact, xml2js } from 'xml-js'
-import { upsertProductModel, upsertInvisibleModelModification, upsertEarringDimensions, upsertModelComponent, upsertMetal, upsertProductPrototyp, upsertRingDimensions, upsertStone, upsertWeavingType, upsertWireType, upsertMetalCoating, upsertColor, upsertSex, upsertProductTheme, upsertProductStyle, upsertProductLockType, upsertAgeCategory, upsertProductType, upsertMetalType, upsertStoneType, upsertCutType, upsertNomenclatureGroupe, upsertSize, upsertInvisibleModelModificationSize } from '@/data/product'
+import { upsertProductModel, upsertEarringDimensions, upsertModelComponent, upsertMetal, upsertProductPrototyp, upsertRingDimensions, upsertStone, upsertWeavingType, upsertWireType, upsertMetalCoating, upsertColor, upsertSex, upsertProductTheme, upsertProductStyle, upsertProductLockType, upsertAgeCategory, upsertProductType, upsertMetalType, upsertStoneType, upsertCutType, upsertNomenclatureGroupe, upsertSize, upsertInvisibleModelModificationSize } from '@/data/product'
 import { prisma } from '@/prisma'
 import path from 'path'
 import FormData from 'form-data'
@@ -479,25 +479,10 @@ async function handleExchangeFileProducts(fileProducts: ElementCompact, file: st
 					create: {
 						code: visibleModelModificationCode,
 						productModelId,
-						wireDiameter: propValues?.[PropName.Diameter] ?? null,
-						...images && {
-							media: {
-								createMany: {
-									data: (await uploadImage(images, article)).map(path => ({ path }))
-								}
-							}
-						}
+						wireDiameter: propValues?.[PropName.Diameter] ?? null
 					},
 					update: {
-						wireDiameter: propValues?.[PropName.Diameter] ?? null,
-						media: {
-							deleteMany: {},
-							...images && {
-								createMany: {
-									data: (await uploadImage(images, article)).map(path => ({ path }))
-								}
-							}
-						}
+						wireDiameter: propValues?.[PropName.Diameter] ?? null
 					}
 				})
 
@@ -521,22 +506,47 @@ async function handleExchangeFileProducts(fileProducts: ElementCompact, file: st
 				})
 			}
 
-			const invisibleModelModificationId = await upsertInvisibleModelModification({
-				article,
-				description,
-				visibleModelModificationId,
-				averageWeight,
-				nomenclatureGroupId,
-				...propValues ? {
-					wireTypeId: propValues[PropName.WireType] ?? null,
-					height: propValues[PropName.Height] ?? 0,
-					width: propValues[PropName.Width] ?? 0,
-				} : {
-					wireTypeId: null,
-					height: 0,
-					width: 0
-				}
-			})
+			const invisibleModificationProps = propValues ? {
+				wireTypeId: propValues[PropName.WireType] ?? null,
+				height: propValues[PropName.Height] ?? 0,
+				width: propValues[PropName.Width] ?? 0,
+			} : {
+				wireTypeId: null,
+				height: 0,
+				width: 0
+			},
+				{ id: invisibleModelModificationId } = await prisma.invisibleModelModification.upsert({
+					select: { id: true },
+					where: { article },
+					create: {
+						article,
+						description,
+						visibleModelModificationId,
+						averageWeight,
+						nomenclatureGroupId,
+						...invisibleModificationProps,
+						...images && {
+							media: {
+								createMany: {
+									data: (await uploadImage(images, article)).map(path => ({ path }))
+								}
+							}
+						}
+					},
+					update: {
+						averageWeight,
+						nomenclatureGroupId,
+						...invisibleModificationProps,
+						media: {
+							deleteMany: {},
+							...images && {
+								createMany: {
+									data: (await uploadImage(images, article)).map(path => ({ path }))
+								}
+							}
+						}
+					}
+				})
 
 			for (const sizeProperties of sizesProperties) {
 				await upsertInvisibleModelModificationSize({

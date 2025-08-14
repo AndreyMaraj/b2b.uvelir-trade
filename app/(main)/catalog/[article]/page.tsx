@@ -1,5 +1,5 @@
 import { getAdditionalProducts, getProductByArticle, getProductVariants } from '@/data/product'
-import { Card, CardBody, CardHeader } from '@nextui-org/card'
+import { Card, CardBody, CardHeader } from '@heroui/card'
 import ProductImages from './product-images'
 import ProductVariants from './product-variants'
 import ProductTabs from './tabs'
@@ -11,7 +11,7 @@ import type { Metadata } from 'next'
 interface CurrentPageProps extends PageProps<'article', never> { }
 
 export async function generateMetadata({ params }: CurrentPageProps): Promise<Metadata> {
-	const article = decodeURIComponent((await params).article),
+	const article = decodeURIComponent(decodeURIComponent((await params).article)),
 		url = `/catalog/${article}`,
 		product = await getProductByArticle(article),
 		title = product ? `${product.visibleModelModification.productModel.productPrototyp.type.name} ${product.article}` : '',
@@ -157,7 +157,7 @@ export default async function Page({ params }: CurrentPageProps) {
 	return (
 		<>
 			<div className='flex flex-col md:flex-row gap-5 lg:gap-x-14'>
-				<ProductImages media={product.visibleModelModification.media.map(mediaFile => mediaFile.path)} />
+				<ProductImages media={product.media.map(mediaFile => mediaFile.path)} />
 				<div className='md:w-1/2'>
 					<h1 className='text-3xl uppercase'>
 						{product.visibleModelModification.productModel.productPrototyp.type.name}
@@ -189,7 +189,7 @@ export default async function Page({ params }: CurrentPageProps) {
 							{product.invisibleModelModificationSizes.map(invisibleModelModificationSize => (
 								<div
 									key={invisibleModelModificationSize.id}
-									className='flex flex-col items-center border rounded-lg p-2 w-28 shadow-sm bg-white'
+									className='flex flex-col items-center border border-gray-400 rounded-lg p-2 w-28 shadow-xs bg-white'
 								>
 									<div className='text-lg font-semibold mb-0.5'>
 										{invisibleModelModificationSize.size.value.toNumber()}
@@ -228,7 +228,7 @@ export default async function Page({ params }: CurrentPageProps) {
 				characteristics={
 					<div className='flex flex-col md:flex-row gap-4 p-3 md:overflow-x-auto'>
 						{characteristicsGroups.map((characteristic, index) =>
-							<Card key={index} className='md:w-72 p-3 flex-shrink-0'>
+							<Card key={index} className='md:w-72 p-3 shrink-0'>
 								<CardHeader>
 									<p className='font-semibold'>
 										{characteristic.groupLabel}
@@ -258,7 +258,7 @@ export default async function Page({ params }: CurrentPageProps) {
 					</h2>
 					<div className='flex overflow-x-auto p-3 gap-x-2.5'>
 						{additionalProducts.map(additionalProduct =>
-							<ProductCard key={additionalProduct.article} product={additionalProduct} className='w-56 flex-shrink-0' />
+							<ProductCard key={additionalProduct.article} product={additionalProduct} className='w-56 shrink-0' />
 						)}
 					</div>
 				</section>

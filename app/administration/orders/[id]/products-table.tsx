@@ -1,11 +1,11 @@
 'use client'
 
-import { Pagination } from '@nextui-org/pagination'
-import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table'
+import { Pagination } from '@heroui/pagination'
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/table'
 import { useCallback, useMemo, useState } from 'react'
 import type { Key } from 'react'
 import type { InvisibleModelModification, OrderItem } from '@prisma/client'
-import { Image } from '@nextui-org/image'
+import { Image } from '@heroui/image'
 import NextImage from 'next/image'
 import Link from '@/components/link'
 
@@ -44,7 +44,7 @@ export default function ProductsTable({ rows }: { rows: ProductRow[] }) {
 							quality={100}
 							radius='none'
 							sizes='100vw'
-							classNames={{ 'wrapper': 'flex-shrink-0' }}
+							classNames={{ 'wrapper': 'shrink-0' }}
 							className='object-cover rounded-lg'
 						/>
 					)

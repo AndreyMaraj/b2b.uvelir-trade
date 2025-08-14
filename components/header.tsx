@@ -1,9 +1,9 @@
 'use client'
 
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem } from '@nextui-org/navbar'
-import { Button } from '@nextui-org/button'
-import { Badge } from '@nextui-org/badge'
-import { Popover, PopoverTrigger, PopoverContent } from '@nextui-org/popover'
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem } from '@heroui/navbar'
+import { Button } from '@heroui/button'
+import { Badge } from '@heroui/badge'
+import { Popover, PopoverTrigger, PopoverContent } from '@heroui/popover'
 import { useCallback, useMemo, useState } from 'react'
 import Link from '@/components/link'
 import { signIn, useSession } from 'next-auth/react'
@@ -25,7 +25,7 @@ function ShoppingBagButton({ productsCount, positionCount, isBadgeInvisible }: {
 			>
 				<PopoverTrigger>
 					<Button className='text-white hover:text-black' variant='ghost' isIconOnly>
-						<span className='iconify mdi--cart text-2xl' />
+						<span className='icon-[mdi--cart]' />
 					</Button>
 				</PopoverTrigger>
 				<PopoverContent className='p-6'>
@@ -94,7 +94,7 @@ export default function Header() {
 			<div className='flex w-full flex-nowrap items-center justify-between container'>
 				<NavbarContent justify='start'>
 					<NavbarItem className='sm:hidden'>
-						<NavbarMenuToggle icon={<span className='iconify mdi--hamburger-menu text-2xl' />} />
+						<NavbarMenuToggle icon={<span className='icon-[mdi--hamburger-menu]' />} />
 					</NavbarItem>
 					{!!products.length &&
 						<NavbarItem className='hidden sm:flex'>
@@ -117,11 +117,11 @@ export default function Header() {
 						</NavbarItem>
 					}
 					<NavbarItem>
-						<Button className='hidden sm:flex text-white hover:text-black' variant='ghost' startContent={<span className='iconify mdi--account-outline text-2xl' />} onPress={onProfileButtonClick}>
+						<Button className='hidden sm:flex text-white hover:text-black' variant='ghost' startContent={<span className='icon-[mdi--account-outline]' />} onPress={onProfileButtonClick}>
 							{session.data ? 'Личный кабинет' : 'Вход для партнеров'}
 						</Button>
 						<Button className='sm:hidden text-white hover:text-black' variant='ghost' isIconOnly onPress={onProfileButtonClick}>
-							<span className='iconify mdi--account-outline text-2xl' />
+							<span className='icon-[mdi--account-outline]' />
 						</Button>
 					</NavbarItem>
 				</NavbarContent>
