@@ -9,6 +9,7 @@ import Link from '@/components/link'
 import { signIn, useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useShoppingBag } from './shopping-bag-hook'
+import { UserRole } from '@prisma/client'
 
 function ShoppingBagButton({ productsCount, positionCount, isBadgeInvisible }: { productsCount: number, positionCount: number, isBadgeInvisible: boolean }) {
 	const [isOpen, setIsOpen] = useState(false)
@@ -71,7 +72,7 @@ export default function Header() {
 		}, {
 			label: 'Каталог',
 			href: '/catalog'
-		}, ...(session.data?.user.role === 'ADMIN' ? [{
+		}, ...(session.data?.user.role === UserRole.ADMIN || session.data?.user.role === UserRole.MANAGER ? [{
 			label: 'Администрирование',
 			href: '/administration/users'
 		}] : [])],

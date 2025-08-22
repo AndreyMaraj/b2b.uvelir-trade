@@ -1,13 +1,13 @@
 'use server'
 
+import type { Client, ShoppingBagsProduct } from '@prisma/client'
 import { prisma } from '@/prisma'
-import type { ShoppingBagsProduct } from '@prisma/client'
 
-export async function updateShoppingBag(data: Omit<ShoppingBagsProduct, 'id'>) {
+export async function updateShoppingBag(data: Omit<ShoppingBagsProduct, 'id' | 'clientId'>, userId: Client['userId']) {
 	try {
 		const shoppingBagsProduct = await prisma.shoppingBagsProduct.findFirst({
 			where: {
-				userId: data.userId,
+				client: { userId },
 				invisibleModelModificationId: data.invisibleModelModificationId,
 				invisibleModelModificationSizeId: data.invisibleModelModificationSizeId
 			}
@@ -24,7 +24,26 @@ export async function updateShoppingBag(data: Omit<ShoppingBagsProduct, 'id'>) {
 					}
 				})
 			} else {
-				return await prisma.shoppingBagsProduct.create({ data })
+				return await prisma.shoppingBagsProduct.create({
+					data: {
+						client: {
+							connect: {
+								userId
+							}
+						},
+						invisibleModelModification: {
+							connect: {
+								id: data.invisibleModelModificationId
+							}
+						},
+						invisibleModelModificationSize: data.invisibleModelModificationSizeId ? {
+							connect: {
+								id: data.invisibleModelModificationSizeId
+							}
+						} : undefined,
+						count: data.count
+					}
+				})
 			}
 		}
 
@@ -43,30 +62,41 @@ export async function updateShoppingBag(data: Omit<ShoppingBagsProduct, 'id'>) {
 	}
 }
 
-export async function clearUsersShoppingBag(userId: ShoppingBagsProduct['userId'], invisibleModelModificationId?: ShoppingBagsProduct['invisibleModelModificationId']) {
+export async function clearUsersShoppingBag(userId: Client['userId'], invisibleModelModificationId?: ShoppingBagsProduct['invisibleModelModificationId']) {
 	try {
-		return await prisma.shoppingBagsProduct.deleteMany({ where: { userId, invisibleModelModificationId } })
+		return await prisma.shoppingBagsProduct.deleteMany({
+			where: {
+				client: { userId },
+				invisibleModelModificationId
+			}
+		})
 	} catch (e) {
 		console.log(e)
 		return
 	}
 }
 
-export async function getShoppingBagsProducts(userId: ShoppingBagsProduct['userId']) {
+export async function getShoppingBagsProducts(userId: Client['userId']) {
 	try {
-		return await prisma.shoppingBagsProduct.findMany({ where: { userId } })
+		return await prisma.shoppingBagsProduct.findMany({
+			where: {
+				client: {
+					userId
+				}
+			}
+		})
 	} catch (e) {
 		console.log(e)
 		return
 	}
 }
 
-export async function getShoppingBagsWithProducts(userId: ShoppingBagsProduct['userId']) {
+export async function getShoppingBagsWithProducts(userId: Client['userId']) {
 	try {
 		return (await prisma.invisibleModelModification.findMany({
 			where: {
 				shoppingBagsProducts: {
-					some: { userId }
+					some: { client: { userId } }
 				}
 			},
 			select: {
@@ -80,7 +110,7 @@ export async function getShoppingBagsWithProducts(userId: ShoppingBagsProduct['u
 					}
 				},
 				shoppingBagsProducts: {
-					where: { userId },
+					where: { client: { userId } },
 					select: {
 						id: true,
 						count: true,

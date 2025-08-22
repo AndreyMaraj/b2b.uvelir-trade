@@ -41,7 +41,7 @@ export default function ProductImages({ media }: { media: Media['path'][] }) {
 							quality={100}
 							radius='lg'
 							sizes='55px'
-							className={`object-cover border-2 hover:border-sky-300${mediaFile === selectedImage ? ' border-sky-500' : ''}`}
+							className={`cursor-pointer object-cover border-2 hover:border-sky-300${mediaFile === selectedImage ? ' border-sky-500' : ''}`}
 							onClick={() => setSelectedImage(mediaFile)}
 						/>
 					)}

@@ -9,7 +9,8 @@ datasource db {
 
 enum UserRole {
     ADMIN
-    USER
+    MANAGER
+    CLIENT
 }
 
 enum MenuType {
@@ -17,21 +18,40 @@ enum MenuType {
 }
 
 model User {
-    id                   String                @id @default(cuid())
-    name                 String
+    id        String    @id @default(cuid())
+    email     String    @unique
+    phone     String    @unique
+    password  String
+    role      UserRole  @default(CLIENT)
+    active    Boolean   @default(false)
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    client    Client?
+    manager   Manager?
+    accounts  Account[]
+}
+
+model Manager {
+    id         Int      @id @default(autoincrement()) @db.SmallInt
+    surname    String
+    name       String
+    patronymic String
+    user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId     String   @unique
+    clients    Client[]
+}
+
+model Client {
+    id                   Int                   @id @default(autoincrement()) @db.SmallInt
+    organization         String
     tin                  String                @unique
     city                 String
-    email                String                @unique
-    phone                String                @unique
-    password             String
-    role                 UserRole              @default(USER)
-    verified             Boolean               @default(false)
-    accounts             Account[]
+    user                 User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+    userId               String                @unique
+    manager              Manager               @relation(fields: [managerId], references: [id])
+    managerId            Int
     shoppingBagsProducts ShoppingBagsProduct[]
     orders               Order[]
-
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
 }
 
 model Account {
@@ -78,10 +98,10 @@ model MenuItem {
 }
 
 model Media {
-    id                           Int                         @id @default(autoincrement())
+    id                           Int                        @id @default(autoincrement())
     path                         String
-    invisibleModelModification   InvisibleModelModification? @relation(fields: [invisibleModelModificationId], references: [id], onDelete: Cascade)
-    invisibleModelModificationId Int?
+    invisibleModelModification   InvisibleModelModification @relation(fields: [invisibleModelModificationId], references: [id], onDelete: Cascade)
+    invisibleModelModificationId Int                        @default(0)
 }
 
 model OrderItem {
@@ -101,22 +121,22 @@ model Order {
     id         Int         @id @default(autoincrement())
     date       DateTime    @default(now())
     comment    String?
-    user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId     String
     orderItems OrderItem[]
+    client     Client      @relation(fields: [clientId], references: [id])
+    clientId   Int
 }
 
 model ShoppingBagsProduct {
     id                               Int                             @id @default(autoincrement())
     count                            Int                             @db.SmallInt
-    user                             User                            @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId                           String
     invisibleModelModification       InvisibleModelModification      @relation(fields: [invisibleModelModificationId], references: [id], onDelete: Cascade)
     invisibleModelModificationId     Int
     invisibleModelModificationSize   InvisibleModelModificationSize? @relation(fields: [invisibleModelModificationSizeId], references: [id], onDelete: Cascade)
     invisibleModelModificationSizeId Int?
+    client                           Client                          @relation(fields: [clientId], references: [id])
+    clientId                         Int
 
-    @@unique([userId, invisibleModelModificationId, invisibleModelModificationSizeId])
+    @@unique([clientId, invisibleModelModificationId, invisibleModelModificationSizeId])
 }
 
 model NomenclatureGroup {

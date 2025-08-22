@@ -1,10 +1,10 @@
 'use client'
 
-import { clearUsersShoppingBag, getShoppingBagsProducts, updateShoppingBag } from '@/actions/shopping-bag'
+import type { ReactNode } from 'react'
 import type { ShoppingBagsProduct, User } from '@prisma/client'
+import { clearUsersShoppingBag, getShoppingBagsProducts, updateShoppingBag } from '@/actions/shopping-bag'
 import { useSession } from 'next-auth/react'
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
-import type { ReactNode } from 'react'
 import { useDebouncedCallback } from 'use-debounce'
 
 interface ShoppingBagContextType {
@@ -31,11 +31,10 @@ export const ShoppingBagProvider = ({ children }: { children: ReactNode }) => {
 
 		try {
 			const shoppingBagProduct = await updateShoppingBag({
-				userId: session.data.user.id,
 				count,
 				invisibleModelModificationId,
 				invisibleModelModificationSizeId
-			})
+			}, session.data.user.id)
 			setProducts(prevProducts => {
 				if (!shoppingBagProduct) {
 					return prevProducts

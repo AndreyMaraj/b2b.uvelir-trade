@@ -1,13 +1,13 @@
 'use client'
 
+import type { Key } from 'react'
+import type { Client, InvisibleModelModification, ShoppingBagsProduct } from '@prisma/client'
 import { getShoppingBagsWithProducts } from '@/actions/shopping-bag'
 import { useShoppingBag } from '@/components/shopping-bag-hook'
 import { Pagination } from '@heroui/pagination'
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/table'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import type { Key } from 'react'
 import EmptyProductMedia from '@/public/empty-product-media.jpg'
-import type { InvisibleModelModification, Order, ShoppingBagsProduct } from '@prisma/client'
 import { Image } from '@heroui/image'
 import { Button } from '@heroui/button'
 import NextImage from 'next/image'
@@ -28,7 +28,7 @@ interface ProductRow {
 
 const rowsPerPage = 25
 
-export default function ProductsTable({ userId }: { userId: Order['userId'] }) {
+export default function ProductsTable({ userId }: { userId: Client['userId'] }) {
 	const { products, isPending, clearShoppingBag } = useShoppingBag(),
 		[rows, setRows] = useState<ProductRow[]>([]),
 		[page, setPage] = useState(1),

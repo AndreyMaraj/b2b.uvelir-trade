@@ -31,7 +31,7 @@ export default function ProductVariants({ currentProductArcticle, productPrototy
 							radius='lg'
 							sizes='75px'
 							classNames={{ 'wrapper': 'w-[75px] h-[75px] shrink-0' }}
-							className={`object-cover border-2 hover:border-sky-300${invisibleModelModification.article === currentProductArcticle ? ' border-sky-500' : ''}`}
+							className={`cursor-pointer object-cover border-2 hover:border-sky-300${invisibleModelModification.article === currentProductArcticle ? ' border-sky-500' : ''}`}
 							onClick={() => onVariantClick(invisibleModelModification.article)}
 						/>
 					)

@@ -1,7 +1,9 @@
-import UsersTable from './users-table'
+import type { Metadata } from 'next'
+import ClientsTable from './clients-table'
 import { auth } from '@/auth'
 import { openGraph, twitter } from '@/app/shared-metadata'
-import type { Metadata } from 'next'
+import { UserRole } from '@prisma/client'
+import AdminPanel from './admin-panel'
 
 const title = 'Пользователи',
 	description = 'Управление пользователями в системе.',
@@ -29,7 +31,7 @@ export const metadata: Metadata = {
 export default async function Page() {
 	const session = await auth()
 
-	if (!session || !session.user.id || session.user.role !== 'ADMIN') {
+	if (!session || !session.user.id || session.user.role === UserRole.CLIENT) {
 		return
 	}
 
@@ -38,7 +40,11 @@ export default async function Page() {
 			<h1 className='text-3xl mb-5'>
 				Администрирование пользователей
 			</h1>
-			<UsersTable userId={session.user.id} />
+			{session.user.role === UserRole.ADMIN ?
+				<AdminPanel />
+				:
+				<ClientsTable userId={session.user.id} />
+			}
 		</>
 	)
 }

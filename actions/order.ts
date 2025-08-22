@@ -1,10 +1,10 @@
 'use server'
 
+import type { Client, Manager, Order } from '@prisma/client'
 import { prisma } from '@/prisma'
-import type { Order } from '@prisma/client'
 import { getShoppingBagsProducts } from './shopping-bag'
 
-export async function createOrder(userId: Order['userId'], comment: Order['comment']) {
+export async function createOrder(userId: Client['userId'], comment: Order['comment']) {
 	const shoppingBagsProducts = await getShoppingBagsProducts(userId)
 
 	if (!shoppingBagsProducts || !shoppingBagsProducts.length) {
@@ -14,8 +14,12 @@ export async function createOrder(userId: Order['userId'], comment: Order['comme
 	try {
 		return await prisma.order.create({
 			data: {
-				userId,
 				comment,
+				client: {
+					connect: {
+						userId
+					}
+				},
 				orderItems: {
 					createMany: {
 						data: shoppingBagsProducts.map(shoppingBagsProduct => ({
@@ -33,10 +37,14 @@ export async function createOrder(userId: Order['userId'], comment: Order['comme
 	}
 }
 
-export async function getUserOrders(userId: Order['userId']) {
+export async function getClientOrders(userId: Client['userId']) {
 	try {
 		return await prisma.order.findMany({
-			where: { userId },
+			where: {
+				client: {
+					userId
+				}
+			},
 			include: {
 				orderItems: {
 					select: {
@@ -51,13 +59,22 @@ export async function getUserOrders(userId: Order['userId']) {
 	}
 }
 
-export async function getOrders() {
+export async function getOrders(userId?: Manager['userId']) {
 	try {
 		return await prisma.order.findMany({
+			...(userId && {
+				where: {
+					client: {
+						manager: {
+							userId
+						}
+					}
+				}
+			}),
 			include: {
-				user: {
+				client: {
 					select: {
-						name: true,
+						organization: true,
 						tin: true,
 						city: true
 					}
@@ -75,19 +92,27 @@ export async function getOrders() {
 	}
 }
 
-export async function getOrder(orderId: Order['id'], userId?: Order['userId']) {
+export async function getOrder(orderId: Order['id'], clientUserId?: Client['userId'], managerUserId?: Manager['userId']) {
 	try {
 		return {
-			order: await prisma.order.findUnique({
-				where: { id: orderId, userId },
+			order: await prisma.order.findFirst({
+				where: {
+					id: orderId,
+					...((clientUserId || managerUserId) && {
+						client: {
+							...(clientUserId && { userId: clientUserId }),
+							...(managerUserId && { manager: { userId: managerUserId } })
+						}
+					})
+				},
 				select: {
 					id: true,
 					date: true,
 					comment: true,
-					...(!userId && {
-						user: {
+					...(!clientUserId && {
+						client: {
 							select: {
-								name: true,
+								organization: true,
 								tin: true,
 								city: true
 							}
