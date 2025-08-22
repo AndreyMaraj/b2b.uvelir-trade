@@ -1,8 +1,9 @@
+import type { Metadata } from 'next'
 import Link from '@/components/link'
-import RegisterForm from '@/components/register-form'
+import ClientRegisterForm from '@/components/client-register-form'
 import { Card, CardBody } from '@heroui/card'
 import { openGraph, twitter } from '@/app/shared-metadata'
-import type { Metadata } from 'next'
+import { getManagers } from '@/data/user'
 
 const title = 'Регистрация',
 	description = 'Создайте учетную запись на Ювелир Трейд Опт.',
@@ -27,7 +28,9 @@ export const metadata: Metadata = {
 	}
 }
 
-export default function Page() {
+export default async function Page() {
+	const managers = await getManagers()
+
 	return (
 		<div className='container px-4 py-3'>
 			<h1 className='text-3xl w-full mb-5'>
@@ -60,7 +63,7 @@ export default function Page() {
 				</div>
 				<Card className='p-6 md:basis-1/2'>
 					<CardBody>
-						<RegisterForm />
+						<ClientRegisterForm managers={managers} />
 					</CardBody>
 				</Card>
 			</div>

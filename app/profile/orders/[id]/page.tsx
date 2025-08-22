@@ -1,13 +1,14 @@
+import type { Metadata } from 'next'
 import ProductsTable from './products-table'
 import { getOrder } from '@/actions/order'
 import EmptyProductMedia from '@/public/empty-product-media.jpg'
 import { openGraph, twitter } from '@/app/shared-metadata'
-import type { Metadata } from 'next'
 import { NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
 import { Textarea } from '@heroui/input'
 import { auth } from '@/auth'
+import { UserRole } from '@prisma/client'
 
-interface CurrentPageProps extends PageProps<'id', never> { }
+interface CurrentPageProps extends PageProps<'/profile/orders/[id]', never> { }
 
 export async function generateMetadata({ params }: CurrentPageProps): Promise<Metadata> {
 	const session = await auth(),
@@ -40,7 +41,7 @@ export async function generateMetadata({ params }: CurrentPageProps): Promise<Me
 export default async function Page({ params }: CurrentPageProps) {
 	const session = await auth()
 
-	if (!session?.user.id) {
+	if (!session?.user.id || session.user.role !== UserRole.CLIENT) {
 		return
 	}
 

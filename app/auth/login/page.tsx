@@ -40,7 +40,6 @@ export default function Page() {
 					<LoginForm />
 				</CardBody>
 				<CardFooter className='flex justify-between'>
-					{/* <Link href='#'>Забыли пароль?</Link> */}
 					<Link href='/auth/register'>Регистрация</Link>
 				</CardFooter>
 			</Card>

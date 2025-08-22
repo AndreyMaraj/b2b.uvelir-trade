@@ -1,6 +1,6 @@
 'use server'
 
-import { InvalidLoginError, signIn, UnverifiedAccountLoginError } from '@/auth'
+import { InvalidLoginError, signIn, InactiveAccountLoginError } from '@/auth'
 import { DEFAULT_LOGIN_REDIRECT } from '@/routes'
 import { LoginSchema } from '@/schemas'
 import { z } from 'zod'
@@ -21,7 +21,7 @@ export const login = async (values: z.infer<typeof LoginSchema>) => {
 	} catch (error) {
 		if (error instanceof InvalidLoginError) {
 			return { error: 'Неверный email или пароль' }
-		} else if (error instanceof UnverifiedAccountLoginError) {
+		} else if (error instanceof InactiveAccountLoginError) {
 			return { error: 'Аккаунт не верифицирован' }
 		}
 

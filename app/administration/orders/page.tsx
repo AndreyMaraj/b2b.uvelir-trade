@@ -1,7 +1,8 @@
+import type { Metadata } from 'next'
 import { auth } from '@/auth'
 import OrdersTable from './orders-table'
 import { openGraph, twitter } from '@/app/shared-metadata'
-import type { Metadata } from 'next'
+import { UserRole } from '@prisma/client'
 
 const title = 'Заказы',
 	description = 'Управление заказами в системе.',
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
 export default async function Page() {
 	const session = await auth()
 
-	if (!session || !session.user.id || session.user.role !== 'ADMIN') {
+	if (!session || !session.user.id || session.user.role == UserRole.CLIENT) {
 		return
 	}
 
@@ -38,7 +39,7 @@ export default async function Page() {
 			<h1 className='text-3xl mb-5'>
 				Администрирование заказов
 			</h1>
-			<OrdersTable />
+			<OrdersTable userId={session.user.role == UserRole.MANAGER ? session.user.id : undefined} />
 		</>
 	)
 }
