@@ -4,7 +4,7 @@ import type { User } from '@prisma/client'
 import { AdminProfileSchema, ClientProfileSchema, ManagerProfileSchema } from '@/schemas'
 import { z } from 'zod'
 import { prisma } from '@/prisma'
-import { getUserByUniqueFields } from '@/data/user'
+import { getClientByUniqueFields, getUserByUniqueFields } from '@/data/user'
 
 export const updateAdminProfile = async (values: z.infer<typeof AdminProfileSchema>, userId: User['id']) => {
 	const validatedFields = AdminProfileSchema.safeParse(values)
@@ -71,6 +71,11 @@ export const updateClientProfile = async (values: z.infer<typeof ClientProfileSc
 
 	if (existingUser && existingUser.id !== userId) {
 		return { error: 'Email or phone already in use!' }
+	}
+
+	const existingClient = await getClientByUniqueFields(tin)
+	if (existingClient && existingClient.userId !== userId) {
+		return { error: 'TIN already in use!' }
 	}
 
 	await prisma.client.update({

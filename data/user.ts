@@ -19,6 +19,17 @@ export const getUserByUniqueFields = async (email?: User['email'], phone?: User[
 	}
 }
 
+export const getClientByUniqueFields = async (tin: Client['tin']) => {
+	try {
+		return await prisma.client.findUnique({
+			where: { tin }
+		})
+	} catch (e) {
+		console.log(e)
+		return null
+	}
+}
+
 export const getUserById = async (id: User['id']) => {
 	try {
 		return await prisma.user.findUnique({

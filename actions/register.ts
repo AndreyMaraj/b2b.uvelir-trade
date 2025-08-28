@@ -4,7 +4,7 @@ import { ClientRegisterSchema, ManagerRegisterSchema } from '@/schemas'
 import { z } from 'zod'
 import bcrypt from 'bcrypt'
 import { prisma } from '@/prisma'
-import { getUserByUniqueFields } from '@/data/user'
+import { getClientByUniqueFields, getUserByUniqueFields } from '@/data/user'
 import { UserRole } from '@prisma/client'
 
 export const registerClient = async (values: z.infer<typeof ClientRegisterSchema>) => {
@@ -17,6 +17,8 @@ export const registerClient = async (values: z.infer<typeof ClientRegisterSchema
 		existingUser = await getUserByUniqueFields(email, phone)
 
 	if (existingUser) return { error: 'Email or phone already in use!' }
+
+	if ((await getClientByUniqueFields(tin))) return { error: 'TIN already in use!' }
 
 	await prisma.user.create({
 		data: {
