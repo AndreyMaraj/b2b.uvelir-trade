@@ -5,6 +5,7 @@ import { Prisma } from '@prisma/client'
 import EmptyProductMedia from '@/public/empty-product-media.jpg'
 import Link from '@/components/link'
 import { NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
+import { Chip } from '@heroui/chip'
 
 const ProductCardData = Prisma.validator<Prisma.InvisibleModelModificationDefaultArgs>()({
 	include: {
@@ -57,8 +58,12 @@ export default function ProductCard({ product, className }: ProductCardProps) {
 					</div>
 				</CardBody>
 				<CardFooter className='text-small justify-between'>
-					<b>{product.visibleModelModification.productModel.productPrototyp.type.name} {product.article}</b>
-					<p className='text-default-500'>{product.invisibleModelModificationSizes?.length ? product.invisibleModelModificationSizes[0].averageWeight.toNumber() : product.averageWeight.toNumber()}</p>
+					<b>
+						{product.visibleModelModification.productModel.productPrototyp.type.name} {product.article}
+					</b>
+					<Chip color='warning' variant='dot'>
+						{product.invisibleModelModificationSizes?.length ? product.invisibleModelModificationSizes[0].averageWeight.toNumber() : product.averageWeight.toNumber()}
+					</Chip>
 				</CardFooter>
 			</Card>
 		</div>
