@@ -1,13 +1,14 @@
 'use client'
 
+import type { Key } from 'react'
+import type { InvisibleModelModification, Order, OrderItem } from '@prisma/client'
 import { Pagination } from '@heroui/pagination'
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/table'
 import { useCallback, useMemo, useState } from 'react'
-import type { Key } from 'react'
-import type { InvisibleModelModification, OrderItem } from '@prisma/client'
 import { Image } from '@heroui/image'
 import NextImage from 'next/image'
 import Link from '@/components/link'
+import DownloadOrderButton from '@/components/download-order-button'
 
 interface ProductRow {
 	id: InvisibleModelModification['id'],
@@ -18,9 +19,14 @@ interface ProductRow {
 	weight: number
 }
 
+type ProductsTableProps = {
+	orderId: Order['id'],
+	rows: ProductRow[]
+}
+
 const rowsPerPage = 25
 
-export default function ProductsTable({ rows }: { rows: ProductRow[] }) {
+export default function ProductsTable({ orderId, rows }: ProductsTableProps) {
 	const [page, setPage] = useState(1),
 		pages = Math.ceil(rows.length / rowsPerPage),
 		items = useMemo(() => {
@@ -64,7 +70,12 @@ export default function ProductsTable({ rows }: { rows: ProductRow[] }) {
 		}, [])
 
 	return (
-		<Table bottomContentPlacement='outside'
+		<Table topContent={
+			<div className='flex justify-end'>
+				<DownloadOrderButton orderId={orderId} />
+			</div>
+		}
+			bottomContentPlacement='outside'
 			bottomContent={pages > 1 &&
 				<div className='flex justify-center'>
 					<Pagination

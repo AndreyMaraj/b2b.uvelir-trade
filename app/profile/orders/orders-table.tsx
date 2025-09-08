@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { getClientOrders } from '@/actions/order'
 import Link from '@/components/link'
+import DownloadOrderButton from '@/components/download-order-button'
 
 interface OrderRow {
 	id: Order['id'],
@@ -35,7 +36,13 @@ export default function OrdersTable({ userId }: { userId: Client['userId'] }) {
 				return cellValue.toLocaleDateString('ru-RU')
 			}
 
-			return cellValue
+			switch (columnKey) {
+				case 'actions':
+					return (
+						<DownloadOrderButton orderId={order.id} />
+					)
+				default: return cellValue
+			}
 		}, [])
 
 	useEffect(() => {
@@ -78,6 +85,9 @@ export default function OrdersTable({ userId }: { userId: Client['userId'] }) {
 				</TableColumn>
 				<TableColumn key='comment'>
 					Комментарий
+				</TableColumn>
+				<TableColumn key='actions' align='center'>
+					Действия
 				</TableColumn>
 			</TableHeader>
 			<TableBody
