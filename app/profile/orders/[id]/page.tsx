@@ -65,10 +65,10 @@ export default async function Page({ params }: CurrentPageProps) {
 	return (
 		<>
 			<h1 className='text-3xl mb-5'>
-				Заказ от {new Date(order.date).toLocaleDateString('ru-RU')}
+				Заказ № {order.id} от {new Date(order.date).toLocaleDateString('ru-RU')}
 			</h1>
 			<div>
-				<ProductsTable rows={orderItems} />
+				<ProductsTable orderId={order.id} rows={orderItems} />
 				{order.comment &&
 					<Textarea
 						label='Комментарий к заказу'

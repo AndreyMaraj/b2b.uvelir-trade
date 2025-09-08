@@ -7,6 +7,7 @@ import { Pagination } from '@heroui/pagination'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { getOrders } from '@/actions/order'
 import Link from '@/components/link'
+import DownloadOrderButton from '@/components/download-order-button'
 
 interface OrderRow {
 	id: Order['id'],
@@ -46,6 +47,10 @@ export default function OrdersTable({ userId }: OrdersTableProps) {
 							<p className='text-bold text-sm capitalize'>{(cellValue as OrderRow['client']).organization}</p>
 							<p className='text-bold text-sm capitalize text-default-400'>{(cellValue as OrderRow['client']).tin}, {(cellValue as OrderRow['client']).city}</p>
 						</div>
+					)
+				case 'actions':
+					return (
+						<DownloadOrderButton orderId={order.id} />
 					)
 				default: return cellValue?.toString()
 			}
@@ -95,6 +100,9 @@ export default function OrdersTable({ userId }: OrdersTableProps) {
 				</TableColumn>
 				<TableColumn key='comment'>
 					Комментарий
+				</TableColumn>
+				<TableColumn key='actions' align='center'>
+					Действия
 				</TableColumn>
 			</TableHeader>
 			<TableBody
