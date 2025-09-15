@@ -129,7 +129,7 @@ export default function ClientPrifileForm({ client }: ClientPrifileFormProps) {
 			<Button type='submit' className='w-full' isDisabled={isPending}>
 				Сохранить
 			</Button>
-			<Button color='danger' variant='light' fullWidth className='mt-5' onPress={() => signOut({ redirectTo: '/auth/login' })}>
+			<Button color='danger' variant='light' fullWidth className='mt-5' onPress={() => signOut()}>
 				Выход
 			</Button>
 		</Form>
