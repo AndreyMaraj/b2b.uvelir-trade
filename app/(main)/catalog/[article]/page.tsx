@@ -8,7 +8,7 @@ import AddToShoppingBagButton from './add-to-shopping-bag-button'
 import { openGraph, twitter } from '@/app/shared-metadata'
 import type { Metadata } from 'next'
 
-interface CurrentPageProps extends PageProps<'article', never> { }
+interface CurrentPageProps extends PageProps<'/catalog/[article]', never> { }
 
 export async function generateMetadata({ params }: CurrentPageProps): Promise<Metadata> {
 	const article = decodeURIComponent(decodeURIComponent((await params).article)),

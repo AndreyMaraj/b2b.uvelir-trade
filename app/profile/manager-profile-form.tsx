@@ -1,8 +1,7 @@
 'use client'
 
-import { updateProfile } from '@/actions/update-profile'
-import { UserWithoutPassword } from '@/data/user'
-import { ProfileSchema } from '@/schemas'
+import { updateManagerProfile } from '@/actions/update-profile'
+import { ManagerProfileSchema } from '@/schemas'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button } from '@heroui/button'
 import { Code } from '@heroui/code'
@@ -12,26 +11,49 @@ import { Controller, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { signOut } from 'next-auth/react'
 import { Form } from '@heroui/form'
+import { Prisma } from '@prisma/client'
+import { getManagerById } from '@/data/user'
 
-export default function PrifileForm({ user }: { user: UserWithoutPassword }) {
+type ManagerPrifileFormProps = {
+	manager: NonNullable<Prisma.PromiseReturnType<typeof getManagerById>>
+}
+
+export default function ManagerPrifileForm({ manager }: ManagerPrifileFormProps) {
 	const [isPending, startTransition] = useTransition(),
 		[error, setError] = useState<string>(),
-		{ control, handleSubmit } = useForm<z.infer<typeof ProfileSchema>>({
-			resolver: zodResolver(ProfileSchema),
+		{ control, handleSubmit } = useForm<z.infer<typeof ManagerProfileSchema>>({
+			resolver: zodResolver(ManagerProfileSchema),
 			defaultValues: {
-				name: user.name,
-				phone: user.phone,
-				email: user.email,
-				tin: user.tin,
-				city: user.city
+				surname: manager.surname,
+				name: manager.name,
+				patronymic: manager.patronymic,
+				phone: manager.user.phone,
+				email: manager.user.email
 			}
 		}),
-		onSubmit = useCallback((values: z.infer<typeof ProfileSchema>) => startTransition(() => {
-			updateProfile(values, user.id).then(data => setError(data?.error))
-		}), [user.id])
+		onSubmit = useCallback((values: z.infer<typeof ManagerProfileSchema>) => startTransition(() => {
+			updateManagerProfile(values, manager.user.id).then(data => setError(data?.error))
+		}), [manager.user.id])
 
 	return (
 		<Form onSubmit={handleSubmit(onSubmit)}>
+			<Controller
+				control={control}
+				name='surname'
+				render={({ field, fieldState }) =>
+					<Input
+						{...field}
+						variant='bordered'
+						label='Фамилия'
+						className='mb-4'
+						type='text'
+						autoComplete='family-name'
+						isDisabled={isPending}
+						isInvalid={fieldState.invalid}
+						errorMessage={fieldState.error?.message}
+					/>
+				}
+			/>
 			<Controller
 				control={control}
 				name='name'
@@ -39,10 +61,10 @@ export default function PrifileForm({ user }: { user: UserWithoutPassword }) {
 					<Input
 						{...field}
 						variant='bordered'
-						label='Название организации'
+						label='Имя'
 						className='mb-4'
 						type='text'
-						autoComplete='name'
+						autoComplete='given-name'
 						isDisabled={isPending}
 						isInvalid={fieldState.invalid}
 						errorMessage={fieldState.error?.message}
@@ -51,32 +73,15 @@ export default function PrifileForm({ user }: { user: UserWithoutPassword }) {
 			/>
 			<Controller
 				control={control}
-				name='tin'
+				name='patronymic'
 				render={({ field, fieldState }) =>
 					<Input
 						{...field}
 						variant='bordered'
-						label='ИНН организации'
+						label='Отчество'
 						className='mb-4'
 						type='text'
-						autoComplete='name'
-						isDisabled={isPending}
-						isInvalid={fieldState.invalid}
-						errorMessage={fieldState.error?.message}
-					/>
-				}
-			/>
-			<Controller
-				control={control}
-				name='city'
-				render={({ field, fieldState }) =>
-					<Input
-						{...field}
-						variant='bordered'
-						label='Город'
-						className='mb-4'
-						type='text'
-						autoComplete='name'
+						autoComplete='additional-name'
 						isDisabled={isPending}
 						isInvalid={fieldState.invalid}
 						errorMessage={fieldState.error?.message}
@@ -125,7 +130,7 @@ export default function PrifileForm({ user }: { user: UserWithoutPassword }) {
 			<Button type='submit' className='w-full' isDisabled={isPending}>
 				Сохранить
 			</Button>
-			<Button color='danger' variant='light' fullWidth className='mt-5' onPress={() => signOut({ redirectTo: '/auth/login' })}>
+			<Button color='danger' variant='light' fullWidth className='mt-5' onPress={() => signOut()}>
 				Выход
 			</Button>
 		</Form>

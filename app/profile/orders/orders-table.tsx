@@ -1,12 +1,13 @@
 'use client'
 
+import type { Key } from 'react'
+import type { Client, Order } from '@prisma/client'
 import { Pagination } from '@heroui/pagination'
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/table'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import type { Key } from 'react'
-import type { Order } from '@prisma/client'
-import { getUserOrders } from '@/actions/order'
+import { getClientOrders } from '@/actions/order'
 import Link from '@/components/link'
+import DownloadOrderButton from '@/components/download-order-button'
 
 interface OrderRow {
 	id: Order['id'],
@@ -18,7 +19,7 @@ interface OrderRow {
 
 const rowsPerPage = 25
 
-export default function OrdersTable({ userId }: { userId: Order['userId'] }) {
+export default function OrdersTable({ userId }: { userId: Client['userId'] }) {
 	const [rows, setRows] = useState<OrderRow[]>([]),
 		[page, setPage] = useState(1),
 		pages = Math.ceil(rows.length / rowsPerPage),
@@ -35,12 +36,18 @@ export default function OrdersTable({ userId }: { userId: Order['userId'] }) {
 				return cellValue.toLocaleDateString('ru-RU')
 			}
 
-			return cellValue
+			switch (columnKey) {
+				case 'actions':
+					return (
+						<DownloadOrderButton orderId={order.id} />
+					)
+				default: return cellValue
+			}
 		}, [])
 
 	useEffect(() => {
 		const fetchData = async () =>
-			setRows((await getUserOrders(userId))?.map(order => ({
+			setRows((await getClientOrders(userId))?.map(order => ({
 				id: order.id,
 				date: order.date,
 				itemsCount: order.orderItems.length,
@@ -78,6 +85,9 @@ export default function OrdersTable({ userId }: { userId: Order['userId'] }) {
 				</TableColumn>
 				<TableColumn key='comment'>
 					Комментарий
+				</TableColumn>
+				<TableColumn key='actions' align='center'>
+					Действия
 				</TableColumn>
 			</TableHeader>
 			<TableBody

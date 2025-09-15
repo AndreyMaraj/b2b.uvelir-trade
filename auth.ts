@@ -2,7 +2,7 @@ import NextAuth, { CredentialsSignin } from 'next-auth'
 import authConfig from '@/auth.config'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import { prisma } from '@/prisma'
-import { getUserByEmail, getUserById } from '@/data/user'
+import { getUserByUniqueFields, getUserByIdWithRole } from '@/data/user'
 import Credentials from 'next-auth/providers/credentials'
 import { LoginSchema } from '@/schemas'
 import bcrypt from 'bcrypt'
@@ -11,8 +11,8 @@ export class InvalidLoginError extends CredentialsSignin {
 	code = 'Invalid identifier or password'
 }
 
-export class UnverifiedAccountLoginError extends CredentialsSignin {
-	code = 'Unverified account'
+export class InactiveAccountLoginError extends CredentialsSignin {
+	code = 'Inactive account'
 }
 
 export const { handlers: { GET, POST }, signIn, signOut, auth } = NextAuth({
@@ -25,7 +25,7 @@ export const { handlers: { GET, POST }, signIn, signOut, auth } = NextAuth({
 				if (validatedFields.success) {
 					const { email, password } = validatedFields.data
 
-					const user = await getUserByEmail(email)
+					const user = await getUserByUniqueFields(email)
 
 					if (!user) {
 						throw new InvalidLoginError()
@@ -37,8 +37,8 @@ export const { handlers: { GET, POST }, signIn, signOut, auth } = NextAuth({
 						throw new InvalidLoginError()
 					}
 
-					if (!user.verified) {
-						throw new UnverifiedAccountLoginError()
+					if (!user.active) {
+						throw new InactiveAccountLoginError()
 					}
 
 					return user
@@ -65,7 +65,7 @@ export const { handlers: { GET, POST }, signIn, signOut, auth } = NextAuth({
 		async jwt({ token }) {
 			if (!token.sub) return token
 
-			const existingUser = await getUserById(token.sub)
+			const existingUser = await getUserByIdWithRole(token.sub)
 			if (existingUser) {
 				token.role = existingUser.role
 			}

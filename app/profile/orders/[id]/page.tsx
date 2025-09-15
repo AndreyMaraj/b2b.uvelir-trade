@@ -1,13 +1,14 @@
+import type { Metadata } from 'next'
 import ProductsTable from './products-table'
 import { getOrder } from '@/actions/order'
 import EmptyProductMedia from '@/public/empty-product-media.jpg'
 import { openGraph, twitter } from '@/app/shared-metadata'
-import type { Metadata } from 'next'
 import { NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
 import { Textarea } from '@heroui/input'
 import { auth } from '@/auth'
+import { UserRole } from '@prisma/client'
 
-interface CurrentPageProps extends PageProps<'id', never> { }
+interface CurrentPageProps extends PageProps<'/profile/orders/[id]', never> { }
 
 export async function generateMetadata({ params }: CurrentPageProps): Promise<Metadata> {
 	const session = await auth(),
@@ -40,7 +41,7 @@ export async function generateMetadata({ params }: CurrentPageProps): Promise<Me
 export default async function Page({ params }: CurrentPageProps) {
 	const session = await auth()
 
-	if (!session?.user.id) {
+	if (!session?.user.id || session.user.role !== UserRole.CLIENT) {
 		return
 	}
 
@@ -64,10 +65,10 @@ export default async function Page({ params }: CurrentPageProps) {
 	return (
 		<>
 			<h1 className='text-3xl mb-5'>
-				Заказ от {new Date(order.date).toLocaleDateString('ru-RU')}
+				Заказ № {order.id} от {new Date(order.date).toLocaleDateString('ru-RU')}
 			</h1>
 			<div>
-				<ProductsTable rows={orderItems} />
+				<ProductsTable orderId={order.id} rows={orderItems} />
 				{order.comment &&
 					<Textarea
 						label='Комментарий к заказу'

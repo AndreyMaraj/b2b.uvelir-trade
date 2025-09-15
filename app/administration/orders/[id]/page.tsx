@@ -1,19 +1,20 @@
+import type { Metadata } from 'next'
 import { auth } from '@/auth'
 import ProductsTable from './products-table'
 import { getOrder } from '@/actions/order'
 import EmptyProductMedia from '@/public/empty-product-media.jpg'
 import { openGraph, twitter } from '@/app/shared-metadata'
-import type { Metadata } from 'next'
 import { NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
 import { Textarea } from '@heroui/input'
+import { UserRole } from '@prisma/client'
 
-interface CurrentPageProps extends PageProps<'id', never> { }
+interface CurrentPageProps extends PageProps<'/administration/orders/[id]', never> { }
 
 export async function generateMetadata({ params }: CurrentPageProps): Promise<Metadata> {
 	const session = await auth(),
 		id = (await params).id,
 		url = `/administration/orders/${id}`,
-		{ order } = (!session || !session.user.id || session.user.role !== 'ADMIN') ? { order: null } : await getOrder(Number(id)),
+		{ order } = (!session || !session.user.id || session.user.role !== UserRole.ADMIN) ? { order: null } : await getOrder(Number(id), undefined, session.user.id),
 		title = order ? `Заказ от ${new Date(order.date).toLocaleDateString('ru-RU')}` : '',
 		description = 'Подробная информация о заказе.'
 
@@ -40,11 +41,11 @@ export async function generateMetadata({ params }: CurrentPageProps): Promise<Me
 export default async function Page({ params }: CurrentPageProps) {
 	const session = await auth()
 
-	if (!session || !session.user.id || session.user.role !== 'ADMIN') {
+	if (!session || !session.user.id || session.user.role === UserRole.CLIENT) {
 		return
 	}
 
-	const { order, invisibleModelModifications } = await getOrder(Number((await params).id))
+	const { order, invisibleModelModifications } = await getOrder(Number((await params).id), undefined, session.user.id)
 
 	if (!order) {
 		return
@@ -64,13 +65,13 @@ export default async function Page({ params }: CurrentPageProps) {
 	return (
 		<>
 			<h1 className='text-3xl mb-5'>
-				Заказ от {new Date(order.date).toLocaleDateString('ru-RU')}
+				Заказ № {order.id} от {new Date(order.date).toLocaleDateString('ru-RU')}
 			</h1>
 			<div>
-				Пользователь: {order?.user.name} {order?.user.tin} {order?.user.city}
+				Пользователь: {order.client.organization} {order.client.tin} {order.client.city}
 			</div>
 			<div>
-				<ProductsTable rows={orderItems} />
+				<ProductsTable orderId={order.id} rows={orderItems} />
 				{order.comment &&
 					<Textarea
 						label='Комментарий к заказу'
