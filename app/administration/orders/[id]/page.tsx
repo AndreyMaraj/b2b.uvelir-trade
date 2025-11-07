@@ -45,7 +45,7 @@ export default async function Page({ params }: CurrentPageProps) {
 		return
 	}
 
-	const { order, invisibleModelModifications } = await getOrder(Number((await params).id), undefined, session.user.id)
+	const { order, invisibleModelModifications } = await getOrder(Number((await params).id), undefined, session.user.role === UserRole.MANAGER ? session.user.id : undefined)
 
 	if (!order) {
 		return

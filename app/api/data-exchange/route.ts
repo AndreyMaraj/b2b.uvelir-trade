@@ -74,7 +74,7 @@ enum PropName {
 	ProductTheme = 'Тематика',
 	ProductStyle = 'Стиль изделия',
 	ProductLockType = 'Тип замка',
-	AgeCategory = 'Возраст',
+	AgeCategory = 'Подходит',
 	Height = 'Высота',
 	Width = 'Ширина',
 	PinWorkingArea = 'Рабочая зона штифта',
