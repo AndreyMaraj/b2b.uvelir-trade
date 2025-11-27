@@ -1,6 +1,6 @@
-import NavLinks from '@/components/nav-links'
 import type { ReactNode } from 'react'
 import type { Metadata } from 'next'
+import NavLinks from '@/components/nav-links'
 
 const title = {
 	template: '%s | Администрирование | Ювелир Трейд Опт',
@@ -27,7 +27,7 @@ const menuItems = [{
 
 export default function Layout({ children }: Readonly<{ children: ReactNode }>) {
 	return (
-		<main className='grow'>
+		<section className='flex-1'>
 			<div className='container px-4 py-3 flex flex-col lg:flex-row gap-5'>
 				<div className='lg:basis-1/5'>
 					<NavLinks menuItems={menuItems} />
@@ -36,6 +36,6 @@ export default function Layout({ children }: Readonly<{ children: ReactNode }>) 
 					{children}
 				</div>
 			</div>
-		</main>
+		</section>
 	)
 }

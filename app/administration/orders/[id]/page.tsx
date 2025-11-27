@@ -7,6 +7,7 @@ import { openGraph, twitter } from '@/app/shared-metadata'
 import { NEXT_PUBLIC_FILE_SERVER_GET_IMAGE_PATH } from '@/consts'
 import { Textarea } from '@heroui/input'
 import { UserRole } from '@prisma/client'
+import { notFound } from 'next/navigation'
 
 interface CurrentPageProps extends PageProps<'/administration/orders/[id]', never> { }
 
@@ -48,7 +49,7 @@ export default async function Page({ params }: CurrentPageProps) {
 	const { order, invisibleModelModifications } = await getOrder(Number((await params).id), undefined, session.user.role === UserRole.MANAGER ? session.user.id : undefined)
 
 	if (!order) {
-		return
+		notFound()
 	}
 
 	const orderItems = invisibleModelModifications.map(invisibleModelModification => ({
