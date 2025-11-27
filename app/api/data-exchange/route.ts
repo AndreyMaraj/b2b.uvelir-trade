@@ -1,5 +1,3 @@
-'use server'
-
 import type { NextRequest } from 'next/server'
 import { promises as fs } from 'fs'
 import * as fsSync from 'fs'
@@ -686,7 +684,7 @@ export async function GET(request: NextRequest) {
 		case RequestMode.CheckAuth:
 			return new Response(`success\n${COOKIE_NAME}\n123`)
 		case RequestMode.Init:
-			return new Response('zip=no\nfile_limit=100000000')
+			return new Response('zip=no\nfile_limit=10485760')
 		case RequestMode.Import:
 			return new Response('success')
 		case RequestMode.Complete:

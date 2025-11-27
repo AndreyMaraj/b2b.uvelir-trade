@@ -60,7 +60,9 @@ export default async function Layout({ children }: Readonly<{ children: ReactNod
 			<body>
 				<Providers className='min-h-screen bg-white flex flex-col' session={sessions} sessionKey={sessionKey}>
 					<Header />
-					{children}
+					<main className='flex-1 flex flex-col'>
+						{children}
+					</main>
 					<Footer />
 				</Providers>
 			</body>

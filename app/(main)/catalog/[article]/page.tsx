@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { getAdditionalProducts, getProductByArticle, getProductVariants } from '@/data/product'
 import { Card, CardBody, CardHeader } from '@heroui/card'
 import ProductImages from './product-images'
@@ -6,7 +7,7 @@ import ProductTabs from './tabs'
 import ProductCard from '../product-card'
 import AddToShoppingBagButton from './add-to-shopping-bag-button'
 import { openGraph, twitter } from '@/app/shared-metadata'
-import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 
 interface CurrentPageProps extends PageProps<'/catalog/[article]', never> { }
 
@@ -53,7 +54,7 @@ export default async function Page({ params }: CurrentPageProps) {
 	const product = await getProductByArticle(decodeURIComponent((await params).article))
 
 	if (!product) {
-		return
+		notFound()
 	}
 
 	const productPrototype = await getProductVariants(product.visibleModelModification.productModel.productPrototyp.id),
