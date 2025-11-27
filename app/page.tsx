@@ -36,7 +36,7 @@ export const metadata: Metadata = {
 
 export default function Page() {
 	return (
-		<main className='flex flex-col grow'>
+		<section className='flex flex-col flex-1'>
 			<div className='container md:h-168 sm:h-120 h-84 py-3'>
 				<Carousel images={[{
 					src: Slider1.src,
@@ -85,6 +85,6 @@ export default function Page() {
 					</div>
 				</div>
 			</div>
-		</main>
+		</section>
 	)
 }

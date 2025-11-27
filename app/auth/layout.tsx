@@ -1,9 +1,9 @@
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
 export default function Layout({ children }: Readonly<{ children: ReactNode }>) {
 	return (
-		<main className='flex grow'>
+		<section className='flex flex-1'>
 			{children}
-		</main>
+		</section>
 	)
 }
